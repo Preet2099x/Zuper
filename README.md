@@ -6,5 +6,10 @@ Zuper is a full-stack web application being built to simplify vehicle rentals an
 - 🎨 Styling: Tailwind CSS
 - ⚙️ Backend: Node.js & Express
 - 🗃️ Database: MongoDB
+- 🔐 Auth & Security: JWT (JSON Web Tokens), bcrypt for password hashing
+- ✉️ Email Service: Nodemailer (via Gmail SMTP for dev)
+- 🛠️ Environment Management: dotenv
+- 🧩 Routing (Frontend): React Router DOM
+- 🧪 Dev Tools: Nodemon for backend auto-reload, Postman for API testing
 
 ---
