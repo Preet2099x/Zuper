@@ -1,21 +1,27 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from  './config/db.js';
 import authRoutes from "./routes/authRoutes.js";
+import testRoutes from "./routes/testRoutes.js";
 
 
-
-dotenv.config();
 connectDB();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+const allowed = [process.env.FRONTEND_URL || "http://localhost:5173"];
+app.use(cors({ origin: allowed })); // allow Vite dev server
+
 app.get('/',(req,res) => {
     res.send('Zuper Backend is running');
 });
+
+app.use("/api/test", testRoutes);
 
 app.use("/api/auth", authRoutes);
 
