@@ -7,7 +7,7 @@ import sendEmail from "../config/mailer.js";
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
 
-// ----- helpers -----
+// ----- HELPERS -----
 function signToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 }
@@ -20,7 +20,7 @@ function hashOtp(otp) {
   return crypto.createHash("sha256").update(otp).digest("hex");
 }
 
-// ----- signup -----
+// ----- SIGNUP -----
 export const signupCustomer = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
@@ -47,10 +47,35 @@ export const signupCustomer = async (req, res) => {
     });
 
     await sendEmail({
-      to: email,
-      subject: "Zuper Email Verification",
-      text: `Your verification code is ${otp}. It expires in 15 minutes.`
+    to: email,
+    subject: "Verify your Zuper account",
+    text: `
+    Hello ${name},
+
+    Welcome to Zuper! To finish setting up your account, please verify your email.
+
+    Your verification code is: ${otp}
+
+    This code will expire in 15 minutes. If you did not sign up for a Zuper account, please ignore this email.
+
+    Thanks,
+    The Zuper Team
+    `,
+    html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+        <h2 style="color: #2563eb;">Welcome to Zuper!</h2>
+        <p>Hello <strong>${name}</strong>,</p>
+        <p>To complete your signup, please verify your email using the code below:</p>
+        <p style="font-size: 20px; font-weight: bold; letter-spacing: 3px; color: #111;">
+            ${otp}
+        </p>
+        <p>This code will expire in <strong>15 minutes</strong>.</p>
+        <p>If you didn’t create a Zuper account, you can ignore this message.</p>
+        <p style="margin-top: 20px;">— The Zuper Team</p>
+        </div>
+    `
     });
+
 
     return res.status(201).json({
       message: "Signup successful. Verification code sent to email."
