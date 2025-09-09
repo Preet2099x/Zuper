@@ -10,6 +10,7 @@ const SMTP_USER = process.env.SMTP_USER || "";
 const SMTP_PASS = process.env.SMTP_PASS || "";
 const FROM = process.env.EMAIL_FROM || "zuper@app.local";
 
+//-> FOR DEBUGGING SMTP IN CASE IT DOESN'T WORK
 // console.log("SMTP ENV CHECK", {
 //   host: process.env.SMTP_HOST,
 //   port: process.env.SMTP_PORT,
