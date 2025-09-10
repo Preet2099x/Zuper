@@ -1,16 +1,14 @@
 // src/App.jsx
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-
-import Signup from "./pages/Signup.jsx";
-import Login from "./pages/Login.jsx";
+import Login from "./pages/customer/Login.jsx";
+import Signup from "./pages/customer/Signup.jsx";
 import CustomerDashboard from "./pages/CustomerDashboard.jsx";
 import ProviderDashboard from "./pages/ProviderDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import VerifyEmail from "./pages/VerifyEmail.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
-
 import PrivateRoute from "./components/PrivateRoute.jsx";
 
 export default function App() {
