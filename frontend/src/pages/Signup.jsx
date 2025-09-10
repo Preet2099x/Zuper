@@ -6,25 +6,51 @@ const API = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 export default function Signup() {
   const nav = useNavigate();
 
-  const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [step, setStep] = useState("signup"); // "signup" | "verify"
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [otp, setOtp] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   // 1) Signup
   const handleSignup = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
+
+    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
+      return setError("Please fill all required fields.");
+    }
+
+    if (form.password.length < 6) {
+      return setError("Password must be at least 6 characters.");
+    }
+
+    if (form.password !== form.confirmPassword) {
+      return setError("Passwords do not match.");
+    }
+
+    setLoading(true);
 
     try {
       const res = await fetch(`${API}/api/auth/customer/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          password: form.password,
+        }),
       });
       const data = await res.json();
 
@@ -62,7 +88,10 @@ export default function Signup() {
         const loginRes = await fetch(`${API}/api/auth/customer/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ emailOrPhone: form.email, password: form.password }),
+          body: JSON.stringify({
+            emailOrPhone: form.email,
+            password: form.password,
+          }),
         });
         const loginData = await loginRes.json();
 
@@ -112,9 +141,7 @@ export default function Signup() {
       <div className="w-full max-w-md bg-white p-6 rounded shadow">
         <h1 className="text-2xl font-semibold mb-4">Sign up for Zuper</h1>
 
-        {error && (
-          <div className="bg-red-100 text-red-700 p-2 rounded mb-3">{error}</div>
-        )}
+        {error && <div className="bg-red-100 text-red-700 p-2 rounded mb-3">{error}</div>}
 
         {step === "signup" && (
           <form onSubmit={handleSignup} className="space-y-3">
@@ -143,15 +170,37 @@ export default function Signup() {
               className="w-full p-2 border rounded"
               required
             />
+            <div className="relative">
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Password"
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
             <input
-              name="password"
-              type="password"
-              value={form.password}
+              name="confirmPassword"
+              type={showPassword ? "text" : "password"}
+              value={form.confirmPassword}
               onChange={handleChange}
-              placeholder="Password"
+              placeholder="Confirm Password"
               className="w-full p-2 border rounded"
               required
             />
+
+            <label className="flex items-center text-sm gap-2">
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={() => setShowPassword((s) => !s)}
+                className="h-4 w-4"
+              />
+              <span>Show password</span>
+            </label>
+
             <button
               type="submit"
               className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-60"
