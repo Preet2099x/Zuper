@@ -66,7 +66,7 @@ export default function LandingPage() {
             <div className="rounded-2xl p-8 bg-emerald-700/90 shadow-lg">
               <h4 className="text-2xl font-semibold">I'm a Customer</h4>
               <p className="mt-3 text-emerald-100/90">Find vehicles nearby, choose short-term plans, and drive — without long-term commitment.</p>
-              <Link to="/signup" className="inline-block mt-6 bg-white text-emerald-700 px-5 py-3 rounded-lg font-semibold">Sign up as Customer</Link>
+              <Link to="/customer/signup" className="inline-block mt-6 bg-white text-emerald-700 px-5 py-3 rounded-lg font-semibold">Sign up as Customer</Link>
             </div>
 
             <div className="rounded-2xl p-8 bg-emerald-700/90 shadow-lg">

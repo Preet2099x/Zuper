@@ -34,13 +34,13 @@ export default function Navbar() {
           {/* CTA Button */}
           <div className="flex items-center space-x-4">
             <Link
-              to="/login"
+              to="/customer/login"
               className="bg-white text-emerald-600 px-4 py-2 rounded hover:bg-gray-100 transition font-medium"
             >
               Login
             </Link>
             <Link
-              to="/signup"
+              to="/customer/signup"
               className="hidden md:inline-block text-white border border-white/30 px-3 py-2 rounded hover:bg-white/10 transition"
             >
               Signup

@@ -23,7 +23,7 @@ export default function VerifyEmail() {
           return;
         }
         setMsg(body.message || "Verified! Redirecting...");
-        setTimeout(() => nav("/login"), 1400);
+        setTimeout(() => nav("/customer/login"), 1400);
       })
       .catch(() => setMsg("Network error"));
   }, [token]);

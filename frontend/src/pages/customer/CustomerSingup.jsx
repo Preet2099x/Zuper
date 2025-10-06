@@ -101,7 +101,7 @@ export default function Signup() {
           nav("/dashboard/customer", { replace: true });
         } else {
           setError(loginData.message || "Login failed. Please log in manually.");
-          nav("/login");
+          nav("/customer/login");
         }
       }
     } catch {

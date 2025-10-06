@@ -155,7 +155,7 @@ export default function Login() {
         <div className="mt-5 text-center text-sm text-gray-500">or continue with</div>
 
 
-        <p className="mt-6 text-center text-sm text-gray-600">Don’t have an account? <button onClick={() => nav('/signup')} className="text-blue-600 hover:underline">Sign up</button></p>
+        <p className="mt-6 text-center text-sm text-gray-600">Don’t have an account? <button onClick={() => nav('/customer/signup')} className="text-blue-600 hover:underline">Sign up</button></p>
       </motion.div>
     </div>
   );
