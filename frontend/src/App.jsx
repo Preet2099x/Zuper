@@ -2,11 +2,13 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-import Signup from "./pages/Signup.jsx";
-import Login from "./pages/Login.jsx";
-import CustomerDashboard from "./pages/CustomerDashboard.jsx";
-import ProviderDashboard from "./pages/ProviderDashboard.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Signup from "./pages/customer/CustomerSingup.jsx";
+import Login from "./pages/customer/CustomerLogin.jsx";
+import CustomerDashboard from "./pages/customer/CustomerDashboard.jsx";
+import ProviderSignup from "./pages/provider/ProviderSignup.jsx";
+import ProviderLogin from "./pages/provider/ProviderLogin.jsx";
+import ProviderDashboard from "./pages/provider/ProviderDashboard.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import VerifyEmail from "./pages/VerifyEmail.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
@@ -22,6 +24,10 @@ export default function App() {
       {/* Public */}
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/customer/signup" element={<Signup />} />
+      <Route path="/customer/login" element={<Login />} />
+      <Route path="/provider/signup" element={<ProviderSignup />} />
+      <Route path="/provider/login" element={<ProviderLogin />} />
       <Route path="/verify-email/:token" element={<VerifyEmail />} />
 
       {/* Protected: wrap with PrivateRoute which checks JWT and optionally role */}
