@@ -4,10 +4,10 @@ import { Routes, Route } from "react-router-dom";
 
 import Signup from "./pages/customer/CustomerSingup.jsx";
 import Login from "./pages/customer/CustomerLogin.jsx";
-import CustomerDashboard from "./pages/customer/CustomerDashboard.jsx";
+import CustomerDashboard from "./pages/customer/customerDashboard/CustomerDashboard.jsx";
 import ProviderSignup from "./pages/provider/ProviderSignup.jsx";
 import ProviderLogin from "./pages/provider/ProviderLogin.jsx";
-import ProviderDashboard from "./pages/provider/ProviderDashboard.jsx";
+import ProviderDashboard from "./pages/provider/providerDashboard/ProviderDashboard.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import VerifyEmail from "./pages/VerifyEmail.jsx";
 import NotFound from "./pages/NotFound.jsx";
