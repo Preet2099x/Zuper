@@ -30,8 +30,10 @@ export default function App() {
 
       {/* Protected: wrap with PrivateRoute which checks JWT and optionally role */}
       <Route element={<PrivateRoute />}>
-        <Route path="/dashboard/customer" element={<CustomerDashboard />} />
-        <Route path="/dashboard/provider" element={<ProviderDashboard />} />
+        {/* Customer Dashboard Routes */}
+        <Route path="/dashboard/customer/*" element={<CustomerDashboard />} />
+
+        <Route path="/dashboard/provider/*" element={<ProviderDashboard />} />
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
       </Route>
 

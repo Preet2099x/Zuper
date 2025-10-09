@@ -1,9 +1,32 @@
-import React from 'react'
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import ProviderSidebar from './ProviderSidebar';
+import ProviderOverview from './ProviderOverview';
+import ProviderMyVehicles from './ProviderMyVehicles';
+import ProviderListVehicle from './ProviderListVehicle';
+import ProviderEarnings from './ProviderEarnings';
+import ProviderInbox from './ProviderInbox';
+import ProviderSettings from './ProviderSettings';
+import ProviderHelp from './ProviderHelp';
 
 const ProviderDashboard = () => {
   return (
-    <div>ProviderDashboard</div>
-  )
-}
+    <div className="flex min-h-screen bg-gray-100">
+      <ProviderSidebar logo="/zuper.png" />
+      <div className="flex-1 overflow-auto">
+        <Routes>
+          <Route index element={<Navigate to="overview" replace />} />
+          <Route path="overview" element={<ProviderOverview />} />
+          <Route path="my-vehicles" element={<ProviderMyVehicles />} />
+          <Route path="list-vehicle" element={<ProviderListVehicle />} />
+          <Route path="earnings" element={<ProviderEarnings />} />
+          <Route path="inbox" element={<ProviderInbox />} />
+          <Route path="settings" element={<ProviderSettings />} />
+          <Route path="help" element={<ProviderHelp />} />
+        </Routes>
+      </div>
+    </div>
+  );
+};
 
-export default ProviderDashboard
+export default ProviderDashboard;
