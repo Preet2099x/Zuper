@@ -66,13 +66,27 @@ export default function LandingPage() {
             <div className="rounded-2xl p-8 bg-emerald-700/90 shadow-lg">
               <h4 className="text-2xl font-semibold">I'm a Customer</h4>
               <p className="mt-3 text-emerald-100/90">Find vehicles nearby, choose short-term plans, and drive — without long-term commitment.</p>
-              <Link to="/customer/signup" className="inline-block mt-6 bg-white text-emerald-700 px-5 py-3 rounded-lg font-semibold">Sign up as Customer</Link>
+              <div className="flex gap-3 mt-6">
+                <Link to="/customer/login" className="flex-1 text-center bg-white text-emerald-700 px-5 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition">
+                  Login
+                </Link>
+                <Link to="/customer/signup" className="flex-1 text-center bg-white text-emerald-700 px-5 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition">
+                  Sign Up
+                </Link>
+              </div>
             </div>
 
             <div className="rounded-2xl p-8 bg-emerald-700/90 shadow-lg">
               <h4 className="text-2xl font-semibold text-white">I'm a Provider</h4>
               <p className="mt-3 text-white/90">List your vehicle, earn on your schedule, and let Zuper handle bookings and payments.</p>
-              <Link to="/provider/signup" className="inline-block mt-6 bg-white text-teal-700 px-5 py-3 rounded-lg font-semibold">Sign up as Provider</Link>
+              <div className="flex gap-3 mt-6">
+                <Link to="/provider/login" className="flex-1 text-center bg-white text-teal-700 px-5 py-3 rounded-lg font-semibold hover:bg-teal-50 transition">
+                  Login
+                </Link>
+                <Link to="/provider/signup" className="flex-1 text-center bg-white text-teal-700 px-5 py-3 rounded-lg font-semibold hover:bg-teal-50 transition">
+                  Sign Up
+                </Link>
+              </div>
             </div>
           </div>
         </div>
