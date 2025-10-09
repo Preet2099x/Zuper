@@ -13,7 +13,6 @@ import DashboardNavbar from '../../../components/DashboardNavbar';
 const CustomerDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <CustomerSidebar />
       <div className="flex-1 flex flex-col">
         <DashboardNavbar userRole="customer" />
         <div className="flex-1 overflow-auto">
