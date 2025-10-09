@@ -1,89 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomerSidebar from './CustomerSidebar';
 
 const CustomerSearch = () => {
   const [searchFilters, setSearchFilters] = useState({
     location: '',
     vehicleType: '',
-    priceRange: '',
-    availability: ''
+    minRate: '',
+    maxRate: '',
+    company: ''
   });
+  
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Static vehicle search results
-  const searchResults = [
-    {
-      id: 1,
-      make: 'Maruti Suzuki',
-      model: 'Swift',
-      year: 2023,
-      price: '₹2,500/day',
-      location: 'Connaught Place, Delhi',
-      features: ['GPS', 'Bluetooth', 'Leather Seats'],
-      image: '/api/placeholder/300/200',
-      rating: 4.8,
-      reviews: 124
-    },
-    {
-      id: 2,
-      make: 'Hyundai',
-      model: 'Creta',
-      year: 2023,
-      price: '₹3,200/day',
-      location: 'IGI Airport, Delhi',
-      features: ['Navigation', 'Heated Seats', 'Premium Sound'],
-      image: '/api/placeholder/300/200',
-      rating: 4.6,
-      reviews: 89
-    },
-    {
-      id: 3,
-      make: 'Tata',
-      model: 'Nexon',
-      year: 2023,
-      price: '₹2,800/day',
-      location: 'Rajouri Garden, Delhi',
-      features: ['Adaptive Cruise', 'Parking Assist', 'Sunroof'],
-      image: '/api/placeholder/300/200',
-      rating: 4.9,
-      reviews: 156
-    },
-    {
-      id: 4,
-      make: 'Honda',
-      model: 'City',
-      year: 2022,
-      price: '₹2,200/day',
-      location: 'Karol Bagh, Delhi',
-      features: ['Fuel Efficient', 'Compact', 'Easy Parking'],
-      image: '/api/placeholder/300/200',
-      rating: 4.4,
-      reviews: 67
-    },
-    {
-      id: 5,
-      make: 'Mahindra',
-      model: 'Scorpio',
-      year: 2023,
-      price: '₹3,500/day',
-      location: 'Adventure Branch, Gurgaon',
-      features: ['4WD', 'Off-Road Ready', 'Roof Rack'],
-      image: '/api/placeholder/300/200',
-      rating: 4.7,
-      reviews: 203
-    },
-    {
-      id: 6,
-      make: 'Kia',
-      model: 'Seltos',
-      year: 2023,
-      price: '₹3,000/day',
-      location: 'Eco Branch, Noida',
-      features: ['Electric', 'Autopilot', 'Supercharger Access'],
-      image: '/api/placeholder/300/200',
-      rating: 4.9,
-      reviews: 312
+  // Fetch all available vehicles on component mount
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
+
+  const fetchVehicles = async (filters = {}) => {
+    setLoading(true);
+    setError('');
+    try {
+      // Build query string from filters
+      const queryParams = new URLSearchParams();
+      
+      if (filters.location) queryParams.append('location', filters.location);
+      if (filters.vehicleType) queryParams.append('type', filters.vehicleType);
+      if (filters.company) queryParams.append('company', filters.company);
+      if (filters.minRate) queryParams.append('minRate', filters.minRate);
+      if (filters.maxRate) queryParams.append('maxRate', filters.maxRate);
+
+      const response = await fetch(`http://localhost:5000/api/vehicles/search?${queryParams.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch vehicles');
+      }
+
+      const data = await response.json();
+      setVehicles(data);
+    } catch (err) {
+      console.error('Error fetching vehicles:', err);
+      setError('Failed to load vehicles. Please try again later.');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -94,8 +57,29 @@ const CustomerSearch = () => {
   };
 
   const handleSearch = () => {
-    // In a real app, this would trigger an API call with filters
-    console.log('Searching with filters:', searchFilters);
+    // Parse price range if selected
+    let filters = { ...searchFilters };
+    
+    if (searchFilters.priceRange) {
+      const [min, max] = searchFilters.priceRange.split('-');
+      filters.minRate = min;
+      if (max && max !== '+') {
+        filters.maxRate = max;
+      }
+    }
+    
+    fetchVehicles(filters);
+  };
+
+  const handleClearFilters = () => {
+    setSearchFilters({
+      location: '',
+      vehicleType: '',
+      minRate: '',
+      maxRate: '',
+      company: ''
+    });
+    fetchVehicles();
   };
 
   return (
@@ -112,18 +96,14 @@ const CustomerSearch = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                <select
+                <input
+                  type="text"
                   name="location"
                   value={searchFilters.location}
                   onChange={handleFilterChange}
+                  placeholder="e.g., Delhi, Mumbai"
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">All Locations</option>
-                  <option value="downtown">Downtown</option>
-                  <option value="airport">Airport</option>
-                  <option value="city-center">City Center</option>
-                  <option value="suburban">Suburban</option>
-                </select>
+                />
               </div>
 
               <div>
@@ -135,16 +115,14 @@ const CustomerSearch = () => {
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Types</option>
-                  <option value="sedan">Sedan</option>
-                  <option value="suv">SUV</option>
-                  <option value="truck">Truck</option>
-                  <option value="electric">Electric</option>
-                  <option value="luxury">Luxury</option>
+                  <option value="car">Car</option>
+                  <option value="bike">Bike</option>
+                  <option value="scooter">Scooter</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Price Range (₹/day)</label>
                 <select
                   name="priceRange"
                   value={searchFilters.priceRange}
@@ -152,95 +130,171 @@ const CustomerSearch = () => {
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Any Price</option>
-                  <option value="0-50">$0 - $50/day</option>
-                  <option value="50-100">$50 - $100/day</option>
-                  <option value="100+">$100+/day</option>
+                  <option value="0-2000">₹0 - ₹2,000/day</option>
+                  <option value="2000-3000">₹2,000 - ₹3,000/day</option>
+                  <option value="3000-5000">₹3,000 - ₹5,000/day</option>
+                  <option value="5000+">₹5,000+/day</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
-                <select
-                  name="availability"
-                  value={searchFilters.availability}
+                <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                <input
+                  type="text"
+                  name="company"
+                  value={searchFilters.company}
                   onChange={handleFilterChange}
+                  placeholder="e.g., Maruti, Hyundai"
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Any Time</option>
-                  <option value="today">Available Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                </select>
+                />
               </div>
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end space-x-3">
+              <button
+                onClick={handleClearFilters}
+                className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
+              >
+                Clear Filters
+              </button>
               <button
                 onClick={handleSearch}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Search Vehicles
+                {loading ? 'Searching...' : 'Search Vehicles'}
               </button>
             </div>
           </div>
 
-          {/* Search Results */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchResults.map((vehicle) => (
-              <div key={vehicle.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
-                <div className="h-48 bg-gray-200 flex items-center justify-center">
-                  <img
-                    src={vehicle.image}
-                    alt={`${vehicle.make} ${vehicle.model}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+              {error}
+            </div>
+          )}
 
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {vehicle.year} {vehicle.make} {vehicle.model}
-                    </h3>
-                    <div className="text-right">
-                      <p className="text-lg font-bold text-blue-600">{vehicle.price}</p>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <span className="text-yellow-400 mr-1">★</span>
-                        <span>{vehicle.rating} ({vehicle.reviews})</span>
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-gray-600">Loading vehicles...</p>
+            </div>
+          )}
+
+          {/* No Results */}
+          {!loading && !error && vehicles.length === 0 && (
+            <div className="text-center py-12 bg-white rounded-lg shadow-md">
+              <svg className="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h3 className="mt-4 text-xl font-medium text-gray-900">No vehicles found</h3>
+              <p className="mt-2 text-gray-600">Try adjusting your search filters or check back later.</p>
+            </div>
+          )}
+
+          {/* Search Results */}
+          {!loading && !error && vehicles.length > 0 && (
+            <>
+              <div className="mb-4">
+                <p className="text-gray-600">Found {vehicles.length} vehicle{vehicles.length !== 1 ? 's' : ''}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {vehicles.map((vehicle) => (
+                  <div key={vehicle._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
+                    <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                      {vehicle.images && vehicle.images.length > 0 ? (
+                        <img
+                          src={vehicle.images[0]}
+                          alt={`${vehicle.company} ${vehicle.model}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-center">
+                          <div className="text-8xl mb-2">
+                            {vehicle.type === 'bike' && '🏍️'}
+                            {vehicle.type === 'scooter' && '🛵'}
+                            {vehicle.type === 'car' && '🚗'}
+                            {!vehicle.type && '🚗'}
+                          </div>
+                          <p className="text-sm text-gray-500 font-medium">No image available</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-xl font-semibold text-gray-900">
+                          {vehicle.year} {vehicle.company} {vehicle.model}
+                        </h3>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-blue-600">₹{vehicle.dailyRate}/day</p>
+                          <span className={`text-xs px-2 py-1 rounded-full ${
+                            vehicle.status === 'available' ? 'bg-green-100 text-green-800' :
+                            vehicle.status === 'rented' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {vehicle.status}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-gray-600 mb-2 flex items-center">
+                        <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        {vehicle.location}
+                      </p>
+
+                      <p className="text-sm text-gray-500 mb-3 capitalize">
+                        Type: {vehicle.type} | License: {vehicle.licensePlate}
+                      </p>
+
+                      {vehicle.description && (
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{vehicle.description}</p>
+                      )}
+
+                      {vehicle.features && vehicle.features.length > 0 && (
+                        <div className="mb-4">
+                          <div className="flex flex-wrap gap-1">
+                            {vehicle.features.slice(0, 4).map((feature, index) => (
+                              <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                                {feature}
+                              </span>
+                            ))}
+                            {vehicle.features.length > 4 && (
+                              <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                                +{vehicle.features.length - 4} more
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {vehicle.provider && (
+                        <p className="text-xs text-gray-500 mb-3">
+                          Provider: {vehicle.provider.businessName || vehicle.provider.name}
+                        </p>
+                      )}
+
+                      <div className="flex space-x-2">
+                        <button 
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm disabled:opacity-50"
+                          disabled={vehicle.status !== 'available'}
+                        >
+                          {vehicle.status === 'available' ? 'Book Now' : 'Not Available'}
+                        </button>
+                        <button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm">
+                          View Details
+                        </button>
                       </div>
                     </div>
                   </div>
-
-                  <p className="text-gray-600 mb-3">{vehicle.location}</p>
-
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-1">
-                      {vehicle.features.map((feature, index) => (
-                        <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-2">
-                    <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm">
-                      Book Now
-                    </button>
-                    <button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm">
-                      View Details
-                    </button>
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-
-          {/* Load More */}
-          <div className="text-center mt-8">
-            <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200">
-              Load More Vehicles
-            </button>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
