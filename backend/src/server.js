@@ -7,6 +7,7 @@ import connectDB from  './config/db.js';
 import authRoutes from "./routes/authRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import vehicleRoutes from "./routes/vehicleRoutes.js";
 
 
 connectDB();
@@ -26,6 +27,7 @@ app.use("/api/test", testRoutes);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/vehicles", vehicleRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
