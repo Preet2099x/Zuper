@@ -103,7 +103,7 @@ const ProviderHelp = () => {
 
   return (
     <div className="p-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Help & Support</h1>
 
         {/* Search Bar */}

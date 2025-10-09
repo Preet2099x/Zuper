@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import CustomerSidebar from './CustomerSidebar';
 
 const CustomerSearch = () => {
   const [searchFilters, setSearchFilters] = useState({
@@ -83,12 +82,9 @@ const CustomerSearch = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <CustomerSidebar logo="/zuper.png" />
-
-      <div className="flex-1 ml-64 p-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Search Vehicles</h1>
+    <div className="p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Search Vehicles</h1>
 
           {/* Search Filters */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -295,7 +291,6 @@ const CustomerSearch = () => {
               </div>
             </>
           )}
-        </div>
       </div>
     </div>
   );

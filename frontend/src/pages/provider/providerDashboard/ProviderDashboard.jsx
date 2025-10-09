@@ -14,7 +14,7 @@ const ProviderDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <ProviderSidebar logo="/zuper.png" />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64">
         <DashboardNavbar userRole="provider" />
         <div className="flex-1 overflow-auto">
           <Routes>

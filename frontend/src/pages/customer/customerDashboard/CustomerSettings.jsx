@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import CustomerSidebar from './CustomerSidebar';
 
 const CustomerSettings = () => {
   const [activeTab, setActiveTab] = useState('security');
@@ -81,11 +80,8 @@ const CustomerSettings = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <CustomerSidebar logo="/zuper.png" />
-
-      <div className="flex-1 ml-64 p-8">
-        <div className="max-w-4xl mx-auto">
+    <div className="p-8">
+      <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Account Settings</h1>
 
           {/* Settings Tabs */}
@@ -476,7 +472,6 @@ const CustomerSettings = () => {
               </div>
             </div>
           </div>
-        </div>
       </div>
 
       {/* Password Change Modal */}

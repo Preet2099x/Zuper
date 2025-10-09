@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import CustomerSidebar from './CustomerSidebar';
 
 const CustomerProfile = () => {
   const [activeTab, setActiveTab] = useState('personal');
@@ -63,11 +62,8 @@ const CustomerProfile = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <CustomerSidebar logo="/zuper.png" />
-
-      <div className="flex-1 ml-64 p-8">
-        <div className="max-w-4xl mx-auto">
+    <div className="p-8">
+      <div className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
@@ -431,7 +427,6 @@ const CustomerProfile = () => {
               )}
             </div>
           </div>
-        </div>
       </div>
     </div>
   );

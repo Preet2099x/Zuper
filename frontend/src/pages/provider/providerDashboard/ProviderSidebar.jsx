@@ -33,7 +33,7 @@ const ProviderSidebar = ({ logo }) => {
     'flex items-center py-3 px-4 my-1 rounded-lg font-medium transition-colors duration-200 hover:bg-slate-700 hover:text-white';
 
   return (
-    <aside className="w-64 min-h-screen bg-slate-900 text-slate-400 flex flex-col p-4">
+    <aside className="w-64 h-screen bg-slate-900 text-slate-400 flex flex-col p-4 fixed left-0 top-0 overflow-y-auto">
       <div className="py-4 px-2 mb-4 text-center">
         <img src={logo} alt="Company Logo" className="w-32 h-auto mx-auto" />
       </div>

@@ -13,7 +13,8 @@ import DashboardNavbar from '../../../components/DashboardNavbar';
 const CustomerDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <div className="flex-1 flex flex-col">
+      <CustomerSidebar logo="/zuper.png" />
+      <div className="flex-1 flex flex-col ml-64">
         <DashboardNavbar userRole="customer" />
         <div className="flex-1 overflow-auto">
           <Routes>

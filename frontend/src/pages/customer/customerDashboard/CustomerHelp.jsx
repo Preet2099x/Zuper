@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import CustomerSidebar from './CustomerSidebar';
 
 const CustomerHelp = () => {
   const [activeCategory, setActiveCategory] = useState('booking');
@@ -115,11 +114,8 @@ const CustomerHelp = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <CustomerSidebar logo="/zuper.png" />
-
-      <div className="flex-1 ml-64 p-8">
-        <div className="max-w-6xl mx-auto">
+    <div className="p-8">
+      <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 mb-8">Help & Support</h1>
 
           {/* Search Bar */}
@@ -259,7 +255,6 @@ const CustomerHelp = () => {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );
