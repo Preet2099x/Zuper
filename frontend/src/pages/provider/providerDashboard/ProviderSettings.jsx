@@ -12,12 +12,12 @@ const ProviderSettings = () => {
   // Static settings data for provider
   const [settings, setSettings] = useState({
     profile: {
-      businessName: 'Premium Car Rentals',
-      contactEmail: 'contact@premiumcars.com',
-      phone: '+1 (555) 987-6543',
-      address: '456 Business Ave, City, State 12346',
-      description: 'Providing premium vehicles for all your transportation needs.',
-      website: 'https://premiumcars.com'
+      businessName: 'Delhi Premium Car Rentals',
+      contactEmail: 'contact@delhipremiumcars.com',
+      phone: '+91 98765 43210',
+      address: 'Connaught Place, New Delhi - 110001',
+      description: 'Providing premium vehicles for all your transportation needs in Delhi NCR.',
+      website: 'https://delhipremiumcars.com'
     },
     notifications: {
       bookingRequests: true,
@@ -28,17 +28,17 @@ const ProviderSettings = () => {
       marketingEmails: false
     },
     business: {
-      taxId: '12-3456789',
-      insuranceProvider: 'Commercial Auto Insurance Co.',
+      taxId: '07AABCU9603R1ZM',
+      insuranceProvider: 'Bajaj Allianz General Insurance',
       policyNumber: 'POL987654321',
-      licenseNumber: 'DLP123456789',
-      operatingHours: 'Mon-Fri: 8AM-6PM, Sat-Sun: 9AM-5PM'
+      licenseNumber: 'DLPCA123456789',
+      operatingHours: 'Mon-Sat: 8AM-8PM, Sun: 9AM-6PM'
     },
     payment: {
-      bankName: 'Business Bank',
-      accountNumber: '****1234',
-      routingNumber: '123456789',
-      paypalEmail: 'payments@premiumcars.com',
+      bankName: 'HDFC Bank',
+      accountNumber: '****5678',
+      routingNumber: 'HDFC0001234',
+      paypalEmail: 'payments@delhipremiumcars.com',
       autoPayout: true,
       payoutSchedule: 'monthly'
     }

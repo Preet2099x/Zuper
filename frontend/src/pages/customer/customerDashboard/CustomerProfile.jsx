@@ -8,22 +8,22 @@ const CustomerProfile = () => {
   // Static user profile data
   const [profileData, setProfileData] = useState({
     personal: {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      phone: '+1 (555) 123-4567',
+      firstName: 'Rajesh',
+      lastName: 'Kumar',
+      email: 'rajesh.kumar@example.com',
+      phone: '+91 98765 43210',
       dateOfBirth: '1990-05-15',
-      address: '123 Main Street, City, State 12345'
+      address: 'Connaught Place, New Delhi - 110001'
     },
     documents: {
       driversLicense: {
-        number: 'DL123456789',
+        number: 'DL-0120230001234',
         expiryDate: '2025-05-15',
-        state: 'CA',
+        state: 'Delhi',
         status: 'Verified'
       },
       insurance: {
-        provider: 'State Farm',
+        provider: 'Bajaj Allianz',
         policyNumber: 'POL987654321',
         expiryDate: '2024-12-31',
         status: 'Active'
@@ -37,7 +37,7 @@ const CustomerProfile = () => {
       },
       marketing: false,
       language: 'English',
-      currency: 'USD'
+      currency: 'INR'
     }
   });
 

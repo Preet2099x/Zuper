@@ -8,9 +8,9 @@ const ProviderInbox = () => {
     {
       id: 1,
       type: 'booking',
-      sender: 'John Doe',
-      subject: 'Booking Request - Mercedes-Benz C-Class',
-      message: 'Hi, I\'m interested in renting your Mercedes-Benz C-Class for a business trip next week. Is it available from Jan 20-25?',
+      sender: 'Rajesh Kumar',
+      subject: 'Booking Request - Maruti Suzuki Swift',
+      message: 'Hi, I\'m interested in renting your Maruti Suzuki Swift for a business trip next week. Is it available from Jan 20-25?',
       timestamp: '2024-01-15 14:30',
       read: false,
       priority: 'high'
@@ -20,7 +20,7 @@ const ProviderInbox = () => {
       type: 'notification',
       sender: 'Zuper Support',
       subject: 'Booking Confirmed',
-      message: 'Your vehicle BMW X5 has been booked by Sarah Wilson. Pickup scheduled for tomorrow at 2:00 PM.',
+      message: 'Your vehicle Hyundai Creta has been booked by Priya Sharma. Pickup scheduled for tomorrow at 2:00 PM.',
       timestamp: '2024-01-14 09:15',
       read: true,
       priority: 'normal'
@@ -28,9 +28,9 @@ const ProviderInbox = () => {
     {
       id: 3,
       type: 'customer',
-      sender: 'Emma Davis',
-      subject: 'Question about Tesla Model Y',
-      message: 'Does the Tesla come with supercharger access? Also, what\'s the range on a full charge?',
+      sender: 'Kavita Patel',
+      subject: 'Question about Tata Nexon',
+      message: 'Does the Tata Nexon come with ABS and airbags? Also, what\'s the mileage?',
       timestamp: '2024-01-13 16:45',
       read: false,
       priority: 'normal'
@@ -40,7 +40,7 @@ const ProviderInbox = () => {
       type: 'notification',
       sender: 'Zuper Support',
       subject: 'Payment Received',
-      message: 'Payment of $630 has been received for your Tesla Model Y booking. Funds will be available in your account after the rental period.',
+      message: 'Payment of ₹18,900 has been received for your Tata Nexon booking. Funds will be available in your account after the rental period.',
       timestamp: '2024-01-12 11:20',
       read: true,
       priority: 'normal'
@@ -50,7 +50,7 @@ const ProviderInbox = () => {
       type: 'system',
       sender: 'Zuper Platform',
       subject: 'Vehicle Verification Required',
-      message: 'Please upload updated photos of your Volkswagen Golf for verification. This helps maintain trust with customers.',
+      message: 'Please upload updated photos of your Honda City for verification. This helps maintain trust with customers.',
       timestamp: '2024-01-11 08:30',
       read: false,
       priority: 'high'
@@ -63,7 +63,7 @@ const ProviderInbox = () => {
       id: 1,
       type: 'booking',
       title: 'New Booking Request',
-      message: 'John Doe wants to rent your Mercedes-Benz C-Class',
+      message: 'Rajesh Kumar wants to rent your Maruti Suzuki Swift',
       timestamp: '2024-01-15 14:30',
       read: false
     },
@@ -87,7 +87,7 @@ const ProviderInbox = () => {
       id: 4,
       type: 'review',
       title: 'New Review Received',
-      message: 'Mike Johnson left a 5-star review for your Audi A4',
+      message: 'Amit Singh left a 5-star review for your Hyundai Creta',
       timestamp: '2024-01-12 09:00',
       read: true
     },
@@ -95,7 +95,7 @@ const ProviderInbox = () => {
       id: 5,
       type: 'system',
       title: 'Maintenance Reminder',
-      message: 'Your Jeep Wrangler is due for scheduled maintenance',
+      message: 'Your Kia Seltos is due for scheduled maintenance',
       timestamp: '2024-01-11 10:00',
       read: false
     }

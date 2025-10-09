@@ -6,15 +6,15 @@ const CustomerOverview = () => {
   const stats = [
     { title: 'Active Contracts', value: '3', color: 'bg-blue-500' },
     { title: 'Vehicles Managed', value: '5', color: 'bg-green-500' },
-    { title: 'Total Spent', value: '$2,450', color: 'bg-yellow-500' },
+    { title: 'Total Spent', value: '₹1,25,000', color: 'bg-yellow-500' },
     { title: 'Pending Payments', value: '1', color: 'bg-red-500' },
   ];
 
   const recentActivity = [
-    { id: 1, action: 'New contract signed', vehicle: 'Toyota Camry', date: '2024-01-15', status: 'active' },
-    { id: 2, action: 'Payment processed', vehicle: 'Honda Civic', date: '2024-01-12', status: 'completed' },
-    { id: 3, action: 'Vehicle inspection', vehicle: 'Ford F-150', date: '2024-01-10', status: 'scheduled' },
-    { id: 4, action: 'Contract renewed', vehicle: 'BMW X3', date: '2024-01-08', status: 'active' },
+    { id: 1, action: 'New contract signed', vehicle: 'Maruti Suzuki Swift', date: '2024-01-15', status: 'active' },
+    { id: 2, action: 'Payment processed', vehicle: 'Hyundai i20', date: '2024-01-12', status: 'completed' },
+    { id: 3, action: 'Vehicle inspection', vehicle: 'Tata Nexon', date: '2024-01-10', status: 'scheduled' },
+    { id: 4, action: 'Contract renewed', vehicle: 'Mahindra Scorpio', date: '2024-01-08', status: 'active' },
   ];
 
   return (

@@ -6,27 +6,27 @@ const ProviderEarnings = () => {
   // Static earnings data
   const earningsData = {
     month: {
-      total: '$4,250',
+      total: '₹1,25,000',
       change: '+12%',
       changeType: 'positive',
       bookings: 12,
-      averageBooking: '$354',
+      averageBooking: '₹10,417',
       period: 'January 2024'
     },
     quarter: {
-      total: '$12,850',
+      total: '₹3,75,000',
       change: '+18%',
       changeType: 'positive',
       bookings: 38,
-      averageBooking: '$338',
+      averageBooking: '₹9,868',
       period: 'Q1 2024'
     },
     year: {
-      total: '$48,600',
+      total: '₹14,25,000',
       change: '+25%',
       changeType: 'positive',
       bookings: 142,
-      averageBooking: '$342',
+      averageBooking: '₹10,035',
       period: '2024'
     }
   };
@@ -35,17 +35,17 @@ const ProviderEarnings = () => {
     {
       id: 1,
       date: '2024-01-15',
-      customer: 'John Doe',
-      vehicle: 'Mercedes-Benz C-Class',
-      amount: '$285',
+      customer: 'Rajesh Kumar',
+      vehicle: 'Maruti Suzuki Swift',
+      amount: '₹8,550',
       status: 'completed',
       type: 'booking'
     },
     {
       id: 2,
       date: '2024-01-14',
-      customer: 'Sarah Wilson',
-      amount: '$25',
+      customer: 'Priya Sharma',
+      amount: '₹750',
       status: 'completed',
       type: 'fee',
       description: 'Platform fee'
@@ -53,26 +53,26 @@ const ProviderEarnings = () => {
     {
       id: 3,
       date: '2024-01-12',
-      customer: 'Mike Johnson',
-      vehicle: 'BMW X5',
-      amount: '$475',
+      customer: 'Amit Singh',
+      vehicle: 'Hyundai Creta',
+      amount: '₹14,250',
       status: 'completed',
       type: 'booking'
     },
     {
       id: 4,
       date: '2024-01-10',
-      customer: 'Emma Davis',
-      vehicle: 'Tesla Model Y',
-      amount: '$630',
+      customer: 'Kavita Patel',
+      vehicle: 'Tata Nexon',
+      amount: '₹18,900',
       status: 'pending',
       type: 'booking'
     },
     {
       id: 5,
       date: '2024-01-08',
-      customer: 'David Brown',
-      amount: '$50',
+      customer: 'Vikram Gupta',
+      amount: '₹1,500',
       status: 'completed',
       type: 'fee',
       description: 'Insurance claim payout'
@@ -80,12 +80,12 @@ const ProviderEarnings = () => {
   ];
 
   const monthlyBreakdown = [
-    { month: 'Jan', earnings: 4250, bookings: 12 },
-    { month: 'Dec', earnings: 3780, bookings: 11 },
-    { month: 'Nov', earnings: 4120, bookings: 13 },
-    { month: 'Oct', earnings: 3650, bookings: 10 },
-    { month: 'Sep', earnings: 3980, bookings: 12 },
-    { month: 'Aug', earnings: 3520, bookings: 9 }
+    { month: 'Jan', earnings: 125000, bookings: 12 },
+    { month: 'Dec', earnings: 112500, bookings: 11 },
+    { month: 'Nov', earnings: 123000, bookings: 13 },
+    { month: 'Oct', earnings: 109500, bookings: 10 },
+    { month: 'Sep', earnings: 119000, bookings: 12 },
+    { month: 'Aug', earnings: 105000, bookings: 9 }
   ];
 
   const currentData = earningsData[selectedPeriod];

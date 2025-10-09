@@ -242,8 +242,8 @@ const ProviderHelp = () => {
                   <div className="text-2xl">📞</div>
                   <div>
                     <h4 className="font-medium text-gray-900">Phone Support</h4>
-                    <p className="text-gray-600">Mon-Fri: 9AM-6PM EST</p>
-                    <p className="text-blue-600 font-medium">1-800-ZUPER-PRO</p>
+                    <p className="text-gray-600">Mon-Sat: 9AM-6PM IST</p>
+                    <p className="text-blue-600 font-medium">1800-123-ZUPER</p>
                   </div>
                 </div>
 
@@ -252,7 +252,7 @@ const ProviderHelp = () => {
                   <div>
                     <h4 className="font-medium text-gray-900">Emergency Support</h4>
                     <p className="text-gray-600">24/7 for urgent issues</p>
-                    <p className="text-blue-600 font-medium">1-888-ZUPER-NOW</p>
+                    <p className="text-blue-600 font-medium">+91-9876543210</p>
                   </div>
                 </div>
 

@@ -24,8 +24,8 @@ const ProviderListVehicle = () => {
   ];
 
   const locations = [
-    'Downtown Branch', 'Airport Branch', 'City Center', 'Suburban Branch',
-    'Eco Branch', 'Adventure Branch', 'Business District', 'Residential Area'
+    'Connaught Place, Delhi', 'IGI Airport, Delhi', 'Rajouri Garden, Delhi', 'Karol Bagh, Delhi',
+    'Eco Branch, Gurgaon', 'Adventure Branch, Noida', 'Business District, Mumbai', 'Residential Area, Bangalore'
   ];
 
   const handleInputChange = (e) => {

@@ -19,7 +19,7 @@ const ProviderOverview = () => {
     },
     {
       title: 'Monthly Revenue',
-      value: '$4,250',
+      value: '₹1,25,000',
       change: '+12%',
       changeType: 'positive',
       icon: '💰'
@@ -36,37 +36,37 @@ const ProviderOverview = () => {
   const recentBookings = [
     {
       id: 1,
-      customer: 'John Doe',
-      vehicle: 'Mercedes-Benz C-Class',
+      customer: 'Rajesh Kumar',
+      vehicle: 'Maruti Suzuki Swift',
       duration: '3 days',
-      amount: '$285',
+      amount: '₹8,550',
       status: 'active',
       pickupDate: '2024-01-15'
     },
     {
       id: 2,
-      customer: 'Sarah Wilson',
-      vehicle: 'BMW X5',
+      customer: 'Priya Sharma',
+      vehicle: 'Hyundai Creta',
       duration: '5 days',
-      amount: '$475',
+      amount: '₹14,250',
       status: 'upcoming',
       pickupDate: '2024-01-18'
     },
     {
       id: 3,
-      customer: 'Mike Johnson',
-      vehicle: 'Audi A4',
+      customer: 'Amit Singh',
+      vehicle: 'Tata Nexon',
       duration: '2 days',
-      amount: '$150',
+      amount: '₹4,500',
       status: 'completed',
       pickupDate: '2024-01-10'
     },
     {
       id: 4,
-      customer: 'Emma Davis',
-      vehicle: 'Tesla Model Y',
+      customer: 'Kavita Patel',
+      vehicle: 'Mahindra Scorpio',
       duration: '7 days',
-      amount: '$630',
+      amount: '₹18,900',
       status: 'active',
       pickupDate: '2024-01-12'
     }

@@ -9,9 +9,9 @@ const CustomerInbox = () => {
     {
       id: 1,
       type: 'booking',
-      sender: 'Premium Cars Ltd',
-      subject: 'Booking Confirmation - Mercedes-Benz C-Class',
-      message: 'Your booking for Mercedes-Benz C-Class has been confirmed. Pickup: Tomorrow 10:00 AM at Downtown Branch.',
+      sender: 'Delhi Premium Cars',
+      subject: 'Booking Confirmation - Maruti Suzuki Swift',
+      message: 'Your booking for Maruti Suzuki Swift has been confirmed. Pickup: Tomorrow 10:00 AM at Connaught Place Branch.',
       timestamp: '2024-01-15 14:30',
       read: false,
       priority: 'high'
@@ -21,7 +21,7 @@ const CustomerInbox = () => {
       type: 'notification',
       sender: 'Zuper Support',
       subject: 'Vehicle Maintenance Update',
-      message: 'The BMW 3 Series you rented last week has completed its scheduled maintenance and is ready for your next booking.',
+      message: 'The Hyundai Creta you rented last week has completed its scheduled maintenance and is ready for your next booking.',
       timestamp: '2024-01-14 09:15',
       read: true,
       priority: 'normal'
@@ -29,7 +29,7 @@ const CustomerInbox = () => {
     {
       id: 3,
       type: 'provider',
-      sender: 'City Wheels',
+      sender: 'Mumbai Wheels',
       subject: 'Special Offer: Weekend Discount',
       message: 'Enjoy 20% off on all SUV rentals this weekend! Book now and save on your next adventure.',
       timestamp: '2024-01-13 16:45',
@@ -39,9 +39,9 @@ const CustomerInbox = () => {
     {
       id: 4,
       type: 'booking',
-      sender: 'EcoDrive',
+      sender: 'Bangalore EcoDrive',
       subject: 'Booking Reminder',
-      message: 'Reminder: Your Tesla Model Y rental starts in 2 hours. Please arrive 15 minutes early for check-in.',
+      message: 'Reminder: Your Tata Nexon rental starts in 2 hours. Please arrive 15 minutes early for check-in.',
       timestamp: '2024-01-12 11:20',
       read: false,
       priority: 'high'
