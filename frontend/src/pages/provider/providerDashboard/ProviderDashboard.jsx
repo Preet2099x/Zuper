@@ -8,22 +8,26 @@ import ProviderEarnings from './ProviderEarnings';
 import ProviderInbox from './ProviderInbox';
 import ProviderSettings from './ProviderSettings';
 import ProviderHelp from './ProviderHelp';
+import DashboardNavbar from '../../../components/DashboardNavbar';
 
 const ProviderDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
       <ProviderSidebar logo="/zuper.png" />
-      <div className="flex-1 overflow-auto">
-        <Routes>
-          <Route index element={<Navigate to="overview" replace />} />
-          <Route path="overview" element={<ProviderOverview />} />
-          <Route path="my-vehicles" element={<ProviderMyVehicles />} />
-          <Route path="list-vehicle" element={<ProviderListVehicle />} />
-          <Route path="earnings" element={<ProviderEarnings />} />
-          <Route path="inbox" element={<ProviderInbox />} />
-          <Route path="settings" element={<ProviderSettings />} />
-          <Route path="help" element={<ProviderHelp />} />
-        </Routes>
+      <div className="flex-1 flex flex-col">
+        <DashboardNavbar userRole="provider" />
+        <div className="flex-1 overflow-auto">
+          <Routes>
+            <Route index element={<Navigate to="overview" replace />} />
+            <Route path="overview" element={<ProviderOverview />} />
+            <Route path="my-vehicles" element={<ProviderMyVehicles />} />
+            <Route path="list-vehicle" element={<ProviderListVehicle />} />
+            <Route path="earnings" element={<ProviderEarnings />} />
+            <Route path="inbox" element={<ProviderInbox />} />
+            <Route path="settings" element={<ProviderSettings />} />
+            <Route path="help" element={<ProviderHelp />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );
