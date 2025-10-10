@@ -9,11 +9,12 @@ import CustomerProfile from './CustomerProfile';
 import CustomerHelp from './CustomerHelp';
 import CustomerSettings from './CustomerSettings';
 import DashboardNavbar from '../../../components/DashboardNavbar';
+import logo from '../../../assets/zuper.png'
 
 const CustomerDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <CustomerSidebar logo="/zuper.png" />
+      <CustomerSidebar logo={logo} />
       <div className="flex-1 flex flex-col ml-64">
         <DashboardNavbar userRole="customer" />
         <div className="flex-1 overflow-auto">

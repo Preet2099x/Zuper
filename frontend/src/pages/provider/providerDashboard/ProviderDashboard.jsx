@@ -9,11 +9,12 @@ import ProviderInbox from './ProviderInbox';
 import ProviderSettings from './ProviderSettings';
 import ProviderHelp from './ProviderHelp';
 import DashboardNavbar from '../../../components/DashboardNavbar';
+import logo from '../../../assets/zuper.png'
 
 const ProviderDashboard = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <ProviderSidebar logo="/zuper.png" />
+      <ProviderSidebar logo={logo} />
       <div className="flex-1 flex flex-col ml-64">
         <DashboardNavbar userRole="provider" />
         <div className="flex-1 overflow-auto">
