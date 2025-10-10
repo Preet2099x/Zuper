@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import VehicleDetailsModal from '../../../components/VehicleDetailsModal';
 
 const CustomerSearch = () => {
   const [searchFilters, setSearchFilters] = useState({
@@ -12,6 +13,18 @@ const CustomerSearch = () => {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedVehicle(null);
+  };
 
   // Fetch all available vehicles on component mount
   useEffect(() => {
@@ -281,7 +294,10 @@ const CustomerSearch = () => {
                         >
                           {vehicle.status === 'available' ? 'Book Now' : 'Not Available'}
                         </button>
-                        <button className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm">
+                        <button 
+                          onClick={() => handleViewDetails(vehicle)}
+                          className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm"
+                        >
                           View Details
                         </button>
                       </div>
@@ -292,6 +308,13 @@ const CustomerSearch = () => {
             </>
           )}
       </div>
+
+      {/* Vehicle Details Modal */}
+      <VehicleDetailsModal 
+        vehicle={selectedVehicle}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
