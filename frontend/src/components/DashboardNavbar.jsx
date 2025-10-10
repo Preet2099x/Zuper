@@ -30,9 +30,11 @@ const DashboardNavbar = ({ userRole }) => {
     
     // Redirect to appropriate login page based on role
     if (userRole === 'customer') {
-      navigate('/customer/login');
+      navigate('/');
+      // navigate('/customer/login');
     } else if (userRole === 'provider') {
-      navigate('/provider/login');
+      navigate('/');
+      // navigate('/provider/login');
     } else {
       navigate('/');
     }

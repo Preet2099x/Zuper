@@ -98,7 +98,7 @@ export default function ProviderSignup() {
         if (loginRes.ok) {
           localStorage.setItem("token", loginData.token);
           localStorage.setItem("user", JSON.stringify(loginData.provider));
-          nav("/dashboard/provider", { replace: true });
+          nav("/dashboard/provider/overview", { replace: true });
         } else {
           setError(loginData.message || "Login failed. Please log in manually.");
           nav("/provider/login");

@@ -98,7 +98,7 @@ export default function Signup() {
         if (loginRes.ok) {
           localStorage.setItem("token", loginData.token);
           localStorage.setItem("user", JSON.stringify(loginData.user));
-          nav("/dashboard/customer", { replace: true });
+          nav("/dashboard/customer/overview", { replace: true });
         } else {
           setError(loginData.message || "Login failed. Please log in manually.");
           nav("/customer/login");
@@ -209,6 +209,18 @@ export default function Signup() {
               {loading ? "Signing up..." : "Sign up"}
             </button>
           </form>
+        )}
+
+        {step === "signup" && (
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Already have an account?{" "}
+            <button
+              onClick={() => nav("/customer/login")}
+              className="text-blue-600 hover:underline font-medium"
+            >
+              Login here
+            </button>
+          </p>
         )}
 
         {step === "verify" && (

@@ -52,7 +52,7 @@ export default function Login() {
         if (form.remember) localStorage.setItem("remembered", form.emailOrPhone);
         else localStorage.removeItem("remembered");
 
-        const redirectTo = loc.state?.from?.pathname || "/dashboard/customer";
+        const redirectTo = loc.state?.from?.pathname || "/dashboard/customer/overview";
         nav(redirectTo, { replace: true });
       }
     } catch (err) {

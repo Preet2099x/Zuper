@@ -52,7 +52,7 @@ export default function ProviderLogin() {
         if (form.remember) localStorage.setItem("remembered", form.emailOrPhone);
         else localStorage.removeItem("remembered");
 
-        const redirectTo = loc.state?.from?.pathname || "/dashboard/provider";
+        const redirectTo = loc.state?.from?.pathname || "/dashboard/provider/overview";
         nav(redirectTo, { replace: true });
       }
     } catch (err) {
