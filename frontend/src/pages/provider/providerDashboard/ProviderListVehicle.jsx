@@ -231,26 +231,35 @@ const ProviderListVehicle = () => {
         return;
       }
 
-      // TODO: Images will be uploaded to cloud storage (S3, Cloudinary, etc.) in future
-      // For now, we're skipping image upload
+      // Create FormData to send both vehicle data and images
+      const formDataToSend = new FormData();
       
-      const vehicleData = {
-        ...formData,
-        features: selectedFeatures,
-        year: year,
-        dailyRate: dailyRate,
-        images: [] // Empty array for now, will be populated with cloud URLs later
-      };
+      // Add vehicle data
+      formDataToSend.append('company', formData.company);
+      formDataToSend.append('model', formData.model);
+      formDataToSend.append('year', year);
+      formDataToSend.append('licensePlate', formData.licensePlate);
+      formDataToSend.append('dailyRate', dailyRate);
+      formDataToSend.append('location', formData.location);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('type', formData.type);
       
-      console.log('Submitting vehicle data:', vehicleData);
+      // Add features as JSON string
+      formDataToSend.append('features', JSON.stringify(selectedFeatures));
+      
+      // Add image files
+      imageFiles.forEach(file => {
+        formDataToSend.append('images', file);
+      });
+      
+      console.log('Submitting vehicle data with images:', { company: formData.company, imageCount: imageFiles.length });
 
       const response = await fetch('http://localhost:5000/api/vehicles', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(vehicleData)
+        body: formDataToSend
       });
 
       const data = await response.json();
@@ -489,15 +498,15 @@ const ProviderListVehicle = () => {
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Vehicle Images 
-                <span className="text-sm text-amber-600 font-normal ml-2">(Coming Soon - Cloud Storage Integration)</span>
+                <span className="text-sm text-green-600 font-normal ml-2">(Azure Cloud Storage)</span>
               </h3>
               
               {/* Upload Area */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
                 <div className="text-4xl mb-4">📸</div>
-                <p className="text-gray-600 mb-4">Image upload feature will be available soon!</p>
+                <p className="text-gray-600 mb-4">Drag and drop images here or click to browse</p>
                 <p className="text-sm text-gray-500 mb-4">
-                  We're integrating cloud storage for better image management. You can still list your vehicle without images for now.
+                  Maximum 10 images, up to 5MB each. Images will be stored securely in Azure Blob Storage.
                 </p>
                 <input
                   type="file"
@@ -506,16 +515,15 @@ const ProviderListVehicle = () => {
                   onChange={handleImageUpload}
                   className="hidden"
                   id="image-upload"
-                  disabled
                 />
                 <label
                   htmlFor="image-upload"
-                  className="inline-block bg-gray-400 text-white font-medium py-2 px-6 rounded-lg cursor-not-allowed"
+                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg cursor-pointer transition-colors"
                 >
-                  Choose Images (Disabled)
+                  Choose Images
                 </label>
                 <p className="text-xs text-gray-500 mt-2">
-                  Cloud storage integration coming soon
+                  {imageFiles.length}/10 images selected
                 </p>
               </div>
 

@@ -1,5 +1,6 @@
 import Vehicle from "../models/Vehicle.js";
 import Provider from "../models/Provider.js";
+import { uploadImageToAzure, deleteMultipleImagesFromAzure } from "../config/azure.js";
 
 // Create a new vehicle listing
 export const createVehicle = async (req, res) => {
@@ -13,7 +14,6 @@ export const createVehicle = async (req, res) => {
       location,
       features,
       description,
-      images,
       type
     } = req.body;
 
@@ -28,6 +28,31 @@ export const createVehicle = async (req, res) => {
       return res.status(400).json({ message: "Vehicle with this license plate already exists" });
     }
 
+    // Handle image uploads to Azure
+    let imageUrls = [];
+    if (req.files && req.files.length > 0) {
+      try {
+        imageUrls = await Promise.all(
+          req.files.map(file =>
+            uploadImageToAzure(file.buffer, file.originalname, file.mimetype)
+          )
+        );
+      } catch (uploadError) {
+        console.error("Image upload error:", uploadError);
+        return res.status(400).json({ message: "Failed to upload images", error: uploadError.message });
+      }
+    }
+
+    // Parse features if they come as a JSON string
+    let parsedFeatures = [];
+    if (features) {
+      try {
+        parsedFeatures = typeof features === 'string' ? JSON.parse(features) : features;
+      } catch (e) {
+        parsedFeatures = Array.isArray(features) ? features : [features];
+      }
+    }
+
     // Create new vehicle
     const vehicle = await Vehicle.create({
       company: company.trim(),
@@ -36,9 +61,9 @@ export const createVehicle = async (req, res) => {
       licensePlate: licensePlate.toUpperCase().trim(),
       dailyRate: parseFloat(dailyRate),
       location: location.trim(),
-      features: features || [],
+      features: parsedFeatures,
       description: description?.trim() || "",
-      images: images || [],
+      images: imageUrls,
       type: type || "car",
       provider: req.user.id,
       status: "available"
@@ -101,9 +126,60 @@ export const updateVehicle = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to update this vehicle" });
     }
 
+    // Parse features if they come as a JSON string
+    let parsedFeatures = vehicle.features || [];
+    if (req.body.features) {
+      try {
+        parsedFeatures = typeof req.body.features === 'string' ? JSON.parse(req.body.features) : req.body.features;
+      } catch (e) {
+        parsedFeatures = Array.isArray(req.body.features) ? req.body.features : [req.body.features];
+      }
+    }
+
+    // Handle existing and new images
+    let imageUrls = [];
+    
+    // Parse existing images if they come as a JSON string
+    if (req.body.images) {
+      try {
+        imageUrls = typeof req.body.images === 'string' ? JSON.parse(req.body.images) : req.body.images;
+      } catch (e) {
+        imageUrls = Array.isArray(req.body.images) ? req.body.images : [];
+      }
+    }
+    
+    // Add new uploaded images
+    if (req.files && req.files.length > 0) {
+      try {
+        const newImageUrls = await Promise.all(
+          req.files.map(file =>
+            uploadImageToAzure(file.buffer, file.originalname, file.mimetype)
+          )
+        );
+        imageUrls = [...imageUrls, ...newImageUrls];
+      } catch (uploadError) {
+        console.error("Image upload error:", uploadError);
+        return res.status(400).json({ message: "Failed to upload images", error: uploadError.message });
+      }
+    }
+
+    // Handle image deletion if imagesToDelete is provided
+    if (req.body.imagesToDelete && Array.isArray(req.body.imagesToDelete)) {
+      try {
+        await deleteMultipleImagesFromAzure(req.body.imagesToDelete);
+        imageUrls = imageUrls.filter(url => !req.body.imagesToDelete.includes(url));
+      } catch (deleteError) {
+        console.error("Image deletion error:", deleteError);
+        return res.status(400).json({ message: "Failed to delete images", error: deleteError.message });
+      }
+    }
+
+    const updateData = { ...req.body, images: imageUrls, features: parsedFeatures };
+    delete updateData.imagesToDelete; // Don't store this in the database
+
     const updatedVehicle = await Vehicle.findByIdAndUpdate(
       req.params.id,
-      { $set: req.body },
+      { $set: updateData },
       { new: true, runValidators: true }
     );
 
@@ -129,6 +205,16 @@ export const deleteVehicle = async (req, res) => {
     // Check if the provider owns this vehicle
     if (vehicle.provider.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not authorized to delete this vehicle" });
+    }
+
+    // Delete associated images from Azure
+    if (vehicle.images && vehicle.images.length > 0) {
+      try {
+        await deleteMultipleImagesFromAzure(vehicle.images);
+      } catch (deleteError) {
+        console.error("Error deleting images from Azure:", deleteError);
+        // Continue with deletion even if image deletion fails
+      }
     }
 
     // Remove vehicle from provider's vehicles array

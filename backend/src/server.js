@@ -8,9 +8,16 @@ import authRoutes from "./routes/authRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import vehicleRoutes from "./routes/vehicleRoutes.js";
+import { ensureContainerExists } from "./config/azure.js";
 
 
 connectDB();
+
+// Initialize Azure Blob Storage container
+ensureContainerExists().catch(err => {
+  console.error("Failed to initialize Azure Blob Storage:", err.message);
+  // Continue server startup even if Azure initialization fails
+});
 
 const app = express();
 app.use(cors());
