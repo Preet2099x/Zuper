@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import VehicleDetailsModal from '../../../components/VehicleDetailsModal';
+import BookingModal from '../../../components/BookingModal';
 
 const CustomerSearch = () => {
   const [searchFilters, setSearchFilters] = useState({
@@ -15,6 +16,9 @@ const CustomerSearch = () => {
   const [error, setError] = useState('');
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState('');
+  const [waitingBookings, setWaitingBookings] = useState([]);
 
   const handleViewDetails = (vehicle) => {
     setSelectedVehicle(vehicle);
@@ -24,6 +28,22 @@ const CustomerSearch = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedVehicle(null);
+  };
+
+  const handleBookClick = (vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsBookingModalOpen(true);
+  };
+
+  const handleCloseBookingModal = () => {
+    setIsBookingModalOpen(false);
+    setSelectedVehicle(null);
+  };
+
+  const handleBookingSuccess = (booking) => {
+    setWaitingBookings(prev => [...prev, booking]);
+    setBookingSuccess('Booking request sent! You will be notified once the provider accepts.');
+    setTimeout(() => setBookingSuccess(''), 5000);
   };
 
   // Fetch all available vehicles on component mount
@@ -98,6 +118,13 @@ const CustomerSearch = () => {
     <div className="p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Search Vehicles</h1>
+
+          {/* Success Message */}
+          {bookingSuccess && (
+            <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+              ✓ {bookingSuccess}
+            </div>
+          )}
 
           {/* Search Filters */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -289,6 +316,7 @@ const CustomerSearch = () => {
 
                       <div className="flex space-x-2">
                         <button 
+                          onClick={() => handleBookClick(vehicle)}
                           className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm disabled:opacity-50"
                           disabled={vehicle.status !== 'available'}
                         >
@@ -315,6 +343,15 @@ const CustomerSearch = () => {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />
+
+      {/* Booking Modal */}
+      {isBookingModalOpen && selectedVehicle && (
+        <BookingModal
+          vehicle={selectedVehicle}
+          onClose={handleCloseBookingModal}
+          onBook={handleBookingSuccess}
+        />
+      )}
     </div>
   );
 };
