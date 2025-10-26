@@ -10,6 +10,7 @@ import {
   FaCog,
   FaQuestionCircle,
   FaDollarSign,
+  FaBell,
 } from 'react-icons/fa';
 
 // Define the navigation links for the provider sidebar
@@ -18,6 +19,7 @@ const providerNavItems = [
   { path: '/dashboard/provider/my-vehicles', icon: <FaTruck />, label: 'My Vehicles' },
   { path: '/dashboard/provider/list-vehicle', icon: <FaPlusCircle />, label: 'List Vehicle' },
   { path: '/dashboard/provider/earnings', icon: <FaDollarSign />, label: 'Earnings' },
+  { path: '/dashboard/provider/booking-requests', icon: <FaBell />, label: 'Booking Requests' },
   { path: '/dashboard/provider/inbox', icon: <FaEnvelope />, label: 'Inbox' },
   { path: '/dashboard/provider/settings', icon: <FaCog />, label: 'Settings', position: 'footer' },
   { path: '/dashboard/provider/help', icon: <FaQuestionCircle />, label: 'Help', position: 'footer' },

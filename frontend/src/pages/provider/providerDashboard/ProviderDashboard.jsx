@@ -5,6 +5,7 @@ import ProviderOverview from './ProviderOverview';
 import ProviderMyVehicles from './ProviderMyVehicles';
 import ProviderListVehicle from './ProviderListVehicle';
 import ProviderEarnings from './ProviderEarnings';
+import ProviderBookingRequests from './ProviderBookingRequests';
 import ProviderInbox from './ProviderInbox';
 import ProviderSettings from './ProviderSettings';
 import ProviderHelp from './ProviderHelp';
@@ -24,6 +25,7 @@ const ProviderDashboard = () => {
             <Route path="my-vehicles" element={<ProviderMyVehicles />} />
             <Route path="list-vehicle" element={<ProviderListVehicle />} />
             <Route path="earnings" element={<ProviderEarnings />} />
+            <Route path="booking-requests" element={<ProviderBookingRequests />} />
             <Route path="inbox" element={<ProviderInbox />} />
             <Route path="settings" element={<ProviderSettings />} />
             <Route path="help" element={<ProviderHelp />} />
