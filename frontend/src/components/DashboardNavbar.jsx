@@ -23,6 +23,24 @@ const DashboardNavbar = ({ userRole }) => {
     }
   }, [userRole, navigate]);
 
+  // Listen for user profile updates
+  useEffect(() => {
+    const handleUserUpdated = () => {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          setUserName(user.name || 'User');
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+        }
+      }
+    };
+
+    window.addEventListener('userUpdated', handleUserUpdated);
+    return () => window.removeEventListener('userUpdated', handleUserUpdated);
+  }, []);
+
   const handleLogout = () => {
     // Remove JWT token and user data from localStorage
     localStorage.removeItem('token');

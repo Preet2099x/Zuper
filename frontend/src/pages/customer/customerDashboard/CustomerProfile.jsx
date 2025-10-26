@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const CustomerProfile = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [originalData, setOriginalData] = useState(null);
 
-  // Static user profile data
   const [profileData, setProfileData] = useState({
     personal: {
-      firstName: 'Rajesh',
-      lastName: 'Kumar',
-      email: 'rajesh.kumar@example.com',
-      phone: '+91 98765 43210',
-      dateOfBirth: '1990-05-15',
-      address: 'Connaught Place, New Delhi - 110001'
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      dateOfBirth: '',
+      address: ''
     },
     documents: {
       driversLicense: {
@@ -40,6 +44,61 @@ const CustomerProfile = () => {
     }
   });
 
+  // Fetch user profile data
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/customer/login';
+        return;
+      }
+
+      const response = await fetch('http://localhost:5000/api/user/customer/profile', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch profile data');
+      }
+
+      const data = await response.json();
+      
+      // Split the name into firstName and lastName
+      const nameParts = (data.name || '').split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const fetchedProfileData = {
+        personal: {
+          firstName: firstName,
+          lastName: lastName,
+          email: data.email || '',
+          phone: data.phone || '',
+          dateOfBirth: data.dob ? data.dob.split('T')[0] : '',
+          address: data.address || ''
+        },
+        documents: profileData.documents,
+        preferences: profileData.preferences
+      };
+
+      setProfileData(fetchedProfileData);
+      setOriginalData(fetchedProfileData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Fetch profile error:', err);
+      setError('Failed to load profile data');
+      setLoading(false);
+    }
+  };
+
   const handleInputChange = (section, field, value) => {
     setProfileData(prev => ({
       ...prev,
@@ -50,21 +109,107 @@ const CustomerProfile = () => {
     }));
   };
 
-  const handleSave = () => {
-    // In a real app, this would save to backend
-    console.log('Saving profile data:', profileData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!profileData.personal.firstName.trim()) {
+      setError('First name is required');
+      return;
+    }
+    if (!profileData.personal.lastName.trim()) {
+      setError('Last name is required');
+      return;
+    }
+    if (!profileData.personal.phone.trim()) {
+      setError('Phone number is required');
+      return;
+    }
+
+    setSaving(true);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      
+      // Combine firstName and lastName into name
+      const fullName = `${profileData.personal.firstName} ${profileData.personal.lastName}`.trim();
+
+      const response = await fetch('http://localhost:5000/api/user/customer/profile', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: fullName,
+          phone: profileData.personal.phone,
+          dob: profileData.personal.dateOfBirth,
+          address: profileData.personal.address
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update profile');
+      }
+
+      const data = await response.json();
+      setSuccessMessage('Profile updated successfully!');
+      setOriginalData(profileData);
+      setIsEditing(false);
+
+      // Update localStorage with new user data
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      userData.name = fullName;
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      // Dispatch custom event to notify navbar of the change
+      window.dispatchEvent(new Event('userUpdated'));
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (err) {
+      console.error('Save profile error:', err);
+      setError(err.message || 'Failed to save profile changes');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleCancel = () => {
-    // Reset to original data (in real app, fetch from backend)
+    // Reset to original data
+    if (originalData) {
+      setProfileData(originalData);
+    }
     setIsEditing(false);
+    setError('');
   };
 
   return (
     <div className="p-8">
       <div className="max-w-4xl mx-auto">
+        {loading ? (
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading profile...</p>
+            </div>
+          </div>
+        ) : (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            {/* Error Message */}
+            {error && (
+              <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-t-lg">
+                {error}
+              </div>
+            )}
+
+            {/* Success Message */}
+            {successMessage && (
+              <div className="p-4 bg-green-100 border border-green-400 text-green-700">
+                {successMessage}
+              </div>
+            )}
+
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
               <div className="flex items-center space-x-6">
@@ -141,13 +286,15 @@ const CustomerProfile = () => {
                       <div className="flex space-x-2">
                         <button
                           onClick={handleSave}
-                          className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                          disabled={saving}
+                          className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
                         >
-                          Save Changes
+                          {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                         <button
                           onClick={handleCancel}
-                          className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                          disabled={saving}
+                          className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
                         >
                           Cancel
                         </button>
@@ -184,8 +331,9 @@ const CustomerProfile = () => {
                         type="email"
                         value={profileData.personal.email}
                         onChange={(e) => handleInputChange('personal', 'email', e.target.value)}
-                        disabled={!isEditing}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                        disabled={true}
+                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 cursor-not-allowed"
+                        title="Email cannot be changed"
                       />
                     </div>
 
@@ -427,6 +575,7 @@ const CustomerProfile = () => {
               )}
             </div>
           </div>
+        )}
       </div>
     </div>
   );
