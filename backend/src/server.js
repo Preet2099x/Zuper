@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import vehicleRoutes from "./routes/vehicleRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import { ensureContainerExists } from "./config/azure.js";
+import { createDefaultAdmin } from "./controllers/adminAuthController.js";
 
 
 connectDB();
@@ -19,6 +20,9 @@ ensureContainerExists().catch(err => {
   console.error("Failed to initialize Azure Blob Storage:", err.message);
   // Continue server startup even if Azure initialization fails
 });
+
+// Create default admin account
+createDefaultAdmin();
 
 const app = express();
 app.use(cors());

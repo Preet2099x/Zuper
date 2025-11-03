@@ -11,6 +11,7 @@ import {
   resendEmailOtp as resendProviderEmailOtp, // Use alias to avoid name conflict
   loginProvider,
 } from "../controllers/providerAuthController.js";
+import { loginAdmin } from "../controllers/adminAuthController.js";
 
 const router = express.Router();
 
@@ -25,5 +26,8 @@ router.post("/provider/signup", signupProvider);
 router.post("/provider/verify-email", verifyProviderEmailOtp);
 router.post("/provider/resend-email-otp", resendProviderEmailOtp);
 router.post("/provider/login", loginProvider);
+
+// --- Admin Routes ---
+router.post("/admin/login", loginAdmin);
 
 export default router;

@@ -149,3 +149,150 @@ export const updateProviderProfile = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Get all customers (admin only)
+export const getAllCustomers = async (req, res) => {
+  try {
+    const customers = await Customer.find({})
+      .select("-password -emailVerificationCode -phoneVerificationCode")
+      .sort({ createdAt: -1 });
+    res.json(customers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all providers (admin only)
+export const getAllProviders = async (req, res) => {
+  try {
+    const providers = await Provider.find({})
+      .select("-password -emailVerificationCode -phoneVerificationCode")
+      .sort({ createdAt: -1 });
+    res.json(providers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Delete customer (admin only)
+export const deleteCustomer = async (req, res) => {
+  try {
+    const customer = await Customer.findByIdAndDelete(req.params.id);
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+    res.json({ message: "Customer deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Delete provider (admin only)
+export const deleteProvider = async (req, res) => {
+  try {
+    const provider = await Provider.findByIdAndDelete(req.params.id);
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+    res.json({ message: "Provider deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Update customer (admin only)
+export const adminUpdateCustomer = async (req, res) => {
+  try {
+    const { name, email, phone, dob, address, isEmailVerified } = req.body;
+
+    const customer = await Customer.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        email,
+        phone,
+        dob,
+        address,
+        isEmailVerified
+      },
+      { new: true }
+    ).select("-password -emailVerificationCode -phoneVerificationCode");
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    res.json({ message: "Customer updated successfully", customer });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Update provider (admin only)
+export const adminUpdateProvider = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      businessName,
+      contactEmail,
+      businessAddress,
+      businessDescription,
+      website,
+      taxId,
+      insuranceProvider,
+      policyNumber,
+      licenseNumber,
+      operatingHours,
+      bankName,
+      accountNumber,
+      routingNumber,
+      paypalEmail,
+      autoPayout,
+      payoutSchedule,
+      isEmailVerified
+    } = req.body;
+
+    const provider = await Provider.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        email,
+        phone,
+        businessName,
+        contactEmail,
+        businessAddress,
+        businessDescription,
+        website,
+        taxId,
+        insuranceProvider,
+        policyNumber,
+        licenseNumber,
+        operatingHours,
+        bankName,
+        accountNumber,
+        routingNumber,
+        paypalEmail,
+        autoPayout,
+        payoutSchedule,
+        isEmailVerified
+      },
+      { new: true }
+    ).select("-password -emailVerificationCode -phoneVerificationCode");
+
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+
+    res.json({ message: "Provider updated successfully", provider });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

@@ -236,7 +236,7 @@ export const deleteVehicle = async (req, res) => {
 export const searchVehicles = async (req, res) => {
   try {
     const { location, type, minRate, maxRate, company, features } = req.query;
-    
+
     let query = { status: "available" };
 
     if (location) {
@@ -269,6 +269,19 @@ export const searchVehicles = async (req, res) => {
     res.json(vehicles);
   } catch (error) {
     console.error("Search vehicles error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all vehicles (admin only)
+export const getAllVehicles = async (req, res) => {
+  try {
+    const vehicles = await Vehicle.find({})
+      .populate("provider", "name businessName phone email")
+      .sort({ createdAt: -1 });
+    res.json(vehicles);
+  } catch (error) {
+    console.error("Get all vehicles error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

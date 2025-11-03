@@ -4,9 +4,15 @@ import {
   getCustomerProfile, 
   updateCustomerProfile,
   getProviderProfile,
-  updateProviderProfile
+  updateProviderProfile,
+  getAllCustomers,
+  getAllProviders,
+  deleteCustomer,
+  deleteProvider,
+  adminUpdateCustomer,
+  adminUpdateProvider
 } from "../controllers/userController.js";
-import { protectCustomer, protectProvider } from "../middleware/authMiddleware.js";
+import { protectCustomer, protectProvider, protectAdmin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -37,5 +43,13 @@ router.get("/provider/profile", protectProvider, getProviderProfile);
 
 // Update provider profile (with logo upload support)
 router.put("/provider/profile", protectProvider, logoUpload.single("businessLogo"), updateProviderProfile);
+
+// Admin routes
+router.get("/customers", protectAdmin, getAllCustomers);
+router.get("/providers", protectAdmin, getAllProviders);
+router.delete("/customers/:id", protectAdmin, deleteCustomer);
+router.delete("/providers/:id", protectAdmin, deleteProvider);
+router.put("/customers/:id", protectAdmin, adminUpdateCustomer);
+router.put("/providers/:id", protectAdmin, adminUpdateProvider);
 
 export default router;

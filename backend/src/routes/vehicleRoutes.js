@@ -6,9 +6,10 @@ import {
   getVehicleById,
   updateVehicle,
   deleteVehicle,
-  searchVehicles
+  searchVehicles,
+  getAllVehicles
 } from "../controllers/vehicleController.js";
-import { protectProvider, protectCustomer } from "../middleware/authMiddleware.js";
+import { protectProvider, protectCustomer, protectAdmin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -37,5 +38,8 @@ router.delete("/:id", protectProvider, deleteVehicle);
 // Public/Customer routes
 router.get("/search", searchVehicles);
 router.get("/:id", getVehicleById);
+
+// Admin routes
+router.get("/admin/all", protectAdmin, getAllVehicles);
 
 export default router;
