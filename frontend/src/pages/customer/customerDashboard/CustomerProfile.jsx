@@ -8,6 +8,12 @@ const CustomerProfile = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [originalData, setOriginalData] = useState(null);
+  const [documents, setDocuments] = useState([]);
+  const [uploadingDocument, setUploadingDocument] = useState(null);
+  const [documentNumbers, setDocumentNumbers] = useState({
+    aadhar: '',
+    license: ''
+  });
 
   const [profileData, setProfileData] = useState({
     personal: {
@@ -48,6 +54,13 @@ const CustomerProfile = () => {
   useEffect(() => {
     fetchProfileData();
   }, []);
+
+  // Fetch documents when documents tab is active
+  useEffect(() => {
+    if (activeTab === 'documents') {
+      fetchDocuments();
+    }
+  }, [activeTab]);
 
   const fetchProfileData = async () => {
     try {
@@ -96,6 +109,25 @@ const CustomerProfile = () => {
       console.error('Fetch profile error:', err);
       setError('Failed to load profile data');
       setLoading(false);
+    }
+  };
+
+  const fetchDocuments = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/documents/customer', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const documentsData = await response.json();
+        setDocuments(documentsData);
+      }
+    } catch (error) {
+      console.error('Error fetching documents:', error);
     }
   };
 
@@ -152,7 +184,6 @@ const CustomerProfile = () => {
         throw new Error(errorData.message || 'Failed to update profile');
       }
 
-      const data = await response.json();
       setSuccessMessage('Profile updated successfully!');
       setOriginalData(profileData);
       setIsEditing(false);
@@ -182,6 +213,103 @@ const CustomerProfile = () => {
     }
     setIsEditing(false);
     setError('');
+  };
+
+  const handleDocumentUpload = async (documentType, file) => {
+    if (!file) return;
+
+    // Validate document number
+    const documentNumber = documentNumbers[documentType];
+    if (!documentNumber || documentNumber.trim() === '') {
+      setError(`${documentType === 'license' ? 'License' : 'Aadhar'} number is required`);
+      return;
+    }
+
+    // Validate format
+    if (documentType === 'aadhar' && !/^\d{12}$/.test(documentNumber)) {
+      setError('Aadhar number must be 12 digits');
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload a valid image file');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be less than 5MB');
+      return;
+    }
+
+    setUploadingDocument(documentType);
+    setError('');
+    setSuccessMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('documentImage', file);
+      formData.append('documentType', documentType);
+
+      if (documentType === 'aadhar') {
+        formData.append('aadharNumber', documentNumber);
+      } else if (documentType === 'license') {
+        formData.append('licenseNumber', documentNumber);
+      }
+
+      const response = await fetch('http://localhost:5000/api/documents/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to upload document');
+      }
+
+      setSuccessMessage(`${documentType === 'license' ? 'License' : 'Aadhar'} document uploaded successfully! Status: Processing`);
+      fetchDocuments(); // Refresh documents list
+
+      // Clear the document number after successful upload
+      setDocumentNumbers(prev => ({
+        ...prev,
+        [documentType]: ''
+      }));
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } catch (err) {
+      console.error('Document upload error:', err);
+      setError(err.message || 'Failed to upload document');
+    } finally {
+      setUploadingDocument(null);
+    }
+  };
+
+  const getDocumentStatus = (documentType) => {
+    const doc = documents.find(d => d.documentType === documentType);
+    return doc ? doc.status : null;
+  };
+
+  const getDocumentBadge = (status) => {
+    const statusConfig = {
+      processing: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Processing' },
+      verified: { bg: 'bg-green-100', text: 'text-green-800', label: 'Verified' },
+      rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejected' }
+    };
+
+    const config = statusConfig[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Not Uploaded' };
+
+    return (
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}>
+        {config.label}
+      </span>
+    );
   };
 
   return (
@@ -377,76 +505,207 @@ const CustomerProfile = () => {
               {activeTab === 'documents' && (
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-6">Documents & Verification</h2>
+                  <p className="text-gray-600 mb-6">
+                    Upload your driving license and Aadhar card for verification. Once verified, your documents and details will be displayed below. Documents will be reviewed by our admin team.
+                  </p>
 
                   <div className="space-y-6">
-                    {/* Driver's License */}
+                    {/* Driving License */}
                     <div className="border border-gray-200 rounded-lg p-6">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium text-gray-900">Driver's License</h3>
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          profileData.documents.driversLicense.status === 'Verified'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {profileData.documents.driversLicense.status}
-                        </span>
+                        <h3 className="text-lg font-medium text-gray-900">Driving License</h3>
+                        {getDocumentBadge(getDocumentStatus('license'))}
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">License Number</label>
-                          <p className="text-gray-900">{profileData.documents.driversLicense.number}</p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                          <p className="text-gray-900">{profileData.documents.driversLicense.expiryDate}</p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
-                          <p className="text-gray-900">{profileData.documents.driversLicense.state}</p>
-                        </div>
-                      </div>
+                      {getDocumentStatus('license') === 'verified' ? (
+                        // Verified Document Display
+                        <div className="space-y-4">
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div className="flex items-center mb-3">
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                ✓ Verified
+                              </span>
+                              <span className="ml-2 text-sm text-green-700">
+                                Verified on {new Date(documents.find(d => d.documentType === 'license')?.verifiedAt).toLocaleDateString()}
+                              </span>
+                            </div>
 
-                      <div className="mt-4">
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                          Update License
-                        </button>
-                      </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  License Number
+                                </label>
+                                <div className="p-3 bg-white border border-gray-300 rounded-md text-gray-900 font-mono">
+                                  {documents.find(d => d.documentType === 'license')?.licenseNumber}
+                                </div>
+                              </div>
+
+                              <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  Document Image
+                                </label>
+                                <div className="border border-gray-300 rounded-lg p-4 bg-white">
+                                  <img
+                                    src={documents.find(d => d.documentType === 'license')?.documentImage}
+                                    alt="Driving License"
+                                    className="max-w-full h-auto max-h-64 object-contain rounded"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        // Upload Form
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              License Number
+                            </label>
+                            <input
+                              type="text"
+                              value={documentNumbers.license}
+                              onChange={(e) => setDocumentNumbers(prev => ({ ...prev, license: e.target.value }))}
+                              placeholder="Enter your driving license number"
+                              className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Upload Driving License Image
+                            </label>
+                            <div className="flex items-center space-x-4">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleDocumentUpload('license', e.target.files[0])}
+                                disabled={uploadingDocument === 'license'}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                              />
+                              {uploadingDocument === 'license' && (
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Upload a clear image of your driving license (max 5MB)
+                            </p>
+                          </div>
+
+                          {getDocumentStatus('license') === 'rejected' && (
+                            <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                              <p className="text-sm text-red-800">
+                                <strong>Rejection Reason:</strong> {documents.find(d => d.documentType === 'license')?.adminNotes}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Insurance */}
+                    {/* Aadhar Card */}
                     <div className="border border-gray-200 rounded-lg p-6">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium text-gray-900">Insurance</h3>
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          profileData.documents.insurance.status === 'Active'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {profileData.documents.insurance.status}
-                        </span>
+                        <h3 className="text-lg font-medium text-gray-900">Aadhar Card</h3>
+                        {getDocumentBadge(getDocumentStatus('aadhar'))}
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Provider</label>
-                          <p className="text-gray-900">{profileData.documents.insurance.provider}</p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Policy Number</label>
-                          <p className="text-gray-900">{profileData.documents.insurance.policyNumber}</p>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                          <p className="text-gray-900">{profileData.documents.insurance.expiryDate}</p>
-                        </div>
-                      </div>
+                      {getDocumentStatus('aadhar') === 'verified' ? (
+                        // Verified Document Display
+                        <div className="space-y-4">
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div className="flex items-center mb-3">
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                ✓ Verified
+                              </span>
+                              <span className="ml-2 text-sm text-green-700">
+                                Verified on {new Date(documents.find(d => d.documentType === 'aadhar')?.verifiedAt).toLocaleDateString()}
+                              </span>
+                            </div>
 
-                      <div className="mt-4">
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                          Update Insurance
-                        </button>
-                      </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  Aadhar Number
+                                </label>
+                                <div className="p-3 bg-white border border-gray-300 rounded-md text-gray-900 font-mono">
+                                  {documents.find(d => d.documentType === 'aadhar')?.aadharNumber}
+                                </div>
+                              </div>
+
+                              <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                  Document Image
+                                </label>
+                                <div className="border border-gray-300 rounded-lg p-4 bg-white">
+                                  <img
+                                    src={documents.find(d => d.documentType === 'aadhar')?.documentImage}
+                                    alt="Aadhar Card"
+                                    className="max-w-full h-auto max-h-64 object-contain rounded"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        // Upload Form
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Aadhar Number
+                            </label>
+                            <input
+                              type="text"
+                              value={documentNumbers.aadhar}
+                              onChange={(e) => setDocumentNumbers(prev => ({ ...prev, aadhar: e.target.value }))}
+                              placeholder="Enter your 12-digit Aadhar number"
+                              maxLength="12"
+                              className="w-full p-3 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Upload Aadhar Card Image
+                            </label>
+                            <div className="flex items-center space-x-4">
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleDocumentUpload('aadhar', e.target.files[0])}
+                                disabled={uploadingDocument === 'aadhar'}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                              />
+                              {uploadingDocument === 'aadhar' && (
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Upload a clear image of your Aadhar card (max 5MB)
+                            </p>
+                          </div>
+
+                          {getDocumentStatus('aadhar') === 'rejected' && (
+                            <div className="bg-red-50 border border-red-200 rounded-md p-3">
+                              <p className="text-sm text-red-800">
+                                <strong>Rejection Reason:</strong> {documents.find(d => d.documentType === 'aadhar')?.adminNotes}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Status Information */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-blue-900 mb-2">Document Verification Process</h4>
+                      <ul className="text-sm text-blue-800 space-y-1">
+                        <li>• Documents are initially marked as "Processing"</li>
+                        <li>• Our admin team will review and verify your documents</li>
+                        <li>• You will be notified once verification is complete</li>
+                        <li>• Verified documents are required for booking vehicles</li>
+                      </ul>
                     </div>
                   </div>
                 </div>

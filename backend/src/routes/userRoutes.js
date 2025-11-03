@@ -10,7 +10,9 @@ import {
   deleteCustomer,
   deleteProvider,
   adminUpdateCustomer,
-  adminUpdateProvider
+  adminUpdateProvider,
+  adminCreateCustomer,
+  adminCreateProvider
 } from "../controllers/userController.js";
 import { protectCustomer, protectProvider, protectAdmin } from "../middleware/authMiddleware.js";
 
@@ -47,6 +49,8 @@ router.put("/provider/profile", protectProvider, logoUpload.single("businessLogo
 // Admin routes
 router.get("/customers", protectAdmin, getAllCustomers);
 router.get("/providers", protectAdmin, getAllProviders);
+router.post("/customers", protectAdmin, adminCreateCustomer);
+router.post("/providers", protectAdmin, adminCreateProvider);
 router.delete("/customers/:id", protectAdmin, deleteCustomer);
 router.delete("/providers/:id", protectAdmin, deleteProvider);
 router.put("/customers/:id", protectAdmin, adminUpdateCustomer);

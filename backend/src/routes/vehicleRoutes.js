@@ -7,7 +7,8 @@ import {
   updateVehicle,
   deleteVehicle,
   searchVehicles,
-  getAllVehicles
+  getAllVehicles,
+  adminCreateVehicle
 } from "../controllers/vehicleController.js";
 import { protectProvider, protectCustomer, protectAdmin } from "../middleware/authMiddleware.js";
 
@@ -41,5 +42,6 @@ router.get("/:id", getVehicleById);
 
 // Admin routes
 router.get("/admin/all", protectAdmin, getAllVehicles);
+router.post("/admin/create", protectAdmin, adminCreateVehicle);
 
 export default router;

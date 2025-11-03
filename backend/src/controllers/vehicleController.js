@@ -285,3 +285,78 @@ export const getAllVehicles = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Create vehicle (admin only)
+export const adminCreateVehicle = async (req, res) => {
+  try {
+    const {
+      company,
+      model,
+      year,
+      licensePlate,
+      dailyRate,
+      location,
+      features,
+      description,
+      type,
+      providerId
+    } = req.body;
+
+    // Validate required fields
+    if (!company || !model || !year || !licensePlate || !dailyRate || !location || !providerId) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Check if license plate already exists
+    const existingVehicle = await Vehicle.findOne({ licensePlate: licensePlate.toUpperCase() });
+    if (existingVehicle) {
+      return res.status(400).json({ message: "Vehicle with this license plate already exists" });
+    }
+
+    // Check if provider exists
+    const provider = await Provider.findById(providerId);
+    if (!provider) {
+      return res.status(404).json({ message: "Provider not found" });
+    }
+
+    // Parse features if they come as a JSON string
+    let parsedFeatures = [];
+    if (features) {
+      try {
+        parsedFeatures = typeof features === 'string' ? JSON.parse(features) : features;
+      } catch (e) {
+        parsedFeatures = Array.isArray(features) ? features : [features];
+      }
+    }
+
+    // Create new vehicle
+    const vehicle = await Vehicle.create({
+      company: company.trim(),
+      model: model.trim(),
+      year: parseInt(year),
+      licensePlate: licensePlate.toUpperCase().trim(),
+      dailyRate: parseFloat(dailyRate),
+      location: location.trim(),
+      features: parsedFeatures,
+      description: description?.trim() || "",
+      images: [], // No images for admin creation
+      type: type || "car",
+      provider: providerId,
+      status: "available"
+    });
+
+    // Add vehicle to provider's vehicles array
+    await Provider.findByIdAndUpdate(
+      providerId,
+      { $push: { vehicles: vehicle._id } }
+    );
+
+    res.status(201).json({
+      message: "Vehicle created successfully",
+      vehicle
+    });
+  } catch (error) {
+    console.error("Admin create vehicle error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

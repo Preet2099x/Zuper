@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import AdminAccounts from './AdminAccounts';
 import AdminVehicles from './AdminVehicles';
 import AdminAdd from './AdminAdd';
+import AdminDocuments from './AdminDocuments';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const AdminDashboard = () => {
   const menuItems = [
     { id: 'accounts', label: 'Accounts', icon: '👥' },
     { id: 'vehicles', label: 'Vehicles', icon: '🚗' },
+    { id: 'documents', label: 'Documents', icon: '📄' },
     { id: 'add', label: 'Add', icon: '➕' }
   ];
 
@@ -26,6 +28,8 @@ const AdminDashboard = () => {
         return <AdminAccounts />;
       case 'vehicles':
         return <AdminVehicles />;
+      case 'documents':
+        return <AdminDocuments />;
       case 'add':
         return <AdminAdd />;
       default:

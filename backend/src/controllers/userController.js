@@ -296,3 +296,91 @@ export const adminUpdateProvider = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Create customer (admin only)
+export const adminCreateCustomer = async (req, res) => {
+  try {
+    const { name, email, phone, address, password, isEmailVerified } = req.body;
+
+    // Check if customer already exists
+    const existingCustomer = await Customer.findOne({ email: email.toLowerCase() });
+    if (existingCustomer) {
+      return res.status(400).json({ message: "Customer with this email already exists" });
+    }
+
+    // Create new customer
+    const customer = await Customer.create({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      phone: phone.trim(),
+      address: address?.trim(),
+      password,
+      isEmailVerified: isEmailVerified || false
+    });
+
+    res.status(201).json({
+      message: "Customer created successfully",
+      customer: {
+        _id: customer._id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        address: customer.address,
+        isEmailVerified: customer.isEmailVerified,
+        createdAt: customer.createdAt
+      }
+    });
+  } catch (error) {
+    console.error("Admin create customer error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Create provider (admin only)
+export const adminCreateProvider = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      businessName,
+      businessAddress,
+      password,
+      isEmailVerified
+    } = req.body;
+
+    // Check if provider already exists
+    const existingProvider = await Provider.findOne({ email: email.toLowerCase() });
+    if (existingProvider) {
+      return res.status(400).json({ message: "Provider with this email already exists" });
+    }
+
+    // Create new provider
+    const provider = await Provider.create({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      phone: phone.trim(),
+      businessName: businessName?.trim(),
+      businessAddress: businessAddress?.trim(),
+      password,
+      isEmailVerified: isEmailVerified || false
+    });
+
+    res.status(201).json({
+      message: "Provider created successfully",
+      provider: {
+        _id: provider._id,
+        name: provider.name,
+        email: provider.email,
+        phone: provider.phone,
+        businessName: provider.businessName,
+        businessAddress: provider.businessAddress,
+        isEmailVerified: provider.isEmailVerified,
+        createdAt: provider.createdAt
+      }
+    });
+  } catch (error) {
+    console.error("Admin create provider error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

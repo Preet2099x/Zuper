@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const AdminAdd = () => {
   const [activeTab, setActiveTab] = useState('account');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [providers, setProviders] = useState([]);
 
   // Account form state
   const [accountForm, setAccountForm] = useState({
@@ -30,6 +31,28 @@ const AdminAdd = () => {
     providerId: ''
   });
 
+  useEffect(() => {
+    if (activeTab === 'vehicle') {
+      fetchProviders();
+    }
+  }, [activeTab]);
+
+  const fetchProviders = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch('http://localhost:5000/api/user/providers', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const providersData = await response.json();
+        setProviders(providersData);
+      }
+    } catch (error) {
+      console.error('Error fetching providers:', error);
+    }
+  };
+
   const handleAccountChange = (e) => {
     setAccountForm({
       ...accountForm,
@@ -53,8 +76,8 @@ const AdminAdd = () => {
     try {
       const token = localStorage.getItem('adminToken');
       const endpoint = accountForm.type === 'customer'
-        ? 'http://localhost:5000/api/auth/customer/signup'
-        : 'http://localhost:5000/api/auth/provider/signup';
+        ? 'http://localhost:5000/api/user/customers'
+        : 'http://localhost:5000/api/user/providers';
 
       const payload = accountForm.type === 'customer'
         ? {
@@ -425,6 +448,26 @@ const AdminAdd = () => {
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Describe the vehicle..."
                 />
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Provider *
+                </label>
+                <select
+                  name="providerId"
+                  value={vehicleForm.providerId}
+                  onChange={handleVehicleChange}
+                  required
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select a provider</option>
+                  {providers.map(provider => (
+                    <option key={provider._id} value={provider._id}>
+                      {provider.name} - {provider.businessName || provider.email}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
