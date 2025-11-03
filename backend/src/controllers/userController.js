@@ -1,5 +1,6 @@
 import Customer from "../models/Customer.js";
 import Provider from "../models/Provider.js";
+import { uploadImageToAzure } from "../config/azure.js";
 
 // Get customer profile
 export const getCustomerProfile = async (req, res) => {
@@ -64,20 +65,77 @@ export const getProviderProfile = async (req, res) => {
 // Update provider profile
 export const updateProviderProfile = async (req, res) => {
   try {
-    const { name, phone, businessName } = req.body;
+    const { 
+      name, 
+      phone, 
+      businessName,
+      contactEmail,
+      businessAddress,
+      businessDescription,
+      website,
+      taxId,
+      insuranceProvider,
+      policyNumber,
+      licenseNumber,
+      operatingHours,
+      bankName,
+      accountNumber,
+      routingNumber,
+      paypalEmail,
+      autoPayout,
+      payoutSchedule
+    } = req.body;
 
     // Validate required fields
     if (!name || !phone) {
       return res.status(400).json({ message: "Name and phone are required" });
     }
 
+    // Handle business logo upload
+    let businessLogoUrl = undefined;
+    if (req.file) {
+      try {
+        businessLogoUrl = await uploadImageToAzure(
+          req.file.buffer, 
+          req.file.originalname, 
+          req.file.mimetype
+        );
+      } catch (uploadError) {
+        console.error("Business logo upload error:", uploadError);
+        return res.status(400).json({ message: "Failed to upload business logo", error: uploadError.message });
+      }
+    }
+
+    // Prepare update data
+    const updateData = {
+      name,
+      phone,
+      businessName,
+      contactEmail,
+      businessAddress,
+      businessDescription,
+      website,
+      taxId,
+      insuranceProvider,
+      policyNumber,
+      licenseNumber,
+      operatingHours,
+      bankName,
+      accountNumber,
+      routingNumber,
+      paypalEmail,
+      autoPayout,
+      payoutSchedule
+    };
+
+    // Only update businessLogo if a new file was uploaded
+    if (businessLogoUrl) {
+      updateData.businessLogo = businessLogoUrl;
+    }
+
     const provider = await Provider.findByIdAndUpdate(
       req.user.id,
-      {
-        name,
-        phone,
-        businessName
-      },
+      updateData,
       { new: true }
     ).select("-password -emailVerificationCode -phoneVerificationCode");
 

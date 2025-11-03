@@ -1,66 +1,222 @@
-import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const ProviderSettings = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
-
-  // Static settings data for provider
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  
+  // Image upload states
+  const [businessLogoFile, setBusinessLogoFile] = useState(null);
+  const [businessLogoPreview, setBusinessLogoPreview] = useState('');
+  
   const [settings, setSettings] = useState({
-    profile: {
-      businessName: 'Delhi Premium Car Rentals',
-      contactEmail: 'contact@delhipremiumcars.com',
-      phone: '+91 98765 43210',
-      address: 'Connaught Place, New Delhi - 110001',
-      description: 'Providing premium vehicles for all your transportation needs in Delhi NCR.',
-      website: 'https://delhipremiumcars.com'
-    },
-    notifications: {
-      bookingRequests: true,
-      bookingConfirmations: true,
-      paymentReceived: true,
-      customerMessages: true,
-      maintenanceReminders: true,
-      marketingEmails: false
-    },
-    business: {
-      taxId: '07AABCU9603R1ZM',
-      insuranceProvider: 'Bajaj Allianz General Insurance',
-      policyNumber: 'POL987654321',
-      licenseNumber: 'DLPCA123456789',
-      operatingHours: 'Mon-Sat: 8AM-8PM, Sun: 9AM-6PM'
-    },
-    payment: {
-      bankName: 'HDFC Bank',
-      accountNumber: '****5678',
-      routingNumber: 'HDFC0001234',
-      paypalEmail: 'payments@delhipremiumcars.com',
-      autoPayout: true,
-      payoutSchedule: 'monthly'
-    }
+    profile: { businessName: '', contactEmail: '', phone: '', address: '', description: '', website: '' },
+    notifications: { bookingRequests: true, bookingConfirmations: true, paymentReceived: true, customerMessages: true, maintenanceReminders: true, marketingEmails: false },
+    business: { taxId: '', insuranceProvider: '', policyNumber: '', licenseNumber: '', operatingHours: '' },
+    payment: { bankName: '', accountNumber: '', routingNumber: '', paypalEmail: '', autoPayout: true, payoutSchedule: 'monthly' }
   });
 
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  useEffect(() => {
+    fetchProviderProfile();
+  }, []);
+
+  // Image compression function
+  const compressImage = (file, maxWidth = 1200, quality = 0.7) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Calculate new dimensions
+          let { width, height } = img;
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to blob with compression
+          canvas.toBlob(
+            (blob) => {
+              resolve(blob);
+            },
+            'image/jpeg',
+            quality
+          );
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
   };
 
-  const handlePasswordSubmit = (e) => {
-    e.preventDefault();
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert('New passwords do not match');
+  // Handle logo upload
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file');
       return;
     }
-    console.log('Changing password...');
-    setShowPasswordModal(false);
-    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image size must be less than 5MB');
+      return;
+    }
+
+    setError('');
+    setMessage('Processing image...');
+
+    try {
+      // Compress the image
+      const compressedBlob = await compressImage(file);
+
+      // Convert blob to file
+      const compressedFile = new File([compressedBlob], file.name, {
+        type: 'image/jpeg',
+        lastModified: Date.now()
+      });
+
+      setBusinessLogoFile(compressedFile);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.readAsDataURL(compressedFile);
+      reader.onloadend = () => {
+        setBusinessLogoPreview(reader.result);
+        setMessage('');
+      };
+    } catch (err) {
+      console.error('Image processing error:', err);
+      setError('Failed to process image. Please try again.');
+      setMessage('');
+    }
+  };
+
+  // Remove logo
+  const handleRemoveLogo = () => {
+    setBusinessLogoFile(null);
+    setBusinessLogoPreview('');
+  };
+
+  const fetchProviderProfile = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please login to access settings');
+        navigate('/provider/login');
+        return;
+      }
+      const response = await axios.get('http://localhost:5000/api/user/provider/profile', { headers: { Authorization: `Bearer ${token}` } });
+      const provider = response.data;
+      setSettings(prev => ({
+        ...prev,
+        profile: { businessName: provider.businessName || '', contactEmail: provider.contactEmail || provider.email || '', phone: provider.phone || '', address: provider.businessAddress || '', description: provider.businessDescription || '', website: provider.website || '' },
+        business: { taxId: provider.taxId || '', insuranceProvider: provider.insuranceProvider || '', policyNumber: provider.policyNumber || '', licenseNumber: provider.licenseNumber || '', operatingHours: provider.operatingHours || '' },
+        payment: { bankName: provider.bankName || '', accountNumber: provider.accountNumber || '', routingNumber: provider.routingNumber || '', paypalEmail: provider.paypalEmail || '', autoPayout: provider.autoPayout !== undefined ? provider.autoPayout : true, payoutSchedule: provider.payoutSchedule || 'monthly' }
+      }));
+      
+      // Set existing logo if available
+      if (provider.businessLogo) {
+        setBusinessLogoPreview(provider.businessLogo);
+      }
+      
+      setError('');
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      setError('Failed to load profile. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      setSaving(true);
+      setError('');
+      setMessage('');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Please login to save settings');
+        navigate('/provider/login');
+        return;
+      }
+      
+      const dataToSend = {
+        name: settings.profile.businessName,
+        phone: settings.profile.phone,
+        businessName: settings.profile.businessName,
+        contactEmail: settings.profile.contactEmail,
+        businessAddress: settings.profile.address,
+        businessDescription: settings.profile.description,
+        website: settings.profile.website,
+        taxId: settings.business.taxId,
+        insuranceProvider: settings.business.insuranceProvider,
+        policyNumber: settings.business.policyNumber,
+        licenseNumber: settings.business.licenseNumber,
+        operatingHours: settings.business.operatingHours,
+        bankName: settings.payment.bankName,
+        accountNumber: settings.payment.accountNumber,
+        routingNumber: settings.payment.routingNumber,
+        paypalEmail: settings.payment.paypalEmail,
+        autoPayout: settings.payment.autoPayout,
+        payoutSchedule: settings.payment.payoutSchedule
+      };
+
+      // If there's a logo file, use FormData
+      if (businessLogoFile) {
+        const formData = new FormData();
+        
+        // Add all profile data
+        Object.keys(dataToSend).forEach(key => {
+          formData.append(key, dataToSend[key]);
+        });
+        
+        // Add the logo file
+        formData.append('businessLogo', businessLogoFile);
+        
+        await axios.put('http://localhost:5000/api/user/provider/profile', formData, { 
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          } 
+        });
+      } else {
+        // No logo file, use regular JSON
+        await axios.put('http://localhost:5000/api/user/provider/profile', dataToSend, { 
+          headers: { 
+            Authorization: `Bearer ${token}`, 
+            'Content-Type': 'application/json' 
+          } 
+        });
+      }
+      
+      setMessage('Profile updated successfully!');
+      setTimeout(() => setMessage(''), 3000);
+    } catch (err) {
+      console.error('Error saving profile:', err);
+      setError(err.response?.data?.message || 'Failed to save profile. Please try again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSettingChange = (category, setting, value) => {
@@ -84,12 +240,15 @@ const ProviderSettings = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Account Settings</h1>
-
-        {/* Settings Tabs */}
-        <div className="bg-white rounded-lg shadow-md mb-6">
+    <div className='p-8'>
+      <div className='max-w-7xl mx-auto'>
+        <h1 className='text-3xl font-bold text-gray-900 mb-8'>Account Settings</h1>
+        {error && <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700'>{error}</div>}
+        {message && <div className='mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700'>{message}</div>}
+        {loading ? (
+          <div className='bg-white rounded-lg shadow-md p-8 text-center'><p className='text-gray-600'>Loading profile...</p></div>
+        ) : (
+          <div className="bg-white rounded-lg shadow-md mb-6">
           <div className="border-b border-gray-200">
             <nav className="flex">
               <button
@@ -143,14 +302,8 @@ const ProviderSettings = () => {
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold text-gray-900">Business Profile</h2>
                   <div className="flex space-x-2">
-                    <button
-                      onClick={() => setShowPasswordModal(true)}
-                      className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                    >
-                      Change Password
-                    </button>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                      Save Changes
+                    <button onClick={handleSaveChanges} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                      {saving ? 'Saving...' : 'Save Changes'}
                     </button>
                   </div>
                 </div>
@@ -226,15 +379,50 @@ const ProviderSettings = () => {
                   {/* Logo Upload */}
                   <div className="border-t border-gray-200 pt-6">
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Business Logo</h3>
-                    <div className="flex items-center space-x-6">
-                      <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
-                        <span className="text-2xl">🏢</span>
+                    <div className="flex items-start space-x-6">
+                      <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                        {businessLogoPreview ? (
+                          <img
+                            src={businessLogoPreview}
+                            alt="Business Logo"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-3xl text-gray-400">🏢</span>
+                        )}
                       </div>
-                      <div>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                          Upload Logo
-                        </button>
-                        <p className="text-sm text-gray-600 mt-1">PNG, JPG up to 2MB</p>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-4 mb-2">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoUpload}
+                            className="hidden"
+                            id="logo-upload"
+                          />
+                          <label
+                            htmlFor="logo-upload"
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg cursor-pointer transition duration-200"
+                          >
+                            {businessLogoPreview ? 'Change Logo' : 'Upload Logo'}
+                          </label>
+                          {businessLogoPreview && (
+                            <button
+                              onClick={handleRemoveLogo}
+                              className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          PNG, JPG up to 5MB. Images will be compressed and stored securely.
+                        </p>
+                        {businessLogoFile && (
+                          <p className="text-sm text-green-600 mt-1">
+                            New logo selected: {businessLogoFile.name}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -465,70 +653,8 @@ const ProviderSettings = () => {
             )}
           </div>
         </div>
+        )}
       </div>
-
-      {/* Password Change Modal */}
-      {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-            <h3 className="text-xl font-semibold text-gray-900 mb-6">Change Password</h3>
-
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                <input
-                  type="password"
-                  name="currentPassword"
-                  value={passwordData.currentPassword}
-                  onChange={handlePasswordChange}
-                  required
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={passwordData.newPassword}
-                  onChange={handlePasswordChange}
-                  required
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={passwordData.confirmPassword}
-                  onChange={handlePasswordChange}
-                  required
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="flex space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowPasswordModal(false)}
-                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-                >
-                  Change Password
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

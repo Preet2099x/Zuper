@@ -17,7 +17,29 @@ const providerSchema = new mongoose.Schema({
 
   businessName: { type: String },
 
-  vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }]
+  vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }],
+
+  // Business profile fields
+  contactEmail: { type: String },
+  businessAddress: { type: String },
+  businessDescription: { type: String },
+  website: { type: String },
+  businessLogo: { type: String }, // URL to logo image stored in Azure
+
+  // Business info fields
+  taxId: { type: String },
+  insuranceProvider: { type: String },
+  policyNumber: { type: String },
+  licenseNumber: { type: String },
+  operatingHours: { type: String },
+
+  // Payment fields
+  bankName: { type: String },
+  accountNumber: { type: String },
+  routingNumber: { type: String },
+  paypalEmail: { type: String },
+  autoPayout: { type: Boolean, default: true },
+  payoutSchedule: { type: String, enum: ['weekly', 'biweekly', 'monthly'], default: 'monthly' }
 }, { timestamps: true });
 
 export default mongoose.model("Provider", providerSchema);
