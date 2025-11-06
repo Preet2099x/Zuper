@@ -1,90 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaUser, FaSignOutAlt } from 'react-icons/fa';
+﻿import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaSignOutAlt } from "react-icons/fa";
 
 const DashboardNavbar = ({ userRole }) => {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState('User');
+  const [userName, setUserName] = useState("User");
 
   useEffect(() => {
-    // Get user data from localStorage
-    const userData = localStorage.getItem('user');
+    const userData = localStorage.getItem("user");
     if (userData) {
       try {
         const user = JSON.parse(userData);
-        setUserName(user.name || 'User');
+        setUserName(user.name || "User");
       } catch (error) {
-        console.error('Error parsing user data:', error);
-        setUserName('User');
+        console.error("Error parsing user data:", error);
+        setUserName("User");
       }
     } else {
-      // If no user data, redirect to login
-      navigate(userRole === 'customer' ? '/customer/login' : '/provider/login');
+      navigate(userRole === "customer" ? "/customer/login" : "/provider/login");
     }
   }, [userRole, navigate]);
 
-  // Listen for user profile updates
   useEffect(() => {
     const handleUserUpdated = () => {
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem("user");
       if (userData) {
         try {
           const user = JSON.parse(userData);
-          setUserName(user.name || 'User');
+          setUserName(user.name || "User");
         } catch (error) {
-          console.error('Error parsing user data:', error);
+          console.error("Error parsing user data:", error);
         }
       }
     };
 
-    window.addEventListener('userUpdated', handleUserUpdated);
-    return () => window.removeEventListener('userUpdated', handleUserUpdated);
+    window.addEventListener("userUpdated", handleUserUpdated);
+    return () => window.removeEventListener("userUpdated", handleUserUpdated);
   }, []);
 
   const handleLogout = () => {
-    // Remove JWT token and user data from localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     
-    // Redirect to appropriate login page based on role
-    if (userRole === 'customer') {
-      navigate('/');
-      // navigate('/customer/login');
-    } else if (userRole === 'provider') {
-      navigate('/');
-      // navigate('/provider/login');
+    if (userRole === "customer") {
+      navigate("/");
+    } else if (userRole === "provider") {
+      navigate("/");
     } else {
-      navigate('/');
+      navigate("/");
     }
   };
 
+  const bgColor = userRole === "customer" ? "bg-yellow-400" : "bg-purple-400";
+  const hoverBg = userRole === "customer" ? "hover:bg-yellow-300" : "hover:bg-purple-300";
+
   return (
-    <nav className="bg-white shadow-md px-6 py-4 flex items-center justify-between">
-      <div className="flex items-center space-x-4">
-        <h1 className="text-2xl font-bold text-slate-800">
-          {userRole === 'customer' ? 'Customer Dashboard' : 'Provider Dashboard'}
+    <nav className={`${bgColor} border-b-4 border-black px-4 py-2.5 flex items-center justify-between`}>
+      <div className="flex items-center space-x-3">
+        <h1 className="brutal-heading text-lg md:text-xl">
+          {userRole === "customer" ? "CUSTOMER ZONE 🎯" : "PROVIDER HUB 💼"}
         </h1>
       </div>
 
-      <div className="flex items-center space-x-6">
-        {/* User Info */}
-        <div className="flex items-center space-x-3">
-          <div className="bg-slate-700 text-white rounded-full p-2">
-            <FaUser className="text-lg" />
+      <div className="flex items-center space-x-2.5">
+        <div className="brutal-card-sm bg-white p-1.5 flex items-center space-x-2 transform -rotate-1">
+          <div className="bg-black text-white rounded-full p-1.5">
+            <FaUser className="text-xs" />
           </div>
-          <div className="text-right">
-            <p className="text-sm font-semibold text-slate-800">{userName}</p>
-            <p className="text-xs text-slate-500 capitalize">{userRole}</p>
+          <div className="text-left">
+            <p className="font-black uppercase text-xs">{userName}</p>
+            <p className="font-bold text-xs text-gray-600 uppercase">{userRole}</p>
           </div>
         </div>
 
-        {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+          className="brutal-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 flex items-center space-x-1.5"
         >
-          <FaSignOutAlt />
-          <span>Logout</span>
+          <FaSignOutAlt className="text-xs" />
+          <span className="font-black uppercase text-xs">Logout</span>
         </button>
       </div>
     </nav>

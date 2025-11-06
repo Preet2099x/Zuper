@@ -114,147 +114,134 @@ const CustomerHelp = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Help & Support</h1>
+    <div className="max-w-7xl mx-auto">
+      <h1 className="brutal-heading text-3xl mb-5">HELP & SUPPORT ❓</h1>
 
-          {/* Search Bar */}
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <div className="max-w-md mx-auto">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search FAQs..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </div>
+      {/* Search Bar */}
+      <div className="brutal-card bg-white p-5 mb-5">
+        <div className="max-w-md mx-auto relative">
+          <input
+            type="text"
+            placeholder="SEARCH FAQS..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 text-sm uppercase placeholder:text-xs"
+          />
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span className="text-xl">🔍</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Categories Sidebar */}
+        <div className="lg:col-span-1">
+          <div className="brutal-card bg-white p-5">
+            <h2 className="brutal-heading text-lg mb-4">CATEGORIES</h2>
+            <div className="space-y-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  className={`w-full text-left brutal-btn p-3 flex items-center gap-3 text-xs ${
+                    activeCategory === category.id
+                      ? 'bg-yellow-400'
+                      : 'bg-gray-200 hover:bg-gray-300'
+                  }`}
+                >
+                  <span className="text-xl">{category.icon}</span>
+                  <span className="font-black uppercase">{category.name}</span>
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Categories Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Categories</h2>
-                <div className="space-y-2">
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setActiveCategory(category.id)}
-                      className={`w-full text-left p-3 rounded-lg transition-colors duration-200 flex items-center space-x-3 ${
-                        activeCategory === category.id
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span className="text-xl">{category.icon}</span>
-                      <span className="font-medium">{category.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+          {/* Contact Support */}
+          <div className="brutal-card bg-cyan-200 border-cyan-600 p-5 mt-4">
+            <h3 className="brutal-heading text-base mb-3">NEED MORE HELP?</h3>
+            <p className="text-xs font-bold mb-4">Can't find what you're looking for? Our support team is here to help.</p>
+            <div className="space-y-2">
+              <button className="w-full brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 text-xs">
+                📞 CALL SUPPORT
+              </button>
+              <button className="w-full brutal-btn bg-white hover:bg-gray-100 py-2 text-xs">
+                💬 LIVE CHAT
+              </button>
+              <button className="w-full brutal-btn bg-white hover:bg-gray-100 py-2 text-xs">
+                ✉️ EMAIL US
+              </button>
+            </div>
+          </div>
+        </div>
 
-              {/* Contact Support */}
-              <div className="bg-blue-50 rounded-lg p-6 mt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Need More Help?</h3>
-                <p className="text-gray-600 mb-4">Can't find what you're looking for? Our support team is here to help.</p>
-                <div className="space-y-3">
-                  <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                    📞 Call Support
-                  </button>
-                  <button className="w-full bg-white hover:bg-gray-50 text-blue-600 font-medium py-2 px-4 rounded-lg border border-blue-600 transition duration-200">
-                    💬 Live Chat
-                  </button>
-                  <button className="w-full bg-white hover:bg-gray-50 text-blue-600 font-medium py-2 px-4 rounded-lg border border-blue-600 transition duration-200">
-                    ✉️ Email Us
-                  </button>
-                </div>
-              </div>
+        {/* FAQ Content */}
+        <div className="lg:col-span-3">
+          <div className="brutal-card bg-white p-5">
+            <div className="mb-4">
+              <h2 className="brutal-heading text-xl">
+                {categories.find(cat => cat.id === activeCategory)?.name}
+              </h2>
+              <p className="font-bold text-xs mt-1">
+                {filteredFAQs.length} {filteredFAQs.length === 1 ? 'question' : 'questions'} found
+              </p>
             </div>
 
-            {/* FAQ Content */}
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-lg shadow-md">
-                <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {categories.find(cat => cat.id === activeCategory)?.name}
-                  </h2>
-                  <p className="text-gray-600 mt-1">
-                    {filteredFAQs.length} {filteredFAQs.length === 1 ? 'question' : 'questions'} found
+            <div className="space-y-3">
+              {filteredFAQs.length > 0 ? (
+                filteredFAQs.map((faq) => (
+                  <div key={faq.id} className="brutal-card-sm bg-gray-50 p-4">
+                    <button
+                      onClick={() => toggleFAQ(faq.id)}
+                      className="w-full text-left flex items-center justify-between"
+                    >
+                      <h3 className="font-black uppercase text-sm pr-4">{faq.question}</h3>
+                      <span className="text-2xl">
+                        {expandedFAQ === faq.id ? '▲' : '▼'}
+                      </span>
+                    </button>
+
+                    {expandedFAQ === faq.id && (
+                      <div className="mt-3 p-3 bg-yellow-100 border-2 border-black">
+                        <p className="text-xs font-bold leading-relaxed">{faq.answer}</p>
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="brutal-card-sm bg-white p-8 text-center">
+                  <div className="text-6xl mb-3">🔍</div>
+                  <h3 className="brutal-heading text-lg mb-2">NO RESULTS FOUND</h3>
+                  <p className="text-xs font-bold">
+                    Try adjusting your search terms or browse different categories.
                   </p>
                 </div>
+              )}
+            </div>
+          </div>
 
-                <div className="divide-y divide-gray-200">
-                  {filteredFAQs.length > 0 ? (
-                    filteredFAQs.map((faq) => (
-                      <div key={faq.id} className="p-6">
-                        <button
-                          onClick={() => toggleFAQ(faq.id)}
-                          className="w-full text-left flex items-center justify-between hover:bg-gray-50 p-3 rounded-lg transition-colors duration-200"
-                        >
-                          <h3 className="text-lg font-medium text-gray-900 pr-4">{faq.question}</h3>
-                          <svg
-                            className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
-                              expandedFAQ === faq.id ? 'rotate-180' : ''
-                            }`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-
-                        {expandedFAQ === faq.id && (
-                          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                            <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-8 text-center">
-                      <div className="text-4xl mb-4">🔍</div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No results found</h3>
-                      <p className="text-gray-600">
-                        Try adjusting your search terms or browse different categories.
-                      </p>
-                    </div>
-                  )}
-                </div>
+          {/* Popular Topics */}
+          <div className="brutal-card bg-white p-5 mt-4">
+            <h3 className="brutal-heading text-lg mb-4">POPULAR TOPICS 🔥</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="brutal-card-sm bg-gray-50 p-4 hover:bg-yellow-100 cursor-pointer transition-colors">
+                <h4 className="font-black uppercase text-xs mb-2">🚗 Extend Your Rental</h4>
+                <p className="text-xs font-bold">Learn how to extend your booking and avoid late fees.</p>
               </div>
-
-              {/* Popular Topics */}
-              <div className="bg-white rounded-lg shadow-md p-6 mt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Topics</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                    <h4 className="font-medium text-gray-900 mb-2">🚗 How to Extend Your Rental</h4>
-                    <p className="text-sm text-gray-600">Learn how to extend your booking and avoid late fees.</p>
-                  </div>
-                  <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                    <h4 className="font-medium text-gray-900 mb-2">💰 Understanding Insurance Coverage</h4>
-                    <p className="text-sm text-gray-600">What\'s covered and what you need to know about rental insurance.</p>
-                  </div>
-                  <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                    <h4 className="font-medium text-gray-900 mb-2">📱 Using the Mobile App</h4>
-                    <p className="text-sm text-gray-600">Tips and tricks for getting the most out of our mobile app.</p>
-                  </div>
-                  <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors duration-200">
-                    <h4 className="font-medium text-gray-900 mb-2">🌍 International Travel</h4>
-                    <p className="text-sm text-gray-600">Requirements and tips for crossing borders with rental vehicles.</p>
-                  </div>
-                </div>
+              <div className="brutal-card-sm bg-gray-50 p-4 hover:bg-yellow-100 cursor-pointer transition-colors">
+                <h4 className="font-black uppercase text-xs mb-2">💰 Insurance Coverage</h4>
+                <p className="text-xs font-bold">What\'s covered and what you need to know about rental insurance.</p>
+              </div>
+              <div className="brutal-card-sm bg-gray-50 p-4 hover:bg-yellow-100 cursor-pointer transition-colors">
+                <h4 className="font-black uppercase text-xs mb-2">📱 Mobile App</h4>
+                <p className="text-xs font-bold">Tips and tricks for getting the most out of our mobile app.</p>
+              </div>
+              <div className="brutal-card-sm bg-gray-50 p-4 hover:bg-yellow-100 cursor-pointer transition-colors">
+                <h4 className="font-black uppercase text-xs mb-2">🌍 International Travel</h4>
+                <p className="text-xs font-bold">Requirements and tips for crossing borders with rental vehicles.</p>
               </div>
             </div>
           </div>
+        </div>
       </div>
     </div>
   );

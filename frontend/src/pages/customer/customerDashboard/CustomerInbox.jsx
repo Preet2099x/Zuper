@@ -122,147 +122,125 @@ const CustomerInbox = () => {
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'high':
-        return 'border-red-500 bg-red-50';
+        return 'bg-red-200 border-red-600';
       case 'normal':
-        return 'border-gray-300 bg-white';
+        return 'bg-white border-black';
       default:
-        return 'border-gray-300 bg-white';
+        return 'bg-white border-black';
     }
   };
 
   return (
-    <div className="p-8">
-      <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Inbox</h1>
+    <div className="max-w-6xl mx-auto">
+      <h1 className="brutal-heading text-3xl mb-5">INBOX 📬</h1>
 
-          {/* Tabs */}
-          <div className="bg-white rounded-lg shadow-md mb-6">
-            <div className="border-b border-gray-200">
-              <nav className="flex">
-                <button
-                  onClick={() => setActiveTab('messages')}
-                  className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                    activeTab === 'messages'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Messages ({messages.filter(m => !m.read).length})
-                </button>
-                <button
-                  onClick={() => setActiveTab('notifications')}
-                  className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                    activeTab === 'notifications'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Notifications ({notifications.filter(n => !n.read).length})
-                </button>
-              </nav>
-            </div>
+      {/* Tabs */}
+      <div className="flex gap-3 mb-5">
+        <button
+          onClick={() => setActiveTab('messages')}
+          className={`brutal-btn py-3 px-5 text-xs ${
+            activeTab === 'messages'
+              ? 'bg-yellow-400'
+              : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+        >
+          💬 MESSAGES ({messages.filter(m => !m.read).length})
+        </button>
+        <button
+          onClick={() => setActiveTab('notifications')}
+          className={`brutal-btn py-3 px-5 text-xs ${
+            activeTab === 'notifications'
+              ? 'bg-yellow-400'
+              : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+        >
+          🔔 NOTIFICATIONS ({notifications.filter(n => !n.read).length})
+        </button>
+      </div>
 
-            {/* Messages Tab */}
-            {activeTab === 'messages' && (
-              <div className="divide-y divide-gray-200">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`p-6 hover:bg-gray-50 transition-colors duration-200 cursor-pointer ${getPriorityColor(message.priority)} ${!message.read ? 'border-l-4' : ''}`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-4">
-                        <div className="text-2xl">{getMessageIcon(message.type)}</div>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <h3 className="text-lg font-semibold text-gray-900">{message.sender}</h3>
-                            {!message.read && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                New
-                              </span>
-                            )}
-                          </div>
-                          <h4 className="text-md font-medium text-gray-800 mb-2">{message.subject}</h4>
-                          <p className="text-gray-600 text-sm mb-2">{message.message}</p>
-                          <p className="text-xs text-gray-500">{message.timestamp}</p>
-                        </div>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button className="text-gray-400 hover:text-gray-600 p-1">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M5 12h.01M5 12h.01M12 12h.01M12 12h.01M12 12h.01M19 12h.01M19 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
+      {/* Messages Tab */}
+      {activeTab === 'messages' && (
+        <div className="space-y-3">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`brutal-card-sm p-4 cursor-pointer hover:rotate-1 transition-transform ${getPriorityColor(message.priority)}`}
+            >
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">{getMessageIcon(message.type)}</div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="brutal-heading text-sm">{message.sender}</h3>
+                    {!message.read && (
+                      <span className="brutal-badge bg-cyan-300 border-cyan-600 text-xs">
+                        NEW
+                      </span>
+                    )}
                   </div>
-                ))}
+                  <h4 className="font-black text-xs uppercase mb-2">{message.subject}</h4>
+                  <p className="text-xs font-bold mb-2">{message.message}</p>
+                  <p className="text-xs font-bold opacity-60">🕐 {message.timestamp}</p>
+                </div>
               </div>
-            )}
-
-            {/* Notifications Tab */}
-            {activeTab === 'notifications' && (
-              <div className="divide-y divide-gray-200">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className={`p-6 hover:bg-gray-50 transition-colors duration-200 cursor-pointer ${!notification.read ? 'border-l-4 border-blue-500 bg-blue-50' : ''}`}
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className="text-2xl">{getNotificationIcon(notification.type)}</div>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="text-lg font-semibold text-gray-900">{notification.title}</h3>
-                          {!notification.read && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              New
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-gray-600 text-sm mb-2">{notification.message}</p>
-                        <p className="text-xs text-gray-500">{notification.timestamp}</p>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button className="text-gray-400 hover:text-gray-600 p-1">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M5 12h.01M5 12h.01M12 12h.01M12 12h.01M12 12h.01M19 12h.01M19 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <button className="flex items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">📧</div>
-                  <p className="font-medium text-gray-900">Compose Message</p>
-                  <p className="text-sm text-gray-600">Send to provider</p>
-                </div>
-              </button>
-              <button className="flex items-center justify-center p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">📱</div>
-                  <p className="font-medium text-gray-900">Contact Support</p>
-                  <p className="text-sm text-gray-600">Get help quickly</p>
-                </div>
-              </button>
-              <button className="flex items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors duration-200">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">📋</div>
-                  <p className="font-medium text-gray-900">View Bookings</p>
-                  <p className="text-sm text-gray-600">Manage reservations</p>
-                </div>
-              </button>
             </div>
-          </div>
+          ))}
+        </div>
+      )}
+
+      {/* Notifications Tab */}
+      {activeTab === 'notifications' && (
+        <div className="space-y-3">
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className={`brutal-card-sm p-4 cursor-pointer hover:rotate-1 transition-transform ${!notification.read ? 'bg-cyan-100 border-cyan-600' : 'bg-white border-black'}`}
+            >
+              <div className="flex items-start gap-4">
+                <div className="text-3xl">{getNotificationIcon(notification.type)}</div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="brutal-heading text-sm">{notification.title}</h3>
+                    {!notification.read && (
+                      <span className="brutal-badge bg-yellow-300 border-yellow-600 text-xs">
+                        NEW
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs font-bold mb-2">{notification.message}</p>
+                  <p className="text-xs font-bold opacity-60">🕐 {notification.timestamp}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Quick Actions */}
+      <div className="brutal-card bg-white p-6 mt-5">
+        <h2 className="brutal-heading text-xl mb-4">QUICK ACTIONS ⚡</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button className="brutal-btn bg-cyan-300 hover:bg-cyan-400 p-4">
+            <div className="text-center">
+              <div className="text-3xl mb-2">📧</div>
+              <p className="font-black uppercase text-sm">Compose</p>
+              <p className="text-xs font-bold">Send to provider</p>
+            </div>
+          </button>
+          <button className="brutal-btn bg-green-300 hover:bg-green-400 p-4">
+            <div className="text-center">
+              <div className="text-3xl mb-2">📱</div>
+              <p className="font-black uppercase text-sm">Support</p>
+              <p className="text-xs font-bold">Get help quickly</p>
+            </div>
+          </button>
+          <button className="brutal-btn bg-purple-300 hover:bg-purple-400 p-4">
+            <div className="text-center">
+              <div className="text-3xl mb-2">📋</div>
+              <p className="font-black uppercase text-sm">Bookings</p>
+              <p className="text-xs font-bold">Manage reservations</p>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
