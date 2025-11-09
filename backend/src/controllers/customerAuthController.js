@@ -28,9 +28,70 @@ export const signupCustomer = async (req, res) => {
       return res.status(400).json({ message: "Missing fields" });
     }
 
-    const existing = await Customer.findOne({ $or: [{ email }, { phone }] });
-    if (existing) return res.status(400).json({ message: "Email or phone already exists" });
+    // Validate Indian phone number format: +91 followed by 10 digits
+    const phoneRegex = /^\+91\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: "Phone must be in format +91XXXXXXXXXX (10 digits)" });
+    }
 
+    const existing = await Customer.findOne({ $or: [{ email }, { phone }] });
+    
+    // If account exists but is not verified, allow re-signup with new OTP
+    if (existing && !existing.isEmailVerified) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const otp = generateOtp();
+      const hashedOtp = hashOtp(otp);
+
+      // Update existing unverified account with new details
+      existing.name = name;
+      existing.email = email;
+      existing.phone = phone;
+      existing.password = hashedPassword;
+      existing.emailVerificationCode = hashedOtp;
+      existing.emailVerificationExpires = Date.now() + 15 * 60 * 1000;
+      await existing.save();
+
+      await sendEmail({
+        to: email,
+        subject: "Verify your Zuper account",
+        text: `
+        Hello ${name},
+
+        Welcome back to Zuper! We noticed you started signup but didn't verify your email.
+
+        Your new verification code is: ${otp}
+
+        This code will expire in 15 minutes. If you did not sign up for a Zuper account, please ignore this email.
+
+        Thanks,
+        The Zuper Team
+        `,
+        html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+          <h2 style="color: #2563eb;">Welcome back to Zuper!</h2>
+          <p>Hello <strong>${name}</strong>,</p>
+          <p>We noticed you started signup but didn't verify your email. Here's a new verification code:</p>
+          <p style="font-size: 20px; font-weight: bold; letter-spacing: 3px; color: #111;">
+              ${otp}
+          </p>
+          <p>This code will expire in <strong>15 minutes</strong>.</p>
+          <p>If you didn't create a Zuper account, you can ignore this message.</p>
+          <p style="margin-top: 20px;">— The Zuper Team</p>
+          </div>
+        `
+      });
+
+      return res.status(200).json({
+        message: "Account exists but was not verified. New verification code sent to email."
+      });
+    }
+
+    // If account exists and is verified, reject signup
+    if (existing) {
+      return res.status(400).json({ message: "Email or phone already exists" });
+    }
+
+    // Create new account
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const otp = generateOtp();

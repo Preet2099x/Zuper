@@ -19,8 +19,17 @@ export default function Signup() {
   const [otp, setOtp] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    // For phone input, only allow digits and limit to 10
+    if (name === "phone") {
+      const digits = value.replace(/\D/g, "").slice(0, 10);
+      setForm({ ...form, phone: digits });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -28,6 +37,10 @@ export default function Signup() {
 
     if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
       return setError("Please fill all required fields.");
+    }
+
+    if (form.phone.length !== 10) {
+      return setError("Phone number must be exactly 10 digits.");
     }
 
     if (form.password.length < 6) {
@@ -47,7 +60,7 @@ export default function Signup() {
         body: JSON.stringify({
           name: form.name,
           email: form.email,
-          phone: form.phone,
+          phone: `+91${form.phone}`, // Add +91 prefix
           password: form.password,
         }),
       });
@@ -205,16 +218,26 @@ export default function Signup() {
 
                 <div>
                   <label className="block mb-2">
-                    <span className="font-black uppercase text-sm">Phone </span>
+                    <span className="font-black uppercase text-sm">Phone Number 📱</span>
                   </label>
-                  <input
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    placeholder="+1234567890"
-                    className="w-full p-4 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-pink-400 placeholder:normal-case"
-                    required
-                  />
+                  <div className="flex gap-2">
+                    <div className="brutal-card-sm bg-gray-100 border-black px-4 py-4 font-black text-lg flex items-center">
+                      +91
+                    </div>
+                    <input
+                      name="phone"
+                      type="tel"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="9876543210"
+                      maxLength="10"
+                      className="flex-1 p-4 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-pink-400 placeholder:normal-case"
+                      required
+                    />
+                  </div>
+                  <p className="text-xs font-bold text-gray-600 mt-1">
+                    Enter 10-digit mobile number
+                  </p>
                 </div>
 
                 <div>

@@ -109,11 +109,14 @@ export default function ProviderLogin() {
                 name="emailOrPhone"
                 value={form.emailOrPhone}
                 onChange={handleChange}
-                placeholder="you@example.com"
-                className="w-full p-4 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-cyan-400 uppercase placeholder:normal-case"
+                placeholder="email@example.com or +919876543210"
+                className="w-full p-4 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-cyan-400 placeholder:normal-case"
                 required
                 autoComplete="username"
               />
+              <p className="text-xs font-bold text-gray-600 mt-1">
+                Use +91 prefix for phone login
+              </p>
             </div>
 
             <div>
