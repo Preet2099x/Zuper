@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+﻿import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_BASE || "http://localhost:5000";
+const API = import.meta.env.VITE_API_BASE;
 
 export default function Login() {
   const nav = useNavigate();
@@ -27,7 +26,6 @@ export default function Login() {
     setLoading(true);
     setError("");
 
-    // basic client-side validation (helpful UX, server still authoritative)
     if (!form.emailOrPhone.trim() || !form.password) {
       setError("Please fill both fields");
       setLoading(false);
@@ -48,7 +46,6 @@ export default function Login() {
       } else {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        // persist remember choice (non-sensitive)
         if (form.remember) localStorage.setItem("remembered", form.emailOrPhone);
         else localStorage.removeItem("remembered");
 
@@ -64,99 +61,166 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100 p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="w-full max-w-md bg-white/95 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-gray-100"
-      >
-        <header className="mb-4 text-center">
-          <h1 className="text-2xl font-semibold">Welcome back</h1>
-          <p className="text-sm text-gray-500 mt-1">Sign in to continue to your account</p>
-        </header>
+    <div className="min-h-screen flex items-center justify-center bg-yellow-50 p-4 relative overflow-hidden">
+      <div className="absolute top-10 right-10 w-32 h-32 bg-cyan-400 border-4 border-black transform rotate-12 hidden md:block"></div>
+      <div className="absolute bottom-10 left-10 w-24 h-24 bg-pink-400 border-4 border-black rounded-full hidden md:block"></div>
+      <div className="absolute top-1/2 left-10 w-16 h-16 bg-lime-400 border-4 border-black transform -rotate-6 hidden lg:block"></div>
+      
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
+          backgroundSize: "40px 40px"
+        }}></div>
+      </div>
 
-        {error && (
-          <div className="flex items-start gap-2 bg-red-50 border border-red-100 text-red-700 p-3 rounded mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12A9 9 0 1112 3a9 9 0 019 9z" />
-            </svg>
-            <div className="text-sm">{error}</div>
-          </div>
-        )}
+      <div className="w-full max-w-md relative z-10 animate-slide-up">
+        <div className="text-center mb-6">
+          <Link to="/" className="inline-block mb-4">
+            <span className="brutal-badge bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 text-2xl inline-block transform -rotate-2">
+              ZUPER
+            </span>
+          </Link>
+          <h1 className="brutal-heading text-4xl md:text-5xl mb-2">
+            WELCOME BACK! 
+          </h1>
+          <p className="font-bold text-gray-700">
+            Sign in to access your account
+          </p>
+        </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <label className="block">
-            <span className="text-sm font-medium text-gray-700">Email or phone</span>
-            <input
-              ref={inputRef}
-              name="emailOrPhone"
-              value={form.emailOrPhone}
-              onChange={handleChange}
-              placeholder="you@example.com or +911234567890"
-              className="mt-1 w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-200"
-              required
-              autoComplete="username"
-            />
-          </label>
+        <div className="brutal-card bg-white p-8 transform rotate-1 hover:rotate-0 transition-transform">
+          {error && (
+            <div className="brutal-card-sm bg-red-100 border-red-500 p-4 mb-6 flex items-start gap-3">
+              <span className="text-2xl"></span>
+              <div>
+                <p className="font-black uppercase text-sm text-red-900 mb-1">ERROR!</p>
+                <p className="font-bold text-sm text-red-800">{error}</p>
+              </div>
+            </div>
+          )}
 
-          <label className="block relative">
-            <span className="text-sm font-medium text-gray-700">Password</span>
-            <input
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Your password"
-              type={showPassword ? "text" : "password"}
-              className="mt-1 w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-200"
-              required
-              autoComplete="current-password"
-            />
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="block mb-2">
+                <span className="font-black uppercase text-sm">Email or Phone </span>
+              </label>
+              <input
+                ref={inputRef}
+                name="emailOrPhone"
+                value={form.emailOrPhone}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                className="w-full p-4 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 uppercase placeholder:normal-case"
+                required
+                autoComplete="username"
+              />
+            </div>
+
+            <div>
+              <label className="block mb-2">
+                <span className="font-black uppercase text-sm">Password </span>
+              </label>
+              <div className="relative">
+                <input
+                  name="password"
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  type={showPassword ? "text" : "password"}
+                  className="w-full p-4 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 placeholder:normal-case"
+                  required
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 font-black text-sm uppercase border-2 border-black bg-yellow-300 px-3 py-1 hover:bg-yellow-400"
+                >
+                  {showPassword ? "HIDE" : "SHOW"}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  name="remember" 
+                  checked={form.remember} 
+                  onChange={handleChange} 
+                  className="w-5 h-5 border-3 border-black" 
+                />
+                <span className="font-bold text-sm">Remember me</span>
+              </label>
+
+              <button 
+                type="button" 
+                onClick={() => nav("/forgot-password")} 
+                className="font-black text-sm uppercase hover:text-blue-600 underline"
+              >
+                Forgot?
+              </button>
+            </div>
+
             <button
-              type="button"
-              onClick={() => setShowPassword((s) => !s)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-3 top-9 text-sm text-gray-500"
+              type="submit"
+              disabled={loading}
+              className="brutal-btn w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {showPassword ? "Hide" : "Show"}
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z" />
+                  </svg>
+                  LOGGING IN...
+                </span>
+              ) : (
+                "SIGN IN "
+              )}
             </button>
-          </label>
+          </form>
 
-          <div className="flex items-center justify-between text-sm">
-            <label className="inline-flex items-center gap-2">
-              <input type="checkbox" name="remember" checked={form.remember} onChange={handleChange} className="w-4 h-4" />
-              <span className="text-gray-600">Remember me</span>
-            </label>
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t-3 border-black"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-white px-4 font-black uppercase text-xs">Or continue with</span>
+              </div>
+            </div>
 
-            <button type="button" onClick={() => nav('/forgot-password')} className="text-blue-600 hover:underline">
-              Forgot?
-            </button>
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <button className="brutal-btn bg-white hover:bg-gray-50 text-black py-3 flex items-center justify-center gap-2">
+                <span className="text-xl"></span>
+                <span className="font-black text-sm">GOOGLE</span>
+              </button>
+              <button className="brutal-btn bg-white hover:bg-gray-50 text-black py-3 flex items-center justify-center gap-2">
+                <span className="text-xl"></span>
+                <span className="font-black text-sm">FACEBOOK</span>
+              </button>
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-lg font-medium shadow-sm disabled:opacity-60 disabled:cursor-not-allowed bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-          >
-            {loading ? (
-              <span className="inline-flex items-center gap-2">
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z" />
-                </svg>
-                Logging in...
-              </span>
-            ) : (
-              'Sign in'
-            )}
-          </button>
-        </form>
+          <p className="mt-6 text-center font-bold">
+            Don't have an account?{" "}
+            <button 
+              onClick={() => nav("/customer/signup")} 
+              className="font-black uppercase text-sm underline hover:text-blue-600"
+            >
+              Sign up here! 
+            </button>
+          </p>
+        </div>
 
-        <div className="mt-5 text-center text-sm text-gray-500">or continue with</div>
-
-
-        <p className="mt-6 text-center text-sm text-gray-600">Don’t have an account? <button onClick={() => nav('/customer/signup')} className="text-blue-600 hover:underline">Sign up</button></p>
-      </motion.div>
+        <div className="text-center mt-6">
+          <Link to="/" className="brutal-btn bg-lime-400 hover:bg-lime-300 text-black px-6 py-3 inline-block">
+             BACK TO HOME
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

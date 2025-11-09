@@ -117,7 +117,7 @@ const VehicleEditModal = ({ vehicle, onClose, onSave }) => {
       // Get token
       const token = localStorage.getItem('token');
 
-      const response = await fetch(`http://localhost:5000/api/vehicles/${vehicle._id}`, {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/${vehicle._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`

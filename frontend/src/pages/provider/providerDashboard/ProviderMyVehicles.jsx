@@ -20,7 +20,7 @@ const ProviderMyVehicles = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/vehicles/my-vehicles', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/my-vehicles`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ const ProviderMyVehicles = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/vehicles/${vehicleId}`, {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/${vehicleId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

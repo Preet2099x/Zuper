@@ -71,7 +71,7 @@ const CustomerProfile = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/user/customer/profile', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/customer/profile`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -115,7 +115,7 @@ const CustomerProfile = () => {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/documents/customer', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/documents/customer`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -165,7 +165,7 @@ const CustomerProfile = () => {
       // Combine firstName and lastName into name
       const fullName = `${profileData.personal.firstName} ${profileData.personal.lastName}`.trim();
 
-      const response = await fetch('http://localhost:5000/api/user/customer/profile', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/customer/profile`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -259,7 +259,7 @@ const CustomerProfile = () => {
         formData.append('licenseNumber', documentNumber);
       }
 
-      const response = await fetch('http://localhost:5000/api/documents/upload', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/documents/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -313,188 +313,183 @@ const CustomerProfile = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto">
-        {loading ? (
-          <div className="flex items-center justify-center min-h-screen">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading profile...</p>
+    <div className="max-w-5xl mx-auto">
+      {loading ? (
+        <div className="brutal-card bg-white p-12 text-center">
+          <div className="inline-block animate-spin text-6xl mb-3">⏳</div>
+          <p className="font-black uppercase text-sm">Loading profile...</p>
+        </div>
+      ) : (
+        <div>
+          {/* Error Message */}
+          {error && (
+            <div className="brutal-card-sm bg-red-300 border-red-600 p-3 mb-5 flex items-start gap-2">
+              <span className="text-xl">❌</span>
+              <p className="font-black uppercase text-xs">{error}</p>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="brutal-card-sm bg-green-300 border-green-600 p-3 mb-5 flex items-start gap-2">
+              <span className="text-xl">✅</span>
+              <p className="font-black uppercase text-xs">{successMessage}</p>
+            </div>
+          )}
+
+          {/* Header */}
+          <div className="brutal-card bg-yellow-400 p-6 mb-5 -rotate-1">
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 bg-white border-4 border-black rounded-full flex items-center justify-center transform rotate-3">
+                <span className="text-3xl font-black">
+                  {profileData.personal.firstName[0]}{profileData.personal.lastName[0]}
+                </span>
+              </div>
+              <div className="flex-1">
+                <h1 className="brutal-heading text-2xl mb-1">
+                  {profileData.personal.firstName} {profileData.personal.lastName}
+                </h1>
+                <p className="font-bold text-sm mb-2">📧 {profileData.personal.email}</p>
+                <div className="brutal-badge bg-green-300 border-green-600 inline-block">
+                  ✅ VERIFIED CUSTOMER
+                </div>
+              </div>
             </div>
           </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            {/* Error Message */}
-            {error && (
-              <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-t-lg">
-                {error}
-              </div>
-            )}
 
-            {/* Success Message */}
-            {successMessage && (
-              <div className="p-4 bg-green-100 border border-green-400 text-green-700">
-                {successMessage}
-              </div>
-            )}
+          {/* Tabs */}
+          <div className="flex gap-3 mb-5">
+            <button
+              onClick={() => setActiveTab('personal')}
+              className={`brutal-btn py-3 px-5 text-xs ${
+                activeTab === 'personal'
+                  ? 'bg-yellow-400'
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              👤 PERSONAL INFO
+            </button>
+            <button
+              onClick={() => setActiveTab('documents')}
+              className={`brutal-btn py-3 px-5 text-xs ${
+                activeTab === 'documents'
+                  ? 'bg-yellow-400'
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              📄 DOCUMENTS
+            </button>
+            <button
+              onClick={() => setActiveTab('preferences')}
+              className={`brutal-btn py-3 px-5 text-xs ${
+                activeTab === 'preferences'
+                  ? 'bg-yellow-400'
+                  : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+            >
+              ⚙️ PREFERENCES
+            </button>
+          </div>
 
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6">
-              <div className="flex items-center space-x-6">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
-                  <span className="text-3xl font-bold text-blue-600">
-                    {profileData.personal.firstName[0]}{profileData.personal.lastName[0]}
-                  </span>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-white">
-                    {profileData.personal.firstName} {profileData.personal.lastName}
-                  </h1>
-                  <p className="text-blue-100">{profileData.personal.email}</p>
-                  <div className="flex items-center mt-2">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                      Verified Customer
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Tabs */}
-            <div className="border-b border-gray-200">
-              <nav className="flex">
-                <button
-                  onClick={() => setActiveTab('personal')}
-                  className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                    activeTab === 'personal'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Personal Info
-                </button>
-                <button
-                  onClick={() => setActiveTab('documents')}
-                  className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                    activeTab === 'documents'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Documents
-                </button>
-                <button
-                  onClick={() => setActiveTab('preferences')}
-                  className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                    activeTab === 'preferences'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  Preferences
-                </button>
-              </nav>
-            </div>
-
-            {/* Tab Content */}
-            <div className="p-8">
+          {/* Tab Content */}
+          <div className="brutal-card bg-white p-6">
               {/* Personal Information Tab */}
               {activeTab === 'personal' && (
                 <div>
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-semibold text-gray-900">Personal Information</h2>
+                  <div className="flex justify-between items-center mb-5">
+                    <h2 className="brutal-heading text-xl">PERSONAL INFO</h2>
                     {!isEditing ? (
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                        className="brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 px-4 text-xs"
                       >
-                        Edit Profile
+                        ✏️ EDIT
                       </button>
                     ) : (
-                      <div className="flex space-x-2">
+                      <div className="flex gap-2">
                         <button
                           onClick={handleSave}
                           disabled={saving}
-                          className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                          className="brutal-btn bg-green-300 hover:bg-green-400 py-2 px-4 text-xs disabled:opacity-50"
                         >
-                          {saving ? 'Saving...' : 'Save Changes'}
+                          {saving ? '⏳ SAVING...' : '💾 SAVE'}
                         </button>
                         <button
                           onClick={handleCancel}
                           disabled={saving}
-                          className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                          className="brutal-btn bg-gray-300 hover:bg-gray-400 py-2 px-4 text-xs disabled:opacity-50"
                         >
-                          Cancel
+                          ❌ CANCEL
                         </button>
                       </div>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                      <label className="block font-black uppercase text-xs mb-2">👤 First Name</label>
                       <input
                         type="text"
                         value={profileData.personal.firstName}
                         onChange={(e) => handleInputChange('personal', 'firstName', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                        className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 text-sm disabled:bg-gray-100 disabled:opacity-70"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                      <label className="block font-black uppercase text-xs mb-2">👤 Last Name</label>
                       <input
                         type="text"
                         value={profileData.personal.lastName}
                         onChange={(e) => handleInputChange('personal', 'lastName', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                        className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 text-sm disabled:bg-gray-100 disabled:opacity-70"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <label className="block font-black uppercase text-xs mb-2">📧 Email</label>
                       <input
                         type="email"
                         value={profileData.personal.email}
                         onChange={(e) => handleInputChange('personal', 'email', e.target.value)}
                         disabled={true}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 cursor-not-allowed"
+                        className="w-full p-2.5 border-3 border-black font-bold text-sm bg-gray-100 opacity-70 cursor-not-allowed"
                         title="Email cannot be changed"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                      <label className="block font-black uppercase text-xs mb-2">📱 Phone</label>
                       <input
                         type="tel"
                         value={profileData.personal.phone}
                         onChange={(e) => handleInputChange('personal', 'phone', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                        className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 text-sm disabled:bg-gray-100 disabled:opacity-70"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                      <label className="block font-black uppercase text-xs mb-2">🎂 Date of Birth</label>
                       <input
                         type="date"
                         value={profileData.personal.dateOfBirth}
                         onChange={(e) => handleInputChange('personal', 'dateOfBirth', e.target.value)}
                         disabled={!isEditing}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                        className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 text-sm disabled:bg-gray-100 disabled:opacity-70"
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                      <label className="block font-black uppercase text-xs mb-2">📍 Address</label>
                       <textarea
                         value={profileData.personal.address}
                         onChange={(e) => handleInputChange('personal', 'address', e.target.value)}
                         disabled={!isEditing}
                         rows={3}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100"
+                        className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 text-sm disabled:bg-gray-100 disabled:opacity-70"
                       />
                     </div>
                   </div>
@@ -835,7 +830,6 @@ const CustomerProfile = () => {
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 };

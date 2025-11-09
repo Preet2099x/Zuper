@@ -1,15 +1,157 @@
 @import "tailwindcss";
 
-/* blobs & subtle animations used by landing page */
-@keyframes blob {
-  0% { transform: translate(0,0) scale(1); }
-  33% { transform: translate(30px,-30px) scale(1.05); }
-  66% { transform: translate(-20px,20px) scale(0.95); }
-  100% { transform: translate(0,0) scale(1); }
-}
-.animate-blob { animation: blob 9s infinite; }
-.animation-delay-2000 { animation-delay: 2s; }
+/* ==================== NEO-BRUTALIST DESIGN SYSTEM ==================== */
 
-/* small confort improvements */
-.container { max-width: 1200px; }
+/* Neo-Brutalist Animations */
+@keyframes float-brutal {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+  }
+}
+
+.animate-float-brutal {
+  animation: float-brutal 3s ease-in-out infinite;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s infinite;
+}
+
+/* Neo-Brutalist Card */
+.brutal-card {
+  border: 4px solid #000;
+  box-shadow: 8px 8px 0 0 #000;
+  transition: all 0.2s ease;
+}
+
+.brutal-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 12px 12px 0 0 #000;
+}
+
+.brutal-card-sm {
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0 0 #000;
+  transition: all 0.2s ease;
+}
+
+.brutal-card-sm:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 10px 10px 0 0 #000;
+}
+
+/* Neo-Brutalist Button */
+.brutal-btn {
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0 0 #000;
+  transition: all 0.15s ease;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.brutal-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 0 #000;
+}
+
+.brutal-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px 0 0 #000;
+}
+
+/* Neo-Brutalist Badge */
+.brutal-badge {
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 0 #000;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Typography */
+.brutal-heading {
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* Utility Classes */
+.text-shadow-brutal {
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.border-brutal {
+  border: 4px solid #000;
+}
+
+.border-brutal-thin {
+  border: 3px solid #000;
+}
+
+/* Selection */
+::selection {
+  background-color: #FFD700;
+  color: #000;
+}
+
+::-moz-selection {
+  background-color: #FFD700;
+  color: #000;
+}
 
