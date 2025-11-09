@@ -18,9 +18,9 @@ const AdminDocuments = () => {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
 
-      let url = `${import.meta.env.VITE_API_BASE}/api/documents/all`;
+      let url = 'http://localhost:5000/api/documents/all';
       if (filter === 'pending') {
-        url = `${import.meta.env.VITE_API_BASE}/api/documents/pending`;
+        url = 'http://localhost:5000/api/documents/pending';
       } else if (filter !== 'all') {
         url += `?status=${filter}`;
       }
@@ -52,7 +52,7 @@ const AdminDocuments = () => {
       setMessage('');
 
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/documents/${documentId}/verify`, {
+      const response = await fetch(`http://localhost:5000/api/documents/${documentId}/verify`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const AdminDocuments = () => {
       setMessage('');
 
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/documents/${documentId}/reject`, {
+      const response = await fetch(`http://localhost:5000/api/documents/${documentId}/reject`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

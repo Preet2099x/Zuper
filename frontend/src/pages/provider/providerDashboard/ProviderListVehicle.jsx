@@ -254,7 +254,7 @@ const ProviderListVehicle = () => {
       
       console.log('Submitting vehicle data with images:', { company: formData.company, imageCount: imageFiles.length });
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles`, {
+      const response = await fetch('http://localhost:5000/api/vehicles', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

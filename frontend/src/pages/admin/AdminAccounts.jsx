@@ -20,12 +20,12 @@ const AdminAccounts = () => {
       const token = localStorage.getItem('adminToken');
 
       // Fetch customers
-      const customersResponse = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/customers`, {
+      const customersResponse = await fetch('http://localhost:5000/api/user/customers', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       // Fetch providers
-      const providersResponse = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/providers`, {
+      const providersResponse = await fetch('http://localhost:5000/api/user/providers', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -50,7 +50,7 @@ const AdminAccounts = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/customers/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/user/customers/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -72,7 +72,7 @@ const AdminAccounts = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/providers/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/user/providers/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -130,7 +130,7 @@ const AdminAccounts = () => {
   const handleSaveCustomer = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/customers/${editingCustomer}`, {
+      const response = await fetch(`http://localhost:5000/api/user/customers/${editingCustomer}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ const AdminAccounts = () => {
   const handleSaveProvider = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/providers/${editingProvider}`, {
+      const response = await fetch(`http://localhost:5000/api/user/providers/${editingProvider}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
