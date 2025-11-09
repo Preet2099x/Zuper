@@ -22,7 +22,7 @@ const ProviderBookingRequests = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/bookings/provider/inbox', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/bookings/provider/inbox`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ const ProviderBookingRequests = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:5000/api/bookings/provider/${selectedBooking._id}/approve`,
+        `${import.meta.env.VITE_API_BASE}/api/bookings/provider/${selectedBooking._id}/approve`,
         {
           method: 'PUT',
           headers: {
@@ -89,7 +89,7 @@ const ProviderBookingRequests = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:5000/api/bookings/provider/${selectedBooking._id}/reject`,
+        `${import.meta.env.VITE_API_BASE}/api/bookings/provider/${selectedBooking._id}/reject`,
         {
           method: 'PUT',
           headers: {

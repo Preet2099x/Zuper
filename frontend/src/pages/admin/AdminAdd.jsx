@@ -40,7 +40,7 @@ const AdminAdd = () => {
   const fetchProviders = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/user/providers', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/providers`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -76,8 +76,8 @@ const AdminAdd = () => {
     try {
       const token = localStorage.getItem('adminToken');
       const endpoint = accountForm.type === 'customer'
-        ? 'http://localhost:5000/api/user/customers'
-        : 'http://localhost:5000/api/user/providers';
+        ? `${import.meta.env.VITE_API_BASE}/api/user/customers`
+        : `${import.meta.env.VITE_API_BASE}/api/user/providers`;
 
       const payload = accountForm.type === 'customer'
         ? {
@@ -138,7 +138,7 @@ const AdminAdd = () => {
     try {
       const token = localStorage.getItem('adminToken');
 
-      const response = await fetch('http://localhost:5000/api/vehicles/admin/create', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/admin/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

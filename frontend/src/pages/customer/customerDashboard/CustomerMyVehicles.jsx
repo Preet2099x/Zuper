@@ -19,7 +19,7 @@ const CustomerMyVehicles = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:5000/api/bookings/customer/my-bookings', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/bookings/customer/my-bookings`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ const CustomerMyVehicles = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:5000/api/bookings/customer/${bookingId}/cancel`,
+        `${import.meta.env.VITE_API_BASE}/api/bookings/customer/${bookingId}/cancel`,
         {
           method: 'PUT',
           headers: {
