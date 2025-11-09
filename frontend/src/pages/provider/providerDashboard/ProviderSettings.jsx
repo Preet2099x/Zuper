@@ -125,7 +125,7 @@ const ProviderSettings = () => {
         navigate('/provider/login');
         return;
       }
-  const response = await axios.get(`${import.meta.env.VITE_API_BASE}/api/user/provider/profile`, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.get('http://localhost:5000/api/user/provider/profile', { headers: { Authorization: `Bearer ${token}` } });
       const provider = response.data;
       setSettings(prev => ({
         ...prev,
@@ -193,7 +193,7 @@ const ProviderSettings = () => {
         // Add the logo file
         formData.append('businessLogo', businessLogoFile);
         
-  await axios.put(`${import.meta.env.VITE_API_BASE}/api/user/provider/profile`, formData, { 
+        await axios.put('http://localhost:5000/api/user/provider/profile', formData, { 
           headers: { 
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -201,7 +201,7 @@ const ProviderSettings = () => {
         });
       } else {
         // No logo file, use regular JSON
-  await axios.put(`${import.meta.env.VITE_API_BASE}/api/user/provider/profile`, dataToSend, { 
+        await axios.put('http://localhost:5000/api/user/provider/profile', dataToSend, { 
           headers: { 
             Authorization: `Bearer ${token}`, 
             'Content-Type': 'application/json' 

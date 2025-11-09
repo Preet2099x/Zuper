@@ -64,7 +64,7 @@ const CustomerSearch = () => {
       if (filters.minRate) queryParams.append('minRate', filters.minRate);
       if (filters.maxRate) queryParams.append('maxRate', filters.maxRate);
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/search?${queryParams.toString()}`);
+      const response = await fetch(`http://localhost:5000/api/vehicles/search?${queryParams.toString()}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch vehicles');

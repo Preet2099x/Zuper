@@ -71,7 +71,7 @@ const CustomerProfile = () => {
         return;
       }
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/customer/profile`, {
+      const response = await fetch('http://localhost:5000/api/user/customer/profile', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -115,7 +115,7 @@ const CustomerProfile = () => {
   const fetchDocuments = async () => {
     try {
       const token = localStorage.getItem('token');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/documents/customer`, {
+      const response = await fetch('http://localhost:5000/api/documents/customer', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -165,7 +165,7 @@ const CustomerProfile = () => {
       // Combine firstName and lastName into name
       const fullName = `${profileData.personal.firstName} ${profileData.personal.lastName}`.trim();
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/user/customer/profile`, {
+      const response = await fetch('http://localhost:5000/api/user/customer/profile', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -259,7 +259,7 @@ const CustomerProfile = () => {
         formData.append('licenseNumber', documentNumber);
       }
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/documents/upload`, {
+      const response = await fetch('http://localhost:5000/api/documents/upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

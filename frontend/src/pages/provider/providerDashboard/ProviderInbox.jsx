@@ -30,7 +30,7 @@ const ProviderInbox = () => {
         return;
       }
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/messages/conversations`, {
+      const response = await fetch('http://localhost:5000/api/messages/conversations', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ const ProviderInbox = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE}/api/messages/conversations/${conversationId}/messages`,
+        `http://localhost:5000/api/messages/conversations/${conversationId}/messages`,
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -83,7 +83,7 @@ const ProviderInbox = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE}/api/messages/conversations/${selectedConversation._id}/messages`,
+        `http://localhost:5000/api/messages/conversations/${selectedConversation._id}/messages`,
         {
           method: 'POST',
           headers: {

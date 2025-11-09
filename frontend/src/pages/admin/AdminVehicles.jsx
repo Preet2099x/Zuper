@@ -16,7 +16,7 @@ const AdminVehicles = () => {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/admin/all`, {
+      const response = await fetch('http://localhost:5000/api/vehicles/admin/all', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -36,7 +36,7 @@ const AdminVehicles = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/vehicles/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -71,7 +71,7 @@ const AdminVehicles = () => {
   const handleSaveVehicle = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/${editingVehicle}`, {
+      const response = await fetch(`http://localhost:5000/api/vehicles/${editingVehicle}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

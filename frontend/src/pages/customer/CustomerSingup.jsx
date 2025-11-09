@@ -1,7 +1,7 @@
 ﻿import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
-const API = import.meta.env.VITE_API_BASE;
+const API = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 
 export default function Signup() {
   const nav = useNavigate();
