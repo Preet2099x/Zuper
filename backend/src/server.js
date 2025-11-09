@@ -30,7 +30,8 @@ app.use(cors());
 app.use(express.json());
 
 const allowed = [process.env.FRONTEND_URL || "http://localhost:5173"];
-app.use(cors({ origin: allowed })); // allow Vite dev server
+app.use(cors({ origin: ['https://zuper-amber.vercel.app'], credentials: true }));
+
 
 app.get('/',(req,res) => {
     res.send('Zuper Backend is running');
