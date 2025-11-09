@@ -41,24 +41,40 @@ export default function ProviderSignup() {
     setLoading(true);
 
     try {
+      const payload = {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+      };
+
+      // Helpful debug log for request payload
+      console.debug("[ProviderSignup] POST", `${API}/api/auth/provider/signup`, payload);
+
       const res = await fetch(`${API}/api/auth/provider/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          password: form.password,
-        }),
+        body: JSON.stringify(payload),
       });
-      const data = await res.json();
+
+      // Try to parse JSON response but fallback to text for non-JSON bodies
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        const text = await res.text();
+        data = { message: text };
+      }
 
       if (!res.ok) {
-        setError(data.message || "Signup failed");
+        console.error("[ProviderSignup] failed", res.status, data);
+        setError(data.message || `Signup failed (${res.status})`);
       } else {
+        console.debug("[ProviderSignup] success", data);
         setStep("verify");
       }
     } catch {
+      console.error("[ProviderSignup] network error", arguments);
       setError("Server unreachable");
     } finally {
       setLoading(false);
