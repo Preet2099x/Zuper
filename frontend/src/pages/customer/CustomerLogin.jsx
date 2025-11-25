@@ -6,7 +6,7 @@ const API = import.meta.env.VITE_API_BASE;
 export default function Login() {
   const nav = useNavigate();
   const loc = useLocation();
-  const [form, setForm] = useState({ emailOrPhone: "", password: "", remember: false });
+  const [form, setForm] = useState({ email: "", password: "", remember: false });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +26,7 @@ export default function Login() {
     setLoading(true);
     setError("");
 
-    if (!form.emailOrPhone.trim() || !form.password) {
+    if (!form.email.trim() || !form.password) {
       setError("Please fill both fields");
       setLoading(false);
       return;
@@ -36,7 +36,7 @@ export default function Login() {
       const res = await fetch(`${API}/api/auth/customer/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ emailOrPhone: form.emailOrPhone.trim(), password: form.password }),
+        body: JSON.stringify({ emailOrPhone: form.email.trim(), password: form.password }),
       });
 
       const data = await res.json().catch(() => ({}));
@@ -46,7 +46,7 @@ export default function Login() {
       } else {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        if (form.remember) localStorage.setItem("remembered", form.emailOrPhone);
+        if (form.remember) localStorage.setItem("remembered", form.email);
         else localStorage.removeItem("remembered");
 
         const redirectTo = loc.state?.from?.pathname || "/dashboard/customer/overview";
@@ -88,7 +88,7 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="brutal-card bg-white p-8 transform rotate-1 hover:rotate-0 transition-transform">
+        <div className="brutal-card bg-white p-8">
           {error && (
             <div className="brutal-card-sm bg-red-100 border-red-500 p-4 mb-6 flex items-start gap-3">
               <span className="text-2xl"></span>
@@ -102,21 +102,19 @@ export default function Login() {
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block mb-2">
-                <span className="font-black uppercase text-sm">Email or Phone </span>
+                <span className="font-black uppercase text-sm">Email</span>
               </label>
               <input
                 ref={inputRef}
-                name="emailOrPhone"
-                value={form.emailOrPhone}
+                name="email"
+                type="email"
+                value={form.email}
                 onChange={handleChange}
-                placeholder="email@example.com or +919876543210"
+                placeholder="email@example.com"
                 className="w-full p-4 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 placeholder:normal-case"
                 required
                 autoComplete="username"
               />
-              <p className="text-xs font-bold text-gray-600 mt-1">
-                Use +91 prefix for phone login
-              </p>
             </div>
 
             <div>
@@ -195,14 +193,15 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              <button className="brutal-btn bg-white hover:bg-gray-50 text-black py-3 flex items-center justify-center gap-2">
-                <span className="text-xl"></span>
+            <div className="mt-4">
+              <button className="brutal-btn bg-white hover:bg-gray-50 text-black py-3 flex items-center justify-center gap-2 w-full">
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
                 <span className="font-black text-sm">GOOGLE</span>
-              </button>
-              <button className="brutal-btn bg-white hover:bg-gray-50 text-black py-3 flex items-center justify-center gap-2">
-                <span className="text-xl"></span>
-                <span className="font-black text-sm">FACEBOOK</span>
               </button>
             </div>
           </div>
