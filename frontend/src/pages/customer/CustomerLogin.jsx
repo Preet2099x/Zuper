@@ -160,7 +160,7 @@ export default function Login() {
                 onClick={() => nav("/forgot-password")} 
                 className="font-black text-sm uppercase hover:text-blue-600 underline"
               >
-                Forgot?
+                Forgot Password?
               </button>
             </div>
 
