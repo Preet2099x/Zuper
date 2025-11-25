@@ -19,9 +19,9 @@ export default function LandingPage() {
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-20 right-10 w-32 h-32 bg-cyan-400 border-4 border-black animate-float-brutal hidden md:block"></div>
+        <div className="absolute top-20 right-10 w-32 h-32 bg-cyan-400 border-4 border-black transform rotate-12 animate-float-brutal hidden md:block"></div>
         <div className="absolute bottom-20 left-10 w-24 h-24 bg-pink-400 border-4 border-black rounded-full hidden md:block"></div>
-        <div className="absolute top-40 left-1/4 w-16 h-16 bg-lime-400 border-4 border-black hidden lg:block"></div>
+        <div className="absolute top-40 left-1/4 w-16 h-16 bg-lime-400 border-4 border-black transform -rotate-6 hidden lg:block"></div>
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center max-w-5xl mx-auto">
@@ -157,7 +157,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Customer Card */}
-            <div className="brutal-card bg-gradient-to-br from-blue-400 to-cyan-400 p-8 transition-transform">
+            <div className="brutal-card bg-gradient-to-br from-blue-400 to-cyan-400 p-8">
               <div className="mb-6">
                 <span className="text-6xl">👤</span>
               </div>
@@ -178,7 +178,7 @@ export default function LandingPage() {
             </div>
 
             {/* Provider Card */}
-            <div className="brutal-card bg-gradient-to-br from-pink-400 to-purple-400 p-8 transition-transform">
+            <div className="brutal-card bg-gradient-to-br from-pink-400 to-purple-400 p-8">
               <div className="mb-6">
                 <span className="text-6xl">💰</span>
               </div>
@@ -268,7 +268,7 @@ export default function LandingPage() {
 
 function FeatureCard({ icon, title, text, bgColor }) {
   return (
-    <div className={`brutal-card ${bgColor} p-8 transition-all`}>
+    <div className={`brutal-card ${bgColor} p-8`}>
       <div className="text-6xl mb-4">{icon}</div>
       <h4 className="text-2xl font-black mb-3 uppercase leading-tight">
         {title}
