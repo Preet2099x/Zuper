@@ -67,6 +67,10 @@ const ProviderMyVehicles = () => {
     }
   };
 
+  const handleEditVehicle = (vehicleId) => {
+    navigate(`/dashboard/provider/edit-vehicle/${vehicleId}`);
+  };
+
   // Remove static data
   const staticVehicles = [
     {
@@ -353,7 +357,10 @@ const ProviderMyVehicles = () => {
                 )}
 
                 <div className="flex space-x-2">
-                  <button className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 text-black py-2 px-3 text-xs">
+                  <button 
+                    onClick={() => handleEditVehicle(vehicle._id)}
+                    className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 text-black py-2 px-3 text-xs"
+                  >
                     ✏️ EDIT
                   </button>
                   <button 
