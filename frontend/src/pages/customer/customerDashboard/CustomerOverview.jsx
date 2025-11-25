@@ -21,7 +21,7 @@ const CustomerOverview = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {stats.map((stat, index) => (
-          <div key={index} className={`brutal-card ${stat.color} p-4 transform ${index % 2 === 0 ? "rotate-1" : "-rotate-1"} hover:rotate-0 transition-transform`}>
+          <div key={index} className={`brutal-card ${stat.color} p-4`}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-3xl">{stat.emoji}</span>
               <div className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-black text-lg border-2 border-white">

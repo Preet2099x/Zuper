@@ -164,7 +164,7 @@ const CustomerInbox = () => {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`brutal-card-sm p-4 cursor-pointer hover:rotate-1 transition-transform ${getPriorityColor(message.priority)}`}
+              className={`brutal-card-sm p-4 cursor-pointer ${getPriorityColor(message.priority)}`}
             >
               <div className="flex items-start gap-4">
                 <div className="text-3xl">{getMessageIcon(message.type)}</div>
@@ -193,7 +193,7 @@ const CustomerInbox = () => {
           {notifications.map((notification) => (
             <div
               key={notification.id}
-              className={`brutal-card-sm p-4 cursor-pointer hover:rotate-1 transition-transform ${!notification.read ? 'bg-cyan-100 border-cyan-600' : 'bg-white border-black'}`}
+              className={`brutal-card-sm p-4 cursor-pointer ${!notification.read ? 'bg-cyan-100 border-cyan-600' : 'bg-white border-black'}`}
             >
               <div className="flex items-start gap-4">
                 <div className="text-3xl">{getNotificationIcon(notification.type)}</div>

@@ -136,7 +136,7 @@ const CustomerMyVehicles = () => {
       )}
       
       {bookings.length === 0 ? (
-        <div className="brutal-card bg-white p-12 text-center rotate-1">
+        <div className="brutal-card bg-white p-12 text-center">
           <div className="text-6xl mb-3">📭</div>
           <h3 className="brutal-heading text-xl mb-2">NO BOOKINGS YET</h3>
           <p className="font-bold text-sm">Start by searching for vehicles to book!</p>
@@ -144,7 +144,7 @@ const CustomerMyVehicles = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {bookings.map((booking) => (
-            <div key={booking._id} className="brutal-card bg-white p-4 hover:rotate-1 transition-transform">
+            <div key={booking._id} className="brutal-card bg-white p-4">
               {/* Vehicle Image */}
               <div className="h-40 bg-gray-200 border-3 border-black mb-3 flex items-center justify-center overflow-hidden">
                 {booking.vehicle?.images && booking.vehicle.images.length > 0 ? (

@@ -14,6 +14,10 @@ const CustomerProfile = () => {
     aadhar: '',
     license: ''
   });
+  const [documentFiles, setDocumentFiles] = useState({
+    aadhar: null,
+    license: null
+  });
 
   const [profileData, setProfileData] = useState({
     personal: {
@@ -215,8 +219,12 @@ const CustomerProfile = () => {
     setError('');
   };
 
-  const handleDocumentUpload = async (documentType, file) => {
-    if (!file) return;
+  const handleDocumentUpload = async (documentType) => {
+    const file = documentFiles[documentType];
+    if (!file) {
+      setError('Please select a file to upload');
+      return;
+    }
 
     // Validate document number
     const documentNumber = documentNumbers[documentType];
@@ -275,10 +283,14 @@ const CustomerProfile = () => {
       setSuccessMessage(`${documentType === 'license' ? 'License' : 'Aadhar'} document uploaded successfully! Status: Processing`);
       fetchDocuments(); // Refresh documents list
 
-      // Clear the document number after successful upload
+      // Clear the document number and file after successful upload
       setDocumentNumbers(prev => ({
         ...prev,
         [documentType]: ''
+      }));
+      setDocumentFiles(prev => ({
+        ...prev,
+        [documentType]: null
       }));
 
       // Clear success message after 5 seconds
@@ -298,15 +310,15 @@ const CustomerProfile = () => {
 
   const getDocumentBadge = (status) => {
     const statusConfig = {
-      processing: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Processing' },
-      verified: { bg: 'bg-green-100', text: 'text-green-800', label: 'Verified' },
-      rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Rejected' }
+      processing: { bg: 'bg-yellow-300', border: 'border-yellow-600', label: '⏰ PROCESSING' },
+      verified: { bg: 'bg-green-300', border: 'border-green-600', label: '✅ VERIFIED' },
+      rejected: { bg: 'bg-red-300', border: 'border-red-600', label: '❌ REJECTED' }
     };
 
-    const config = statusConfig[status] || { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Not Uploaded' };
+    const config = statusConfig[status] || { bg: 'bg-gray-300', border: 'border-gray-600', label: '📋 NOT UPLOADED' };
 
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}>
+      <span className={`brutal-badge ${config.bg} ${config.border}`}>
         {config.label}
       </span>
     );
@@ -338,7 +350,7 @@ const CustomerProfile = () => {
           )}
 
           {/* Header */}
-          <div className="brutal-card bg-yellow-400 p-6 mb-5 -rotate-1">
+          <div className="brutal-card bg-yellow-400 p-6 mb-5">
             <div className="flex items-center gap-6">
               <div className="w-20 h-20 bg-white border-4 border-black rounded-full flex items-center justify-center transform rotate-3">
                 <span className="text-3xl font-black">
@@ -499,156 +511,255 @@ const CustomerProfile = () => {
               {/* Documents Tab */}
               {activeTab === 'documents' && (
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Documents & Verification</h2>
-                  <p className="text-gray-600 mb-6">
+                  <h2 className="brutal-heading text-xl mb-5">DOCUMENTS & VERIFICATION</h2>
+                  <p className="font-bold text-sm mb-5">
                     Upload your driving license and Aadhar card for verification. Once verified, your documents and details will be displayed below. Documents will be reviewed by our admin team.
                   </p>
 
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {/* Driving License */}
-                    <div className="border border-gray-200 rounded-lg p-6">
+                    <div className="brutal-card-sm bg-cyan-50 p-5">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium text-gray-900">Driving License</h3>
+                        <h3 className="brutal-heading text-base">🚗 DRIVING LICENSE</h3>
                         {getDocumentBadge(getDocumentStatus('license'))}
                       </div>
 
                       {getDocumentStatus('license') === 'verified' ? (
                         // Verified Document Display
-                        <div className="space-y-4">
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                            <div className="flex items-center mb-3">
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                ✓ Verified
-                              </span>
-                              <span className="ml-2 text-sm text-green-700">
-                                Verified on {new Date(documents.find(d => d.documentType === 'license')?.verifiedAt).toLocaleDateString()}
-                              </span>
-                            </div>
+                        <div>
+                          <div className="brutal-badge bg-green-300 border-green-600 mb-3 inline-block">
+                            ✅ VERIFIED ON {new Date(documents.find(d => d.documentType === 'license')?.verifiedAt).toLocaleDateString()}
+                          </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  License Number
-                                </label>
-                                <div className="p-3 bg-white border border-gray-300 rounded-md text-gray-900 font-mono">
-                                  {documents.find(d => d.documentType === 'license')?.licenseNumber}
-                                </div>
-                              </div>
-
-                              <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Document Image
-                                </label>
-                                <div className="border border-gray-300 rounded-lg p-4 bg-white">
-                                  <img
-                                    src={documents.find(d => d.documentType === 'license')?.documentImage}
-                                    alt="Driving License"
-                                    className="max-w-full h-auto max-h-64 object-contain rounded"
-                                  />
-                                </div>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                LICENSE NUMBER
+                              </label>
+                              <div className="p-3 bg-white border-3 border-black font-mono font-bold text-sm">
+                                {documents.find(d => d.documentType === 'license')?.licenseNumber}
                               </div>
                             </div>
+
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                DOCUMENT IMAGE
+                              </label>
+                              <div className="border-3 border-black p-3 bg-white">
+                                <img
+                                  src={documents.find(d => d.documentType === 'license')?.documentImage}
+                                  alt="Driving License"
+                                  className="max-w-full h-auto max-h-64 object-contain"
+                                />
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                setDocuments(prev => prev.filter(d => d.documentType !== 'license'));
+                                setDocumentNumbers(prev => ({ ...prev, license: '' }));
+                                setDocumentFiles(prev => ({ ...prev, license: null }));
+                              }}
+                              className="brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 px-4 text-xs w-full"
+                            >
+                              🔄 UPDATE LICENSE
+                            </button>
+                          </div>
+                        </div>
+                      ) : getDocumentStatus('license') === 'processing' ? (
+                        // Processing Document Display
+                        <div>
+                          <div className="brutal-badge bg-yellow-300 border-yellow-600 mb-3 inline-block">
+                            ⏰ UNDER REVIEW - Awaiting admin verification
+                          </div>
+
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                LICENSE NUMBER (SUBMITTED)
+                              </label>
+                              <div className="p-3 bg-white border-3 border-black font-mono font-bold text-sm">
+                                {documents.find(d => d.documentType === 'license')?.licenseNumber}
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                SUBMITTED DOCUMENT
+                              </label>
+                              <div className="border-3 border-black p-3 bg-white">
+                                <img
+                                  src={documents.find(d => d.documentType === 'license')?.documentImage}
+                                  alt="Driving License"
+                                  className="max-w-full h-auto max-h-64 object-contain"
+                                />
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                setDocuments(prev => prev.filter(d => d.documentType !== 'license'));
+                                setDocumentNumbers(prev => ({ ...prev, license: '' }));
+                                setDocumentFiles(prev => ({ ...prev, license: null }));
+                              }}
+                              className="brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 px-4 text-xs w-full"
+                            >
+                              🔄 UPDATE LICENSE
+                            </button>
                           </div>
                         </div>
                       ) : (
                         // Upload Form
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              License Number
+                            <label className="block font-black uppercase text-xs mb-2">
+                              LICENSE NUMBER
                             </label>
                             <input
                               type="text"
                               value={documentNumbers.license}
                               onChange={(e) => setDocumentNumbers(prev => ({ ...prev, license: e.target.value }))}
                               placeholder="Enter your driving license number"
-                              className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-cyan-400 text-sm"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Upload Driving License Image
+                            <label className="block font-black uppercase text-xs mb-2">
+                              📤 UPLOAD LICENSE IMAGE
                             </label>
-                            <div className="flex items-center space-x-4">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleDocumentUpload('license', e.target.files[0])}
-                                disabled={uploadingDocument === 'license'}
-                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                              />
-                              {uploadingDocument === 'license' && (
-                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                              )}
-                            </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                              Upload a clear image of your driving license (max 5MB)
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setDocumentFiles(prev => ({ ...prev, license: e.target.files[0] }))}
+                              disabled={uploadingDocument === 'license'}
+                              className="block w-full text-sm font-bold file:brutal-btn file:bg-cyan-300 file:hover:bg-cyan-400 file:text-xs file:py-2 file:px-4"
+                            />
+                            {documentFiles.license && (
+                              <p className="text-xs font-bold mt-1 text-green-600">
+                                ✅ {documentFiles.license.name} selected
+                              </p>
+                            )}
+                            <p className="text-xs font-bold mt-1">
+                              📸 Upload a clear image (max 5MB)
                             </p>
                           </div>
 
                           {getDocumentStatus('license') === 'rejected' && (
-                            <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                              <p className="text-sm text-red-800">
-                                <strong>Rejection Reason:</strong> {documents.find(d => d.documentType === 'license')?.adminNotes}
-                              </p>
+                            <div className="brutal-card-sm bg-red-300 border-red-600 p-3 mb-3">
+                              <p className="font-black uppercase text-xs mb-1">❌ REJECTED</p>
+                              <p className="text-xs font-bold">{documents.find(d => d.documentType === 'license')?.adminNotes}</p>
                             </div>
                           )}
+
+                          <button
+                            onClick={() => handleDocumentUpload('license')}
+                            disabled={uploadingDocument === 'license' || !documentNumbers.license || !documentFiles.license}
+                            className="brutal-btn bg-green-300 hover:bg-green-400 py-2 px-4 text-xs w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {uploadingDocument === 'license' ? '⏳ UPLOADING...' : '💾 SAVE LICENSE'}
+                          </button>
                         </div>
                       )}
                     </div>
 
                     {/* Aadhar Card */}
-                    <div className="border border-gray-200 rounded-lg p-6">
+                    <div className="brutal-card-sm bg-yellow-50 p-5">
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-medium text-gray-900">Aadhar Card</h3>
+                        <h3 className="brutal-heading text-base">🪪 AADHAR CARD</h3>
                         {getDocumentBadge(getDocumentStatus('aadhar'))}
                       </div>
 
                       {getDocumentStatus('aadhar') === 'verified' ? (
                         // Verified Document Display
-                        <div className="space-y-4">
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                            <div className="flex items-center mb-3">
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                                ✓ Verified
-                              </span>
-                              <span className="ml-2 text-sm text-green-700">
-                                Verified on {new Date(documents.find(d => d.documentType === 'aadhar')?.verifiedAt).toLocaleDateString()}
-                              </span>
-                            </div>
+                        <div>
+                          <div className="brutal-badge bg-green-300 border-green-600 mb-3 inline-block">
+                            ✅ VERIFIED ON {new Date(documents.find(d => d.documentType === 'aadhar')?.verifiedAt).toLocaleDateString()}
+                          </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Aadhar Number
-                                </label>
-                                <div className="p-3 bg-white border border-gray-300 rounded-md text-gray-900 font-mono">
-                                  {documents.find(d => d.documentType === 'aadhar')?.aadharNumber}
-                                </div>
-                              </div>
-
-                              <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Document Image
-                                </label>
-                                <div className="border border-gray-300 rounded-lg p-4 bg-white">
-                                  <img
-                                    src={documents.find(d => d.documentType === 'aadhar')?.documentImage}
-                                    alt="Aadhar Card"
-                                    className="max-w-full h-auto max-h-64 object-contain rounded"
-                                  />
-                                </div>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                AADHAR NUMBER
+                              </label>
+                              <div className="p-3 bg-white border-3 border-black font-mono font-bold text-sm">
+                                {documents.find(d => d.documentType === 'aadhar')?.aadharNumber}
                               </div>
                             </div>
+
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                DOCUMENT IMAGE
+                              </label>
+                              <div className="border-3 border-black p-3 bg-white">
+                                <img
+                                  src={documents.find(d => d.documentType === 'aadhar')?.documentImage}
+                                  alt="Aadhar Card"
+                                  className="max-w-full h-auto max-h-64 object-contain"
+                                />
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                setDocuments(prev => prev.filter(d => d.documentType !== 'aadhar'));
+                                setDocumentNumbers(prev => ({ ...prev, aadhar: '' }));
+                                setDocumentFiles(prev => ({ ...prev, aadhar: null }));
+                              }}
+                              className="brutal-btn bg-yellow-300 hover:bg-yellow-400 py-2 px-4 text-xs w-full"
+                            >
+                              🔄 UPDATE AADHAR
+                            </button>
+                          </div>
+                        </div>
+                      ) : getDocumentStatus('aadhar') === 'processing' ? (
+                        // Processing Document Display
+                        <div>
+                          <div className="brutal-badge bg-yellow-300 border-yellow-600 mb-3 inline-block">
+                            ⏰ UNDER REVIEW - Awaiting admin verification
+                          </div>
+
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                AADHAR NUMBER (SUBMITTED)
+                              </label>
+                              <div className="p-3 bg-white border-3 border-black font-mono font-bold text-sm">
+                                {documents.find(d => d.documentType === 'aadhar')?.aadharNumber}
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block font-black uppercase text-xs mb-2">
+                                SUBMITTED DOCUMENT
+                              </label>
+                              <div className="border-3 border-black p-3 bg-white">
+                                <img
+                                  src={documents.find(d => d.documentType === 'aadhar')?.documentImage}
+                                  alt="Aadhar Card"
+                                  className="max-w-full h-auto max-h-64 object-contain"
+                                />
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => {
+                                setDocuments(prev => prev.filter(d => d.documentType !== 'aadhar'));
+                                setDocumentNumbers(prev => ({ ...prev, aadhar: '' }));
+                                setDocumentFiles(prev => ({ ...prev, aadhar: null }));
+                              }}
+                              className="brutal-btn bg-yellow-300 hover:bg-yellow-400 py-2 px-4 text-xs w-full"
+                            >
+                              🔄 UPDATE AADHAR
+                            </button>
                           </div>
                         </div>
                       ) : (
                         // Upload Form
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Aadhar Number
+                            <label className="block font-black uppercase text-xs mb-2">
+                              AADHAR NUMBER (12 DIGITS)
                             </label>
                             <input
                               type="text"
@@ -656,46 +767,53 @@ const CustomerProfile = () => {
                               onChange={(e) => setDocumentNumbers(prev => ({ ...prev, aadhar: e.target.value }))}
                               placeholder="Enter your 12-digit Aadhar number"
                               maxLength="12"
-                              className="w-full p-3 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                              className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-yellow-400 text-sm"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Upload Aadhar Card Image
+                            <label className="block font-black uppercase text-xs mb-2">
+                              📤 UPLOAD AADHAR IMAGE
                             </label>
-                            <div className="flex items-center space-x-4">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleDocumentUpload('aadhar', e.target.files[0])}
-                                disabled={uploadingDocument === 'aadhar'}
-                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                              />
-                              {uploadingDocument === 'aadhar' && (
-                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-green-600"></div>
-                              )}
-                            </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                              Upload a clear image of your Aadhar card (max 5MB)
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => setDocumentFiles(prev => ({ ...prev, aadhar: e.target.files[0] }))}
+                              disabled={uploadingDocument === 'aadhar'}
+                              className="block w-full text-sm font-bold file:brutal-btn file:bg-yellow-300 file:hover:bg-yellow-400 file:text-xs file:py-2 file:px-4"
+                            />
+                            {documentFiles.aadhar && (
+                              <p className="text-xs font-bold mt-1 text-green-600">
+                                ✅ {documentFiles.aadhar.name} selected
+                              </p>
+                            )}
+                            <p className="text-xs font-bold mt-1">
+                              📸 Upload a clear image (max 5MB)
                             </p>
                           </div>
 
                           {getDocumentStatus('aadhar') === 'rejected' && (
-                            <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                              <p className="text-sm text-red-800">
-                                <strong>Rejection Reason:</strong> {documents.find(d => d.documentType === 'aadhar')?.adminNotes}
-                              </p>
+                            <div className="brutal-card-sm bg-red-300 border-red-600 p-3 mb-3">
+                              <p className="font-black uppercase text-xs mb-1">❌ REJECTED</p>
+                              <p className="text-xs font-bold">{documents.find(d => d.documentType === 'aadhar')?.adminNotes}</p>
                             </div>
                           )}
+
+                          <button
+                            onClick={() => handleDocumentUpload('aadhar')}
+                            disabled={uploadingDocument === 'aadhar' || !documentNumbers.aadhar || !documentFiles.aadhar}
+                            className="brutal-btn bg-green-300 hover:bg-green-400 py-2 px-4 text-xs w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {uploadingDocument === 'aadhar' ? '⏳ UPLOADING...' : '💾 SAVE AADHAR'}
+                          </button>
                         </div>
                       )}
                     </div>
 
                     {/* Status Information */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-blue-900 mb-2">Document Verification Process</h4>
-                      <ul className="text-sm text-blue-800 space-y-1">
+                    <div className="brutal-card-sm bg-purple-100 border-purple-600 p-4">
+                      <h4 className="brutal-heading text-sm mb-2">📋 VERIFICATION PROCESS</h4>
+                      <ul className="text-xs font-bold space-y-1">
                         <li>• Documents are initially marked as "Processing"</li>
                         <li>• Our admin team will review and verify your documents</li>
                         <li>• You will be notified once verification is complete</li>
@@ -709,17 +827,17 @@ const CustomerProfile = () => {
               {/* Preferences Tab */}
               {activeTab === 'preferences' && (
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Account Preferences</h2>
+                  <h2 className="brutal-heading text-xl mb-5">ACCOUNT PREFERENCES ⚙️</h2>
 
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {/* Notifications */}
-                    <div className="border border-gray-200 rounded-lg p-6">
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">Notifications</h3>
+                    <div className="brutal-card-sm bg-cyan-50 p-5">
+                      <h3 className="brutal-heading text-base mb-4">🔔 NOTIFICATIONS</h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div>
-                            <label className="text-sm font-medium text-gray-700">Email Notifications</label>
-                            <p className="text-sm text-gray-500">Receive booking confirmations and updates via email</p>
+                            <label className="font-black uppercase text-xs">📧 EMAIL NOTIFICATIONS</label>
+                            <p className="text-xs font-bold">Receive booking confirmations and updates via email</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -737,8 +855,8 @@ const CustomerProfile = () => {
 
                         <div className="flex items-center justify-between">
                           <div>
-                            <label className="text-sm font-medium text-gray-700">SMS Notifications</label>
-                            <p className="text-sm text-gray-500">Receive important alerts via text message</p>
+                            <label className="font-black uppercase text-xs">📱 SMS NOTIFICATIONS</label>
+                            <p className="text-xs font-bold">Receive important alerts via text message</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -756,8 +874,8 @@ const CustomerProfile = () => {
 
                         <div className="flex items-center justify-between">
                           <div>
-                            <label className="text-sm font-medium text-gray-700">Push Notifications</label>
-                            <p className="text-sm text-gray-500">Receive notifications in the app</p>
+                            <label className="font-black uppercase text-xs">🔔 PUSH NOTIFICATIONS</label>
+                            <p className="text-xs font-bold">Receive notifications in the app</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -776,15 +894,15 @@ const CustomerProfile = () => {
                     </div>
 
                     {/* Other Preferences */}
-                    <div className="border border-gray-200 rounded-lg p-6">
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">General Preferences</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="brutal-card-sm bg-purple-50 p-5">
+                      <h3 className="brutal-heading text-base mb-4">🌐 GENERAL PREFERENCES</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                          <label className="block font-black uppercase text-xs mb-2">🌍 LANGUAGE</label>
                           <select
                             value={profileData.preferences.language}
                             onChange={(e) => handleInputChange('preferences', 'language', e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-purple-400 text-sm uppercase"
                           >
                             <option value="English">English</option>
                             <option value="Spanish">Spanish</option>
@@ -793,11 +911,11 @@ const CustomerProfile = () => {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
+                          <label className="block font-black uppercase text-xs mb-2">💰 CURRENCY</label>
                           <select
                             value={profileData.preferences.currency}
                             onChange={(e) => handleInputChange('preferences', 'currency', e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full p-2.5 border-3 border-black font-bold focus:outline-none focus:ring-4 focus:ring-purple-400 text-sm uppercase"
                           >
                             <option value="USD">USD ($)</option>
                             <option value="EUR">EUR (€)</option>
@@ -806,11 +924,11 @@ const CustomerProfile = () => {
                         </div>
                       </div>
 
-                      <div className="mt-6">
+                      <div className="mt-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <label className="text-sm font-medium text-gray-700">Marketing Communications</label>
-                            <p className="text-sm text-gray-500">Receive promotional offers and updates</p>
+                            <label className="font-black uppercase text-xs">📣 MARKETING COMMUNICATIONS</label>
+                            <p className="text-xs font-bold">Receive promotional offers and updates</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input

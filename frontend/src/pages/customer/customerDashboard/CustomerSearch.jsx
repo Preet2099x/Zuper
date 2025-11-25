@@ -221,7 +221,7 @@ const CustomerSearch = () => {
 
       {/* No Results */}
       {!loading && !error && vehicles.length === 0 && (
-        <div className="brutal-card bg-white p-8 text-center rotate-1">
+        <div className="brutal-card bg-white p-8 text-center">
           <div className="text-6xl mb-3">🔍</div>
           <h3 className="brutal-heading text-xl mb-2">NO VEHICLES FOUND</h3>
           <p className="font-bold text-sm">Try adjusting your filters!</p>
@@ -236,7 +236,7 @@ const CustomerSearch = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {vehicles.map((vehicle) => (
-              <div key={vehicle._id} className="brutal-card bg-white p-4 hover:rotate-1 transition-transform">
+              <div key={vehicle._id} className="brutal-card bg-white p-4">
                 <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 border-3 border-black mb-3 flex items-center justify-center">
                   {vehicle.images && vehicle.images.length > 0 ? (
                     <img
@@ -331,7 +331,7 @@ const CustomerSearch = () => {
                     onClick={() => handleViewDetails(vehicle)}
                     className="brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 px-3 text-xs"
                   >
-                    👁️
+                    ℹ️
                   </button>
                 </div>
               </div>
