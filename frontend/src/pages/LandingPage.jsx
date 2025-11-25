@@ -19,22 +19,22 @@ export default function LandingPage() {
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-20 right-10 w-32 h-32 bg-cyan-400 border-4 border-black transform rotate-12 animate-float-brutal hidden md:block"></div>
+        <div className="absolute top-20 right-10 w-32 h-32 bg-cyan-400 border-4 border-black animate-float-brutal hidden md:block"></div>
         <div className="absolute bottom-20 left-10 w-24 h-24 bg-pink-400 border-4 border-black rounded-full hidden md:block"></div>
-        <div className="absolute top-40 left-1/4 w-16 h-16 bg-lime-400 border-4 border-black transform -rotate-6 hidden lg:block"></div>
+        <div className="absolute top-40 left-1/4 w-16 h-16 bg-lime-400 border-4 border-black hidden lg:block"></div>
 
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center max-w-5xl mx-auto">
             {/* Badge */}
             <div className="inline-block mb-6 animate-slide-up">
-              <span className="brutal-badge bg-white px-4 py-2 text-xs md:text-sm inline-block rotate-[-2deg]">
+              <span className="brutal-badge bg-white px-4 py-2 text-xs md:text-sm inline-block">
                 🚀 #1 Vehicle Rental Platform
               </span>
             </div>
 
             {/* Main Heading */}
             <h1 className="brutal-heading text-6xl md:text-8xl lg:text-9xl mb-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 border-4 border-black text-white transform -rotate-1 shadow-[12px_12px_0_0_#000]">
+              <span className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3 border-4 border-black text-white shadow-[12px_12px_0_0_#000]">
                 ZUPER
               </span>
             </h1>
@@ -43,7 +43,7 @@ export default function LandingPage() {
             <div className="mb-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
               <p className="text-2xl md:text-4xl font-black mb-4 text-shadow-brutal">
                 Temporary Vehicles<br />
-                <span className="bg-yellow-300 px-3 py-1 border-3 border-black inline-block mt-2 transform rotate-1">
+                <span className="bg-yellow-300 px-3 py-1 border-3 border-black inline-block mt-2">
                   ON DEMAND 🎯
                 </span>
               </p>
@@ -91,8 +91,8 @@ export default function LandingPage() {
       <section className="py-20 bg-white border-y-4 border-black">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
-            <div className="brutal-card bg-gradient-to-br from-purple-400 to-pink-400 p-8 md:p-12 transform -rotate-1">
-              <span className="brutal-badge bg-white px-3 py-1 text-xs inline-block mb-4 rotate-2">
+            <div className="brutal-card bg-gradient-to-br from-purple-400 to-pink-400 p-8 md:p-12">
+              <span className="brutal-badge bg-white px-3 py-1 text-xs inline-block mb-4">
                 💡 WHAT IS ZUPER?
               </span>
               <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
@@ -112,7 +112,7 @@ export default function LandingPage() {
       <section id="features" className="py-20 bg-yellow-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <span className="brutal-badge bg-cyan-300 px-4 py-2 text-sm inline-block mb-4 rotate-1">
+            <span className="brutal-badge bg-cyan-300 px-4 py-2 text-sm inline-block mb-4">
               ⚡ FEATURES
             </span>
             <h3 className="brutal-heading text-4xl md:text-6xl mb-4">
@@ -126,21 +126,18 @@ export default function LandingPage() {
               title="FLEXIBLE DURATIONS" 
               text="Hourly, daily, monthly — pick what fits your lifestyle and budget!" 
               bgColor="bg-lime-300"
-              rotate="rotate-[-2deg]"
             />
             <FeatureCard 
               icon="🛠️" 
               title="MAINTENANCE COVERED" 
               text="All repairs and insurance handled by Zuper. Drive worry-free!" 
               bgColor="bg-pink-300"
-              rotate="rotate-[1deg]"
             />
             <FeatureCard 
               icon="🔁" 
               title="EASY UPGRADES" 
               text="Switch plans or upgrade your vehicle with just one click!" 
               bgColor="bg-cyan-300"
-              rotate="rotate-[-1deg]"
             />
           </div>
         </div>
@@ -150,7 +147,7 @@ export default function LandingPage() {
       <section id="roles" className="py-20 bg-white border-y-4 border-black">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <span className="brutal-badge bg-yellow-300 px-4 py-2 text-sm inline-block mb-4 rotate-[-1deg]">
+            <span className="brutal-badge bg-yellow-300 px-4 py-2 text-sm inline-block mb-4">
               🎯 GET STARTED
             </span>
             <h3 className="brutal-heading text-4xl md:text-6xl mb-4">
@@ -160,7 +157,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Customer Card */}
-            <div className="brutal-card bg-gradient-to-br from-blue-400 to-cyan-400 p-8 transform rotate-[-1deg] hover:rotate-0 transition-transform">
+            <div className="brutal-card bg-gradient-to-br from-blue-400 to-cyan-400 p-8 transition-transform">
               <div className="mb-6">
                 <span className="text-6xl">👤</span>
               </div>
@@ -181,7 +178,7 @@ export default function LandingPage() {
             </div>
 
             {/* Provider Card */}
-            <div className="brutal-card bg-gradient-to-br from-pink-400 to-purple-400 p-8 transform rotate-[1deg] hover:rotate-0 transition-transform">
+            <div className="brutal-card bg-gradient-to-br from-pink-400 to-purple-400 p-8 transition-transform">
               <div className="mb-6">
                 <span className="text-6xl">💰</span>
               </div>
@@ -208,7 +205,7 @@ export default function LandingPage() {
       <section className="py-20 bg-yellow-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <span className="brutal-badge bg-pink-300 px-4 py-2 text-sm inline-block mb-4 rotate-1">
+            <span className="brutal-badge bg-pink-300 px-4 py-2 text-sm inline-block mb-4">
               💬 TESTIMONIALS
             </span>
             <h3 className="brutal-heading text-4xl md:text-6xl mb-4">
@@ -245,7 +242,7 @@ export default function LandingPage() {
           <div className="max-w-4xl mx-auto">
             <h3 className="brutal-heading text-4xl md:text-6xl mb-6 text-white">
               READY TO GET<br />
-              <span className="bg-yellow-300 text-black px-4 py-2 inline-block mt-2 border-4 border-white transform -rotate-2">
+              <span className="bg-yellow-300 text-black px-4 py-2 inline-block mt-2 border-4 border-white">
                 ROLLING? 🚀
               </span>
             </h3>
@@ -269,9 +266,9 @@ export default function LandingPage() {
 
 /* Neo-Brutalist Components */
 
-function FeatureCard({ icon, title, text, bgColor, rotate }) {
+function FeatureCard({ icon, title, text, bgColor }) {
   return (
-    <div className={`brutal-card ${bgColor} p-8 transform ${rotate} hover:rotate-0 transition-all`}>
+    <div className={`brutal-card ${bgColor} p-8 transition-all`}>
       <div className="text-6xl mb-4">{icon}</div>
       <h4 className="text-2xl font-black mb-3 uppercase leading-tight">
         {title}
