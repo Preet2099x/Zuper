@@ -20,24 +20,24 @@ export default function Navbar() {
 
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center space-x-2">
-            <Link
-              to="/"
+            <a
+              href="#top"
               className="px-4 py-2 font-black uppercase text-sm hover:bg-yellow-300 transition-colors border-2 border-transparent hover:border-black"
             >
               Home
-            </Link>
-            <Link
-              to="#features"
+            </a>
+            <a
+              href="#features"
               className="px-4 py-2 font-black uppercase text-sm hover:bg-cyan-300 transition-colors border-2 border-transparent hover:border-black"
             >
               Features
-            </Link>
-            <Link
-              to="#roles"
+            </a>
+            <a
+              href="#roles"
               className="px-4 py-2 font-black uppercase text-sm hover:bg-pink-300 transition-colors border-2 border-transparent hover:border-black"
             >
               Get Started
-            </Link>
+            </a>
           </nav>
 
           {/* CTA Buttons */}
@@ -91,27 +91,27 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 border-t-4 border-black bg-yellow-50">
             <nav className="flex flex-col space-y-2">
-              <Link
-                to="/"
+              <a
+                href="#top"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="px-4 py-3 font-black uppercase text-sm border-3 border-black bg-white hover:bg-yellow-300 transition-colors"
               >
                 Home
-              </Link>
-              <Link
-                to="#features"
+              </a>
+              <a
+                href="#features"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="px-4 py-3 font-black uppercase text-sm border-3 border-black bg-white hover:bg-cyan-300 transition-colors"
               >
                 Features
-              </Link>
-              <Link
-                to="#roles"
+              </a>
+              <a
+                href="#roles"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="px-4 py-3 font-black uppercase text-sm border-3 border-black bg-white hover:bg-pink-300 transition-colors"
               >
                 Get Started
-              </Link>
+              </a>
               <div className="pt-2 space-y-2">
                 <Link
                   to="/customer/login"

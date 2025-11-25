@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 
 export default function LandingPage() {
   return (
-    <div className="bg-yellow-50 text-gray-900 antialiased">
+    <div id="top" className="bg-yellow-50 text-gray-900 antialiased">
       <Navbar />
 
       {/* HERO - Neo-Brutalist Style */}

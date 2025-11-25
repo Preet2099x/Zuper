@@ -2,6 +2,11 @@
 
 /* ==================== NEO-BRUTALIST DESIGN SYSTEM ==================== */
 
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
 /* Neo-Brutalist Animations */
 @keyframes float-brutal {
   0%, 100% {
