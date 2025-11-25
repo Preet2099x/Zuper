@@ -307,377 +307,375 @@ const ProviderListVehicle = () => {
   ];
 
   return (
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">List New Vehicle</h1>
+    <div className="max-w-5xl mx-auto p-6">
+      <h1 className="brutal-heading text-3xl mb-8">➕ LIST NEW VEHICLE</h1>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
-
-        {/* Success Message */}
-        {success && (
-          <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{success}</span>
-          </div>
-        )}
-
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => (
-              <div key={step.number} className="flex items-center">
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                  currentStep >= step.number
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-600'
-                }`}>
-                  {step.number}
-                </div>
-                <div className="ml-4">
-                  <p className={`font-medium ${
-                    currentStep >= step.number ? 'text-blue-600' : 'text-gray-600'
-                  }`}>
-                    {step.title}
-                  </p>
-                  <p className="text-sm text-gray-500">{step.description}</p>
-                </div>
-                {index < steps.length - 1 && (
-                  <div className={`w-16 h-1 mx-4 ${
-                    currentStep > step.number ? 'bg-blue-600' : 'bg-gray-200'
-                  }`} />
-                )}
-              </div>
-            ))}
-          </div>
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 brutal-card bg-red-300 border-3 border-black p-4">
+          <span className="font-black uppercase text-sm text-black">{error}</span>
         </div>
+      )}
 
-        {/* Step 1: Basic Information */}
-        {currentStep === 1 && (
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Basic Information</h2>
+      {/* Success Message */}
+      {success && (
+        <div className="mb-6 brutal-card bg-green-300 border-3 border-black p-4">
+          <span className="font-black uppercase text-sm text-black">{success}</span>
+        </div>
+      )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Company *</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Maruti Suzuki, Hero, TVS"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
+      {/* Progress Steps */}
+      <div className="mb-10">
+        <div className="flex items-center justify-between">
+          {steps.map((step, index) => (
+            <div key={step.number} className="flex items-center">
+              <div className={`flex items-center justify-center w-12 h-12 border-3 border-black font-black text-lg ${
+                currentStep >= step.number
+                  ? 'bg-purple-400 text-black'
+                  : 'bg-white text-gray-400'
+              }`}>
+                {step.number}
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Model *</label>
-                <input
-                  type="text"
-                  name="model"
-                  value={formData.model}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Swift, Splendor, Jupiter"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
+              <div className="ml-4">
+                <p className={`font-black uppercase text-xs ${
+                  currentStep >= step.number ? 'text-purple-600' : 'text-gray-500'
+                }`}>
+                  {step.title}
+                </p>
+                <p className="text-xs font-bold text-gray-500">{step.description}</p>
               </div>
+              {index < steps.length - 1 && (
+                <div className={`w-16 h-1 mx-4 border-2 ${
+                  currentStep > step.number ? 'bg-purple-400 border-purple-400' : 'bg-gray-200 border-gray-200'
+                }`} />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Year *</label>
-                <input
-                  type="text"
-                  name="year"
-                  value={formData.year}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 2024"
-                  maxLength="4"
-                  pattern="[0-9]{4}"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">Enter a 4-digit year (2000-2030)</p>
-              </div>
+      {/* Step 1: Basic Information */}
+      {currentStep === 1 && (
+        <div className="brutal-card bg-white p-8">
+          <h2 className="brutal-heading text-2xl mb-6">📋 BASIC INFORMATION</h2>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Type *</label>
-                <select
-                  name="type"
-                  value={formData.type}
-                  onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                >
-                  <option value="car">Car</option>
-                  <option value="bike">Bike</option>
-                  <option value="scooter">Scooter</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">License Plate *</label>
-                <input
-                  type="text"
-                  name="licensePlate"
-                  value={formData.licensePlate}
-                  onChange={handleInputChange}
-                  placeholder="e.g., ABC-1234"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Daily Rate (₹) *</label>
-                <input
-                  type="number"
-                  name="dailyRate"
-                  value={formData.dailyRate}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 2500"
-                  min="1"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Connaught Place, New Delhi"
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-black uppercase text-gray-900 mb-2">Company *</label>
+              <input
+                type="text"
+                name="company"
+                value={formData.company}
+                onChange={handleInputChange}
+                placeholder="e.g., Maruti Suzuki, Hero, TVS"
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-purple-400"
+                required
+              />
             </div>
 
-            <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-              <textarea
-                name="description"
-                value={formData.description}
+            <div>
+              <label className="block text-xs font-black uppercase text-gray-900 mb-2">Model *</label>
+              <input
+                type="text"
+                name="model"
+                value={formData.model}
                 onChange={handleInputChange}
-                placeholder="Describe your vehicle, its condition, and any special features..."
-                rows={4}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., Swift, Splendor, Jupiter"
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-purple-400"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase text-gray-900 mb-2">Year *</label>
+              <input
+                type="text"
+                name="year"
+                value={formData.year}
+                onChange={handleInputChange}
+                placeholder="e.g., 2024"
+                maxLength="4"
+                pattern="[0-9]{4}"
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-purple-400"
+                required
+              />
+              <p className="text-xs font-bold text-gray-600 mt-1">Enter a 4-digit year (2000-2030)</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase text-gray-900 mb-2">Vehicle Type *</label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleInputChange}
+                className="w-full p-3 border-3 border-black font-bold bg-white focus:ring-0 focus:border-purple-400"
+                required
+              >
+                <option value="car">Car</option>
+                <option value="bike">Bike</option>
+                <option value="scooter">Scooter</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase text-gray-900 mb-2">License Plate *</label>
+              <input
+                type="text"
+                name="licensePlate"
+                value={formData.licensePlate}
+                onChange={handleInputChange}
+                placeholder="e.g., ABC-1234"
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-purple-400"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase text-gray-900 mb-2">Daily Rate (₹) *</label>
+              <input
+                type="number"
+                name="dailyRate"
+                value={formData.dailyRate}
+                onChange={handleInputChange}
+                placeholder="e.g., 2500"
+                min="1"
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-purple-400"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase text-gray-900 mb-2">Location *</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                placeholder="e.g., Connaught Place, New Delhi"
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-purple-400"
+                required
               />
             </div>
           </div>
-        )}
 
-        {/* Step 2: Features & Location */}
-        {currentStep === 2 && (
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Features & Equipment</h2>
-
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-4">Select Features</label>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {availableFeatures.map((feature, index) => (
-                  <label key={index} className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={selectedFeatures.includes(feature)}
-                      onChange={() => handleFeatureToggle(feature)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="text-sm text-gray-700">{feature}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Vehicle Images 
-                <span className="text-sm text-green-600 font-normal ml-2">(Azure Cloud Storage)</span>
-              </h3>
-              
-              {/* Upload Area */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
-                <div className="text-4xl mb-4">📸</div>
-                <p className="text-gray-600 mb-4">Drag and drop images here or click to browse</p>
-                <p className="text-sm text-gray-500 mb-4">
-                  Maximum 10 images, up to 5MB each. Images will be stored securely in Azure Blob Storage.
-                </p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="image-upload"
-                />
-                <label
-                  htmlFor="image-upload"
-                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg cursor-pointer transition-colors"
-                >
-                  Choose Images
-                </label>
-                <p className="text-xs text-gray-500 mt-2">
-                  {imageFiles.length}/10 images selected
-                </p>
-              </div>
-
-              {/* Image Previews */}
-              {imagePreviews.length > 0 && (
-                <div className="mt-6">
-                  <h4 className="text-md font-medium text-gray-900 mb-3">Uploaded Images</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {imagePreviews.map((preview, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={preview}
-                          alt={`Preview ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg border border-gray-300"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage(index)}
-                          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                          title="Remove image"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                        </button>
-                        <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                          {index + 1}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+          <div className="mt-6">
+            <label className="block text-xs font-black uppercase text-gray-900 mb-2">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Describe your vehicle, its condition, and any special features..."
+              rows={4}
+              className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-purple-400"
+            />
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Step 3: Review & Submit */}
-        {currentStep === 3 && (
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Review & Submit</h2>
+      {/* Step 2: Features & Location */}
+      {currentStep === 2 && (
+        <div className="brutal-card bg-white p-8">
+          <h2 className="brutal-heading text-2xl mb-6">⭐ FEATURES & EQUIPMENT</h2>
 
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Vehicle Details</h3>
-                  <div className="space-y-2">
-                    <p><span className="font-medium">Company:</span> {formData.company || 'Not specified'}</p>
-                    <p><span className="font-medium">Model:</span> {formData.model || 'Not specified'}</p>
-                    <p><span className="font-medium">Year:</span> {formData.year || 'Not specified'}</p>
-                    <p><span className="font-medium">Type:</span> <span className="capitalize">{formData.type || 'Not specified'}</span></p>
-                    <p><span className="font-medium">License Plate:</span> {formData.licensePlate || 'Not specified'}</p>
-                    <p><span className="font-medium">Daily Rate:</span> ₹{formData.dailyRate || 'Not specified'}</p>
-                    <p><span className="font-medium">Location:</span> {formData.location || 'Not specified'}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Features</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedFeatures.length > 0 ? (
-                      selectedFeatures.map((feature, index) => (
-                        <span key={index} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
-                          {feature}
-                        </span>
-                      ))
-                    ) : (
-                      <p className="text-gray-500">No features selected</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {formData.description && (
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Description</h3>
-                  <p className="text-gray-700 bg-gray-50 p-4 rounded-lg">{formData.description}</p>
-                </div>
-              )}
-
-              {imagePreviews.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-3">Vehicle Images ({imagePreviews.length})</h3>
-                  <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                    {imagePreviews.map((preview, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={preview}
-                          alt={`Vehicle ${index + 1}`}
-                          className="w-full h-24 object-cover rounded-lg border border-gray-300"
-                        />
-                        <div className="absolute bottom-1 left-1 bg-black bg-opacity-50 text-white text-xs px-1.5 py-0.5 rounded">
-                          {index + 1}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="border-t border-gray-200 pt-6">
-                <div className="flex items-center space-x-4">
+          <div className="mb-8">
+            <label className="block text-xs font-black uppercase text-gray-900 mb-4">Select Features</label>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {availableFeatures.map((feature, index) => (
+                <label key={index} className="brutal-card-sm bg-white p-3 flex items-center space-x-2 cursor-pointer hover:bg-purple-100">
                   <input
                     type="checkbox"
-                    id="terms"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                    required
+                    checked={selectedFeatures.includes(feature)}
+                    onChange={() => handleFeatureToggle(feature)}
+                    className="w-4 h-4 border-2 border-black text-purple-600 focus:ring-0"
                   />
-                  <label htmlFor="terms" className="text-sm text-gray-700">
-                    I agree to the terms and conditions and confirm that all information provided is accurate.
-                  </label>
+                  <span className="text-xs font-bold text-gray-900">{feature}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t-3 border-black pt-8">
+            <h3 className="brutal-heading text-lg mb-2">
+              📸 VEHICLE IMAGES
+            </h3>
+            <p className="text-xs font-black uppercase text-green-700 mb-4">(Azure Cloud Storage)</p>
+            
+            {/* Upload Area */}
+            <div className="brutal-card-sm border-dashed bg-white p-8 text-center hover:bg-purple-50 transition-colors cursor-pointer">
+              <div className="text-5xl mb-4">📸</div>
+              <p className="font-bold text-sm text-gray-900 mb-3 uppercase">Drag and drop images here or click to browse</p>
+              <p className="text-xs font-bold text-gray-600 mb-4">
+                Maximum 10 images, up to 5MB each. Images will be stored securely in Azure Blob Storage.
+              </p>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                className="hidden"
+                id="image-upload"
+              />
+              <label
+                htmlFor="image-upload"
+                className="brutal-btn bg-purple-300 hover:bg-purple-400 text-black py-3 px-6 cursor-pointer inline-block"
+              >
+                📁 CHOOSE IMAGES
+              </label>
+              <p className="text-xs font-black text-gray-700 mt-3 uppercase">
+                {imageFiles.length}/10 images selected
+              </p>
+            </div>
+
+            {/* Image Previews */}
+            {imagePreviews.length > 0 && (
+              <div className="mt-6">
+                <h4 className="brutal-heading text-sm mb-4">✅ UPLOADED IMAGES</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="relative group brutal-card-sm p-0 overflow-hidden">
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-32 object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white border-2 border-black p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        title="Remove image"
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                      <div className="absolute bottom-2 left-2 brutal-badge bg-black text-white text-xs px-2 py-1 border-2 border-white">
+                        {index + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Review & Submit */}
+      {currentStep === 3 && (
+        <div className="brutal-card bg-white p-8">
+          <h2 className="brutal-heading text-2xl mb-6">✅ REVIEW & SUBMIT</h2>
+
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="brutal-card-sm bg-purple-50 p-5">
+                <h3 className="brutal-heading text-lg mb-4">🚗 VEHICLE DETAILS</h3>
+                <div className="space-y-2">
+                  <p className="text-xs font-bold text-gray-700"><span className="font-black uppercase">Company:</span> {formData.company || 'Not specified'}</p>
+                  <p className="text-xs font-bold text-gray-700"><span className="font-black uppercase">Model:</span> {formData.model || 'Not specified'}</p>
+                  <p className="text-xs font-bold text-gray-700"><span className="font-black uppercase">Year:</span> {formData.year || 'Not specified'}</p>
+                  <p className="text-xs font-bold text-gray-700"><span className="font-black uppercase">Type:</span> <span className="capitalize">{formData.type || 'Not specified'}</span></p>
+                  <p className="text-xs font-bold text-gray-700"><span className="font-black uppercase">License Plate:</span> {formData.licensePlate || 'Not specified'}</p>
+                  <p className="text-xs font-bold text-gray-700"><span className="font-black uppercase">Daily Rate:</span> ₹{formData.dailyRate || 'Not specified'}</p>
+                  <p className="text-xs font-bold text-gray-700"><span className="font-black uppercase">Location:</span> {formData.location || 'Not specified'}</p>
+                </div>
+              </div>
+
+              <div className="brutal-card-sm bg-cyan-50 p-5">
+                <h3 className="brutal-heading text-lg mb-4">⭐ FEATURES</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedFeatures.length > 0 ? (
+                    selectedFeatures.map((feature, index) => (
+                      <span key={index} className="brutal-badge bg-purple-300 text-xs">
+                        {feature}
+                      </span>
+                    ))
+                  ) : (
+                    <p className="text-xs font-bold text-gray-600 uppercase">No features selected</p>
+                  )}
                 </div>
               </div>
             </div>
+
+            {formData.description && (
+              <div className="brutal-card-sm bg-white p-5">
+                <h3 className="brutal-heading text-lg mb-3">📝 DESCRIPTION</h3>
+                <p className="text-xs font-bold text-gray-700 bg-gray-50 p-4 border-2 border-gray-200">{formData.description}</p>
+              </div>
+            )}
+
+            {imagePreviews.length > 0 && (
+              <div className="brutal-card-sm bg-white p-5">
+                <h3 className="brutal-heading text-lg mb-4">📸 VEHICLE IMAGES ({imagePreviews.length})</h3>
+                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="relative brutal-card-sm p-0 overflow-hidden">
+                      <img
+                        src={preview}
+                        alt={`Vehicle ${index + 1}`}
+                        className="w-full h-24 object-cover"
+                      />
+                      <div className="absolute bottom-1 left-1 brutal-badge bg-black text-white text-xs px-2 py-1 border-2 border-white">
+                        {index + 1}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="border-t-3 border-black pt-6">
+              <div className="flex items-center space-x-4 brutal-card-sm bg-purple-50 p-4">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  className="w-5 h-5 border-3 border-black text-purple-600 focus:ring-0"
+                  required
+                />
+                <label htmlFor="terms" className="text-xs font-black uppercase text-gray-900">
+                  I agree to the terms and conditions and confirm that all information provided is accurate.
+                </label>
+              </div>
+            </div>
           </div>
-        )}
-
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
-          <button
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-            className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition duration-200"
-          >
-            Previous
-          </button>
-
-          {currentStep < 3 ? (
-            <button
-              onClick={handleNext}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition duration-200"
-            >
-              {loading ? 'Listing Vehicle...' : 'List Vehicle'}
-            </button>
-          )}
         </div>
+      )}
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-between mt-8">
+        <button
+          onClick={handlePrevious}
+          disabled={currentStep === 1}
+          className="brutal-btn bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50 text-black py-4 px-8"
+        >
+          ⬅ PREVIOUS
+        </button>
+
+        {currentStep < 3 ? (
+          <button
+            onClick={handleNext}
+            className="brutal-btn bg-purple-400 hover:bg-purple-500 text-black py-4 px-8"
+          >
+            NEXT ➡
+          </button>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="brutal-btn bg-green-400 hover:bg-green-500 disabled:bg-green-200 disabled:cursor-not-allowed disabled:opacity-50 text-black py-4 px-8"
+          >
+            {loading ? '⏳ LISTING VEHICLE...' : '✅ LIST VEHICLE'}
+          </button>
+        )}
       </div>
     </div>
   );

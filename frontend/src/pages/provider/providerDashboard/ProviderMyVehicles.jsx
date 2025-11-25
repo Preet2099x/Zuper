@@ -175,9 +175,9 @@ const ProviderMyVehicles = () => {
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading vehicles...</p>
+        <div className="text-center brutal-card bg-white p-8">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-400 mx-auto mb-4"></div>
+          <p className="font-black uppercase text-sm text-gray-900">Loading vehicles...</p>
         </div>
       </div>
     );
@@ -186,13 +186,13 @@ const ProviderMyVehicles = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'available':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-300';
       case 'rented':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-300';
       case 'maintenance':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-300';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-300';
     }
   };
 
@@ -222,179 +222,177 @@ const ProviderMyVehicles = () => {
   };
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
+    <div className="max-w-7xl mx-auto p-6">
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 brutal-card bg-red-300 border-3 border-black p-4">
+          <span className="font-black uppercase text-sm text-black">{error}</span>
+        </div>
+      )}
 
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Vehicles</h1>
-          <button 
-            onClick={() => navigate('/dashboard/provider/list-vehicle')}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="brutal-heading text-3xl">🚗 MY VEHICLES</h1>
+        <button 
+          onClick={() => navigate('/dashboard/provider/list-vehicle')}
+          className="brutal-btn bg-purple-300 hover:bg-purple-400 text-black px-6 py-3"
+        >
+          ➕ ADD NEW VEHICLE
+        </button>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="brutal-card bg-white p-5 mb-8">
+        <div className="flex flex-wrap gap-2.5">
+          <button
+            onClick={() => setFilterStatus('all')}
+            className={`brutal-btn text-xs px-4 py-2 ${
+              filterStatus === 'all'
+                ? 'bg-purple-400'
+                : 'bg-white hover:bg-purple-100'
+            }`}
           >
-            Add New Vehicle
+            ALL VEHICLES ({vehicles.length})
+          </button>
+          <button
+            onClick={() => setFilterStatus('available')}
+            className={`brutal-btn text-xs px-4 py-2 ${
+              filterStatus === 'available'
+                ? 'bg-purple-400'
+                : 'bg-white hover:bg-green-100'
+            }`}
+          >
+            ✅ AVAILABLE ({vehicles.filter(v => v.status === 'available').length})
+          </button>
+          <button
+            onClick={() => setFilterStatus('rented')}
+            className={`brutal-btn text-xs px-4 py-2 ${
+              filterStatus === 'rented'
+                ? 'bg-purple-400'
+                : 'bg-white hover:bg-blue-100'
+            }`}
+          >
+            🔵 RENTED ({vehicles.filter(v => v.status === 'rented').length})
+          </button>
+          <button
+            onClick={() => setFilterStatus('maintenance')}
+            className={`brutal-btn text-xs px-4 py-2 ${
+              filterStatus === 'maintenance'
+                ? 'bg-purple-400'
+                : 'bg-white hover:bg-yellow-100'
+            }`}
+          >
+            🟡 MAINTENANCE ({vehicles.filter(v => v.status === 'maintenance').length})
           </button>
         </div>
+      </div>
 
-        {/* Filter Tabs */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex space-x-4">
-            <button
-              onClick={() => setFilterStatus('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                filterStatus === 'all'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              All Vehicles ({vehicles.length})
-            </button>
-            <button
-              onClick={() => setFilterStatus('available')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                filterStatus === 'available'
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Available ({vehicles.filter(v => v.status === 'available').length})
-            </button>
-            <button
-              onClick={() => setFilterStatus('rented')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                filterStatus === 'rented'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Rented ({vehicles.filter(v => v.status === 'rented').length})
-            </button>
-            <button
-              onClick={() => setFilterStatus('maintenance')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                filterStatus === 'maintenance'
-                  ? 'bg-yellow-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Maintenance ({vehicles.filter(v => v.status === 'maintenance').length})
-            </button>
-          </div>
+      {/* Vehicles Grid */}
+      {vehicles.length === 0 ? (
+        <div className="brutal-card bg-purple-100 p-12 text-center">
+          <div className="text-7xl mb-6">🚗</div>
+          <h3 className="brutal-heading text-2xl mb-3">NO VEHICLES YET</h3>
+          <p className="font-bold text-sm text-gray-700 uppercase mb-6">Start by adding your first vehicle to get started!</p>
+          <button 
+            onClick={() => navigate('/dashboard/provider/list-vehicle')}
+            className="brutal-btn bg-purple-300 hover:bg-purple-400 text-black py-4 px-8"
+          >
+            ➕ ADD YOUR FIRST VEHICLE
+          </button>
         </div>
-
-        {/* Vehicles Grid */}
-        {vehicles.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <div className="text-6xl mb-4">🚗</div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">No Vehicles Yet</h3>
-            <p className="text-gray-600 mb-6">Start by adding your first vehicle to get started!</p>
-            <button 
-              onClick={() => navigate('/dashboard/provider/list-vehicle')}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-8 rounded-lg transition duration-200"
-            >
-              Add Your First Vehicle
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredVehicles.map((vehicle) => (
-              <div key={vehicle._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
-                <div className="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center relative">
-                  {vehicle.images && vehicle.images.length > 0 ? (
-                    <img
-                      src={vehicle.images[0]}
-                      alt={`${vehicle.company} ${vehicle.model}`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-6xl">{getVehicleEmoji(vehicle.type)}</div>
-                  )}
-                  <div className="absolute top-4 right-4">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(vehicle.status)}`}>
-                      {getStatusIcon(vehicle.status)} {vehicle.status}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      {vehicle.year} {vehicle.company} {vehicle.model}
-                    </h3>
-                    <p className="text-lg font-bold text-blue-600">₹{vehicle.dailyRate}/day</p>
-                  </div>
-
-                  <div className="space-y-2 mb-4">
-                    <p className="text-gray-600">📍 {vehicle.location}</p>
-                    <p className="text-gray-600">{getVehicleEmoji(vehicle.type)} {vehicle.licensePlate}</p>
-                    <p className="text-gray-600 capitalize">🏷️ {vehicle.type}</p>
-                    {vehicle.features && vehicle.features.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {vehicle.features.slice(0, 3).map((feature, index) => (
-                          <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                            {feature}
-                          </span>
-                        ))}
-                        {vehicle.features.length > 3 && (
-                          <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                            +{vehicle.features.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {vehicle.description && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">{vehicle.description}</p>
-                  )}
-
-                  <div className="flex space-x-2">
-                    <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm">
-                      Edit
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteVehicle(vehicle._id)}
-                      className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-lg transition duration-200 text-sm"
-                    >
-                      Delete
-                    </button>
-                  </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredVehicles.map((vehicle) => (
+            <div key={vehicle._id} className="brutal-card-sm bg-white overflow-hidden hover:bg-purple-50 transition-colors">
+              <div className="h-48 bg-gradient-to-br from-purple-100 to-cyan-100 flex items-center justify-center relative">
+                {vehicle.images && vehicle.images.length > 0 ? (
+                  <img
+                    src={vehicle.images[0]}
+                    alt={`${vehicle.company} ${vehicle.model}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-7xl">{getVehicleEmoji(vehicle.type)}</div>
+                )}
+                <div className="absolute top-4 right-4">
+                  <span className={`brutal-badge ${getStatusColor(vehicle.status)} text-black border-2 border-black text-xs px-3 py-1.5`}>
+                    {getStatusIcon(vehicle.status)} {vehicle.status.toUpperCase()}
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
 
-        {/* Fleet Summary */}
-        {vehicles.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6 mt-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Fleet Summary</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-gray-900">{vehicles.length}</p>
-                <p className="text-sm text-gray-600">Total Vehicles</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">{vehicles.filter(v => v.status === 'available').length}</p>
-                <p className="text-sm text-gray-600">Available</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">{vehicles.filter(v => v.status === 'rented').length}</p>
-                <p className="text-sm text-gray-600">Currently Rented</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-yellow-600">{vehicles.filter(v => v.status === 'maintenance').length}</p>
-                <p className="text-sm text-gray-600">In Maintenance</p>
+              <div className="p-5">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-black uppercase text-sm text-gray-900">
+                    {vehicle.year} {vehicle.company} {vehicle.model}
+                  </h3>
+                  <p className="font-black text-sm text-purple-600">₹{vehicle.dailyRate}/day</p>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <p className="text-xs font-bold text-gray-700">📍 {vehicle.location}</p>
+                  <p className="text-xs font-bold text-gray-700">{getVehicleEmoji(vehicle.type)} {vehicle.licensePlate}</p>
+                  <p className="text-xs font-bold text-gray-700 capitalize">🏷️ {vehicle.type}</p>
+                  {vehicle.features && vehicle.features.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {vehicle.features.slice(0, 3).map((feature, index) => (
+                        <span key={index} className="brutal-badge bg-purple-200 text-[10px] px-2 py-1">
+                          {feature}
+                        </span>
+                      ))}
+                      {vehicle.features.length > 3 && (
+                        <span className="brutal-badge bg-purple-200 text-[10px] px-2 py-1">
+                          +{vehicle.features.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {vehicle.description && (
+                  <p className="text-xs font-bold text-gray-600 mb-4 line-clamp-2">{vehicle.description}</p>
+                )}
+
+                <div className="flex space-x-2">
+                  <button className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 text-black py-2 px-3 text-xs">
+                    ✏️ EDIT
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteVehicle(vehicle._id)}
+                    className="flex-1 brutal-btn bg-red-300 hover:bg-red-400 text-black py-2 px-3 text-xs"
+                  >
+                    ❌ DELETE
+                  </button>
+                </div>
               </div>
             </div>
+          ))}
+        </div>
+      )}
+
+      {/* Fleet Summary */}
+      {vehicles.length > 0 && (
+        <div className="brutal-card bg-white p-8 mt-8">
+          <h2 className="brutal-heading text-xl mb-6">📊 FLEET SUMMARY</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="brutal-card-sm bg-purple-100 text-center p-5">
+              <p className="text-4xl font-black text-gray-900 mb-2">{vehicles.length}</p>
+              <p className="font-black uppercase text-xs text-gray-700">Total Vehicles</p>
+            </div>
+            <div className="brutal-card-sm bg-green-200 text-center p-5">
+              <p className="text-4xl font-black text-green-700 mb-2">{vehicles.filter(v => v.status === 'available').length}</p>
+              <p className="font-black uppercase text-xs text-gray-700">Available</p>
+            </div>
+            <div className="brutal-card-sm bg-blue-200 text-center p-5">
+              <p className="text-4xl font-black text-blue-700 mb-2">{vehicles.filter(v => v.status === 'rented').length}</p>
+              <p className="font-black uppercase text-xs text-gray-700">Currently Rented</p>
+            </div>
+            <div className="brutal-card-sm bg-yellow-200 text-center p-5">
+              <p className="text-4xl font-black text-yellow-700 mb-2">{vehicles.filter(v => v.status === 'maintenance').length}</p>
+              <p className="font-black uppercase text-xs text-gray-700">In Maintenance</p>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
