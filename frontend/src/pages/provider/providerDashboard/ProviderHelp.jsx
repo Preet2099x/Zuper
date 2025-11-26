@@ -102,79 +102,79 @@ const ProviderHelp = () => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Help & Support</h1>
+        <h1 className="brutal-heading text-3xl mb-8">❓ HELP & SUPPORT</h1>
 
         {/* Search Bar */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="brutal-card p-5 mb-6 bg-cyan-100">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search for help..."
+              placeholder="SEARCH FOR HELP..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-4 pl-12 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-lg"
+              className="w-full p-4 pl-14 border-3 border-black uppercase text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
-            <div className="absolute left-4 top-4 text-gray-400">
+            <div className="absolute left-5 top-4 text-2xl">
               🔍
             </div>
           </div>
         </div>
 
         {/* Category Filters */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Browse by Category</h2>
+        <div className="brutal-card p-5 mb-6 bg-yellow-100">
+          <h2 className="brutal-heading text-xl mb-5">📚 BROWSE BY CATEGORY</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {faqCategories.map(category => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`p-4 rounded-lg border-2 transition-all duration-200 text-center ${
+                className={`brutal-btn p-4 text-center text-xs ${
                   activeCategory === category.id
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                    ? 'bg-cyan-400'
+                    : 'bg-white'
                 }`}
               >
                 <div className="text-2xl mb-2">{category.icon}</div>
-                <div className="text-sm font-medium">{category.name}</div>
+                <div className="font-black uppercase">{category.name}</div>
               </button>
             ))}
           </div>
         </div>
 
         {/* FAQ Section */}
-        <div className="bg-white rounded-lg shadow-md">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">
-              Frequently Asked Questions
+        <div className="brutal-card bg-white">
+          <div className="p-5 border-b-3 border-black bg-purple-100">
+            <h2 className="brutal-heading text-xl">
+              ❓ FREQUENTLY ASKED QUESTIONS
               {activeCategory !== 'all' && (
-                <span className="text-gray-600 ml-2">
+                <span className="text-sm ml-2">
                   ({faqCategories.find(cat => cat.id === activeCategory)?.name})
                 </span>
               )}
             </h2>
           </div>
 
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y-3 divide-black">
             {filteredFAQs.length > 0 ? (
               filteredFAQs.map(faq => (
-                <div key={faq.id} className="p-6">
+                <div key={faq.id} className="p-5">
                   <button
                     onClick={() => toggleFAQ(faq.id)}
-                    className="w-full text-left flex justify-between items-center hover:bg-gray-50 p-2 rounded-lg transition duration-200"
+                    className="w-full text-left flex justify-between items-center hover:bg-gray-50 p-3 transition-all"
                   >
-                    <h3 className="text-lg font-medium text-gray-900 pr-4">
+                    <h3 className="font-black text-sm uppercase pr-4">
                       {faq.question}
                     </h3>
-                    <span className="text-2xl text-gray-400 flex-shrink-0">
-                      {expandedFAQ === faq.id ? '−' : '+'}
+                    <span className="text-2xl flex-shrink-0">
+                      {expandedFAQ === faq.id ? '➖' : '➕'}
                     </span>
                   </button>
 
                   {expandedFAQ === faq.id && (
-                    <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                      <p className="text-gray-700 leading-relaxed">
+                    <div className="mt-3 brutal-card-sm p-4 bg-blue-100">
+                      <p className="text-xs font-bold">
                         {faq.answer}
                       </p>
                     </div>
@@ -184,9 +184,9 @@ const ProviderHelp = () => {
             ) : (
               <div className="p-8 text-center">
                 <div className="text-4xl mb-4">🤔</div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No results found</h3>
-                <p className="text-gray-600">
-                  Try adjusting your search terms or browse different categories.
+                <h3 className="font-black text-lg uppercase mb-2">NO RESULTS FOUND</h3>
+                <p className="text-xs font-bold">
+                  TRY DIFFERENT SEARCH TERMS OR BROWSE CATEGORIES.
                 </p>
               </div>
             )}
@@ -194,97 +194,113 @@ const ProviderHelp = () => {
         </div>
 
         {/* Contact Support Section */}
-        <div className="bg-white rounded-lg shadow-md p-8 mt-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Still Need Help?</h2>
+        <div className="brutal-card bg-white mt-6">
+          <div className="p-5 border-b-3 border-black bg-pink-100">
+            <h2 className="brutal-heading text-xl">👋 STILL NEED HELP?</h2>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Contact Form */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Contact Support</h3>
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subject *</label>
-                  <select className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                    <option>Select a topic</option>
-                    <option>Account Issues</option>
-                    <option>Booking Problems</option>
-                    <option>Payment Questions</option>
-                    <option>Vehicle Management</option>
-                    <option>Technical Support</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
-                  <textarea
-                    rows={6}
-                    placeholder="Describe your issue in detail..."
-                    className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200"
-                >
-                  Send Message
-                </button>
-              </form>
-            </div>
-
-            {/* Contact Information */}
-            <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Other Ways to Reach Us</h3>
-
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">📞</div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Contact Form */}
+              <div>
+                <h3 className="brutal-heading text-lg mb-5 bg-cyan-100 p-3 border-2 border-black">
+                  📨 CONTACT SUPPORT
+                </h3>
+                <form className="space-y-4">
                   <div>
-                    <h4 className="font-medium text-gray-900">Phone Support</h4>
-                    <p className="text-gray-600">Mon-Sat: 9AM-6PM IST</p>
-                    <p className="text-blue-600 font-medium">1800-123-ZUPER</p>
+                    <label className="block text-xs font-black uppercase mb-2">🎯 SUBJECT *</label>
+                    <select className="w-full p-3 border-3 border-black text-xs font-bold uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400">
+                      <option>SELECT A TOPIC</option>
+                      <option>ACCOUNT ISSUES</option>
+                      <option>BOOKING PROBLEMS</option>
+                      <option>PAYMENT QUESTIONS</option>
+                      <option>VEHICLE MANAGEMENT</option>
+                      <option>TECHNICAL SUPPORT</option>
+                      <option>OTHER</option>
+                    </select>
                   </div>
-                </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">🚨</div>
                   <div>
-                    <h4 className="font-medium text-gray-900">Emergency Support</h4>
-                    <p className="text-gray-600">24/7 for urgent issues</p>
-                    <p className="text-blue-600 font-medium">+91-9876543210</p>
+                    <label className="block text-xs font-black uppercase mb-2">✍️ MESSAGE *</label>
+                    <textarea
+                      rows={6}
+                      placeholder="DESCRIBE YOUR ISSUE IN DETAIL..."
+                      className="w-full p-3 border-3 border-black text-xs font-bold placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    />
                   </div>
-                </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">📧</div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Email Support</h4>
-                    <p className="text-gray-600">Response within 24 hours</p>
-                    <p className="text-blue-600 font-medium">support@zuper.com</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="text-2xl">💬</div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Live Chat</h4>
-                    <p className="text-gray-600">Available in dashboard</p>
-                    <button className="text-blue-600 hover:text-blue-700 font-medium">
-                      Start Chat
-                    </button>
-                  </div>
-                </div>
+                  <button
+                    type="submit"
+                    className="brutal-btn bg-cyan-400 text-xs px-5 py-3 w-full"
+                  >
+                    🚀 SEND MESSAGE
+                  </button>
+                </form>
               </div>
 
-              {/* Quick Links */}
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h4 className="font-medium text-gray-900 mb-4">Quick Links</h4>
-                <div className="space-y-2">
-                  <a href="#" className="block text-blue-600 hover:text-blue-700">Provider Guidelines</a>
-                  <a href="#" className="block text-blue-600 hover:text-blue-700">Insurance Information</a>
-                  <a href="#" className="block text-blue-600 hover:text-blue-700">Tax Documentation</a>
-                  <a href="#" className="block text-blue-600 hover:text-blue-700">Vehicle Requirements</a>
+              {/* Contact Information */}
+              <div>
+                <h3 className="brutal-heading text-lg mb-5 bg-yellow-100 p-3 border-2 border-black">
+                  📱 OTHER WAYS TO REACH US
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="brutal-card-sm p-4 bg-green-100">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">📞</div>
+                      <div>
+                        <h4 className="font-black text-xs uppercase">PHONE SUPPORT</h4>
+                        <p className="text-[10px] font-bold">MON-SAT: 9AM-6PM IST</p>
+                        <p className="font-black text-xs mt-1">1800-123-ZUPER</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="brutal-card-sm p-4 bg-red-100">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">🚨</div>
+                      <div>
+                        <h4 className="font-black text-xs uppercase">EMERGENCY SUPPORT</h4>
+                        <p className="text-[10px] font-bold">24/7 FOR URGENT ISSUES</p>
+                        <p className="font-black text-xs mt-1">+91-9876543210</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="brutal-card-sm p-4 bg-blue-100">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">📧</div>
+                      <div>
+                        <h4 className="font-black text-xs uppercase">EMAIL SUPPORT</h4>
+                        <p className="text-[10px] font-bold">RESPONSE WITHIN 24 HOURS</p>
+                        <p className="font-black text-xs mt-1">support@zuper.com</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="brutal-card-sm p-4 bg-purple-100">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl">💬</div>
+                      <div>
+                        <h4 className="font-black text-xs uppercase">LIVE CHAT</h4>
+                        <p className="text-[10px] font-bold">AVAILABLE IN DASHBOARD</p>
+                        <button className="brutal-btn bg-cyan-400 text-[10px] px-3 py-2 mt-2">
+                          🚀 START CHAT
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Links */}
+                <div className="brutal-card-sm p-4 bg-orange-100 mt-6">
+                  <h4 className="font-black text-xs uppercase mb-3">🔗 QUICK LINKS</h4>
+                  <div className="space-y-2">
+                    <a href="#" className="block text-xs font-bold hover:underline">➡️ PROVIDER GUIDELINES</a>
+                    <a href="#" className="block text-xs font-bold hover:underline">➡️ INSURANCE INFORMATION</a>
+                    <a href="#" className="block text-xs font-bold hover:underline">➡️ TAX DOCUMENTATION</a>
+                    <a href="#" className="block text-xs font-bold hover:underline">➡️ VEHICLE REQUIREMENTS</a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -292,29 +308,45 @@ const ProviderHelp = () => {
         </div>
 
         {/* Provider Resources */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-8 mt-6">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Provider Resources</h2>
+        <div className="brutal-card bg-gradient-to-r from-cyan-100 to-purple-100 mt-6">
+          <div className="p-5 border-b-3 border-black">
+            <h2 className="brutal-heading text-xl">📚 PROVIDER RESOURCES</h2>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="text-3xl mb-4">📖</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Provider Handbook</h3>
-              <p className="text-gray-600 mb-4">Complete guide to getting started and managing your business.</p>
-              <button className="text-blue-600 hover:text-blue-700 font-medium">Download PDF</button>
-            </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="brutal-card p-6 bg-yellow-100">
+                <div className="text-3xl mb-4">📖</div>
+                <h3 className="brutal-heading text-base mb-3">PROVIDER HANDBOOK</h3>
+                <p className="text-[10px] font-bold mb-4">
+                  COMPLETE GUIDE TO GETTING STARTED AND MANAGING YOUR BUSINESS.
+                </p>
+                <button className="brutal-btn bg-cyan-400 text-xs px-5 py-3 w-full">
+                  📄 DOWNLOAD PDF
+                </button>
+              </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="text-3xl mb-4">🎥</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Video Tutorials</h3>
-              <p className="text-gray-600 mb-4">Step-by-step video guides for common tasks and features.</p>
-              <button className="text-blue-600 hover:text-blue-700 font-medium">Watch Videos</button>
-            </div>
+              <div className="brutal-card p-6 bg-pink-100">
+                <div className="text-3xl mb-4">🎥</div>
+                <h3 className="brutal-heading text-base mb-3">VIDEO TUTORIALS</h3>
+                <p className="text-[10px] font-bold mb-4">
+                  STEP-BY-STEP VIDEO GUIDES FOR COMMON TASKS AND FEATURES.
+                </p>
+                <button className="brutal-btn bg-cyan-400 text-xs px-5 py-3 w-full">
+                  ▶️ WATCH VIDEOS
+                </button>
+              </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="text-3xl mb-4">📰</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Latest Updates</h3>
-              <p className="text-gray-600 mb-4">Stay informed about platform changes and new features.</p>
-              <button className="text-blue-600 hover:text-blue-700 font-medium">View Updates</button>
+              <div className="brutal-card p-6 bg-green-100">
+                <div className="text-3xl mb-4">📰</div>
+                <h3 className="brutal-heading text-base mb-3">LATEST UPDATES</h3>
+                <p className="text-[10px] font-bold mb-4">
+                  STAY INFORMED ABOUT PLATFORM CHANGES AND NEW FEATURES.
+                </p>
+                <button className="brutal-btn bg-cyan-400 text-xs px-5 py-3 w-full">
+                  👁️ VIEW UPDATES
+                </button>
+              </div>
             </div>
           </div>
         </div>

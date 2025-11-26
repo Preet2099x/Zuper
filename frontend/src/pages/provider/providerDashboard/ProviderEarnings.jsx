@@ -115,154 +115,134 @@ const ProviderEarnings = () => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Earnings</h1>
-          <div className="flex space-x-2">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-              Download Report
+          <h1 className="brutal-heading text-3xl">💰 EARNINGS</h1>
+          <div className="flex space-x-3">
+            <button className="brutal-btn bg-green-300 text-xs">
+              📥 DOWNLOAD REPORT
             </button>
-            <button className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-              Export Data
+            <button className="brutal-btn bg-purple-300 text-xs">
+              📤 EXPORT DATA
             </button>
           </div>
         </div>
 
         {/* Period Selector */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex space-x-4">
+        <div className="brutal-card p-5 mb-6 bg-yellow-100">
+          <div className="flex gap-4">
             <button
               onClick={() => setSelectedPeriod('month')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${
+              className={`brutal-btn text-xs px-5 py-3 ${
                 selectedPeriod === 'month'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-cyan-400'
+                  : 'bg-white'
               }`}
             >
-              This Month
+              📅 THIS MONTH
             </button>
             <button
               onClick={() => setSelectedPeriod('quarter')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${
+              className={`brutal-btn text-xs px-5 py-3 ${
                 selectedPeriod === 'quarter'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-cyan-400'
+                  : 'bg-white'
               }`}
             >
-              This Quarter
+              📊 THIS QUARTER
             </button>
             <button
               onClick={() => setSelectedPeriod('year')}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors duration-200 ${
+              className={`brutal-btn text-xs px-5 py-3 ${
                 selectedPeriod === 'year'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-cyan-400'
+                  : 'bg-white'
               }`}
             >
-              This Year
+              📈 THIS YEAR
             </button>
           </div>
         </div>
 
         {/* Earnings Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Earnings</p>
-                <p className="text-3xl font-bold text-gray-900">{currentData.total}</p>
-                <p className={`text-sm font-medium ${
-                  currentData.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {currentData.change} from last {selectedPeriod}
-                </p>
-              </div>
-              <div className="text-3xl">💰</div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+          <div className="brutal-card p-4 bg-green-200">
+            <p className="text-[10px] font-black uppercase mb-2">💰 TOTAL EARNINGS</p>
+            <p className="text-3xl font-black mb-1">{currentData.total}</p>
+            <p className={`text-xs font-bold ${
+              currentData.changeType === 'positive' ? 'text-green-800' : 'text-red-800'
+            }`}>
+              {currentData.change} from last {selectedPeriod}
+            </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Bookings</p>
-                <p className="text-3xl font-bold text-gray-900">{currentData.bookings}</p>
-                <p className="text-sm text-gray-600">{currentData.period}</p>
-              </div>
-              <div className="text-3xl">📅</div>
-            </div>
+          <div className="brutal-card p-4 bg-blue-200">
+            <p className="text-[10px] font-black uppercase mb-2">📅 TOTAL BOOKINGS</p>
+            <p className="text-3xl font-black mb-1">{currentData.bookings}</p>
+            <p className="text-xs font-bold">{currentData.period}</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Average per Booking</p>
-                <p className="text-3xl font-bold text-gray-900">{currentData.averageBooking}</p>
-                <p className="text-sm text-gray-600">Revenue per rental</p>
-              </div>
-              <div className="text-3xl">📊</div>
-            </div>
+          <div className="brutal-card p-4 bg-purple-200">
+            <p className="text-[10px] font-black uppercase mb-2">📊 AVG PER BOOKING</p>
+            <p className="text-3xl font-black mb-1">{currentData.averageBooking}</p>
+            <p className="text-xs font-bold">Revenue per rental</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Platform Fees</p>
-                <p className="text-3xl font-bold text-gray-900">$215</p>
-                <p className="text-sm text-gray-600">5% of earnings</p>
-              </div>
-              <div className="text-3xl">💳</div>
-            </div>
+          <div className="brutal-card p-4 bg-red-200">
+            <p className="text-[10px] font-black uppercase mb-2">💳 PLATFORM FEES</p>
+            <p className="text-3xl font-black mb-1">$215</p>
+            <p className="text-xs font-bold">5% of earnings</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Monthly Chart */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Monthly Earnings</h2>
+          <div className="brutal-card p-6 bg-cyan-100">
+            <h2 className="brutal-heading text-xl mb-6">📈 MONTHLY EARNINGS</h2>
             <div className="space-y-4">
               {monthlyBreakdown.map((month, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <span className="font-medium text-gray-700 w-12">{month.month}</span>
-                    <div className="flex-1 bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{ width: `${(month.earnings / 4250) * 100}%` }}
-                      ></div>
-                    </div>
+                <div key={index} className="flex items-center gap-3">
+                  <span className="font-black text-xs w-10">{month.month}</span>
+                  <div className="flex-1 bg-white border-2 border-black h-4 max-w-[200px]">
+                    <div
+                      className="bg-cyan-400 h-full"
+                      style={{ width: `${Math.min((month.earnings / 125000) * 100, 100)}%` }}
+                    ></div>
                   </div>
-                  <div className="text-right">
-                    <span className="font-medium text-gray-900">${month.earnings.toLocaleString()}</span>
-                    <span className="text-sm text-gray-600 ml-2">({month.bookings} bookings)</span>
+                  <div className="text-right min-w-[100px]">
+                    <span className="font-black text-sm">${month.earnings.toLocaleString()}</span>
                   </div>
+                  <span className="text-[10px] font-bold min-w-[30px]">({month.bookings})</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Recent Transactions */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Transactions</h2>
-            <div className="space-y-4">
+          <div className="brutal-card p-6 bg-pink-100">
+            <h2 className="brutal-heading text-xl mb-6">💸 RECENT TRANSACTIONS</h2>
+            <div className="space-y-3">
               {recentTransactions.map((transaction) => (
-                <div key={transaction.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <div className="text-2xl">{getTypeIcon(transaction.type)}</div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {transaction.type === 'booking' ? transaction.vehicle : transaction.description}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {transaction.customer} • {transaction.date}
-                      </p>
+                <div key={transaction.id} className="brutal-card-sm p-3 bg-white">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <div className="text-lg flex-shrink-0">{getTypeIcon(transaction.type)}</div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-black text-xs uppercase truncate">
+                          {transaction.type === 'booking' ? transaction.vehicle : transaction.description}
+                        </p>
+                        <p className="text-[10px] font-bold truncate">
+                          {transaction.customer} • {transaction.date}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-gray-900">{transaction.amount}</p>
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
-                      {transaction.status}
-                    </span>
+                    <div className="text-right flex-shrink-0">
+                      <p className="font-black text-sm whitespace-nowrap">{transaction.amount}</p>
+                      <span className={`brutal-badge ${transaction.status === 'completed' ? 'bg-green-200' : 'bg-yellow-200'}`}>
+                        {transaction.status.toUpperCase()}
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -271,29 +251,29 @@ const ProviderEarnings = () => {
         </div>
 
         {/* Payout Information */}
-        <div className="bg-white rounded-lg shadow-md p-6 mt-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Payout Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="text-2xl mb-2">🏦</div>
-              <p className="font-medium text-gray-900">Bank Transfer</p>
-              <p className="text-sm text-gray-600">Monthly payouts</p>
-              <p className="text-sm font-medium text-green-600 mt-1">Next payout: Jan 31</p>
+        <div className="brutal-card p-6 mt-6 bg-orange-100">
+          <h2 className="brutal-heading text-xl mb-6">🏦 PAYOUT INFORMATION</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="brutal-card-sm p-4 bg-white text-center">
+              <div className="text-2xl mb-3">🏦</div>
+              <p className="font-black text-xs uppercase mb-2">Bank Transfer</p>
+              <p className="text-[10px] font-bold mb-2">Monthly payouts</p>
+              <p className="text-xs font-black text-green-800">Next: Jan 31</p>
             </div>
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="text-2xl mb-2">💰</div>
-              <p className="font-medium text-gray-900">$3,872.50</p>
-              <p className="text-sm text-gray-600">Available for payout</p>
-              <button className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded text-sm transition duration-200">
-                Request Payout
+            <div className="brutal-card-sm p-4 bg-green-200 text-center">
+              <div className="text-2xl mb-3">💰</div>
+              <p className="font-black text-lg mb-2">$3,872.50</p>
+              <p className="text-[10px] font-bold mb-3">Available for payout</p>
+              <button className="brutal-btn bg-cyan-400 text-[10px]">
+                💸 REQUEST PAYOUT
               </button>
             </div>
-            <div className="text-center p-4 border border-gray-200 rounded-lg">
-              <div className="text-2xl mb-2">📊</div>
-              <p className="font-medium text-gray-900">Tax Documents</p>
-              <p className="text-sm text-gray-600">1099 form available</p>
-              <button className="mt-2 bg-gray-600 hover:bg-gray-700 text-white font-medium py-1 px-3 rounded text-sm transition duration-200">
-                Download
+            <div className="brutal-card-sm p-4 bg-white text-center">
+              <div className="text-2xl mb-3">📊</div>
+              <p className="font-black text-xs uppercase mb-2">Tax Documents</p>
+              <p className="text-[10px] font-bold mb-3">1099 form available</p>
+              <button className="brutal-btn bg-purple-300 text-[10px]">
+                📥 DOWNLOAD
               </button>
             </div>
           </div>

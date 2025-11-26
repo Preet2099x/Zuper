@@ -167,99 +167,102 @@ const ProviderBookingRequests = () => {
   if (loading) {
     return (
       <div className="p-8 flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading booking requests...</p>
+        <div className="brutal-card p-8 bg-yellow-200 text-center">
+          <div className="text-4xl mb-4">⏳</div>
+          <p className="font-black uppercase">LOADING BOOKING REQUESTS...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8">
+    <div className="p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">📥 Booking Requests</h1>
+        <h1 className="brutal-heading text-3xl mb-8">📥 BOOKING REQUESTS</h1>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
+          <div className="brutal-card mb-6 p-4 bg-red-200">
+            <p className="font-black text-sm">⚠️ {error}</p>
           </div>
         )}
 
         {/* Filter Tabs */}
-        <div className="bg-white rounded-lg shadow-md mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="flex">
-              {['PENDING_PROVIDER', 'PROVIDER_ACCEPTED', 'CONFIRMED', 'CANCELLED'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilterStatus(status)}
-                  className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 capitalize ${
-                    filterStatus === status
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
-                  }`}
-                >
-                  {status} ({bookings.filter(b => b.status === status).length})
-                </button>
-              ))}
-            </nav>
+        <div className="brutal-card p-5 mb-6 bg-purple-100">
+          <div className="flex flex-wrap gap-4">
+            {['PENDING_PROVIDER', 'PROVIDER_ACCEPTED', 'CONFIRMED', 'CANCELLED'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`brutal-btn text-[10px] px-5 py-3 ${
+                  filterStatus === status
+                    ? 'bg-cyan-400'
+                    : 'bg-white'
+                }`}
+              >
+                {status.replace('_', ' ')} ({bookings.filter(b => b.status === status).length})
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Booking Requests List */}
         {filteredBookings.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-600 text-lg">No {filterStatus} booking requests</p>
+          <div className="brutal-card p-12 text-center bg-gray-100">
+            <p className="font-black text-lg uppercase">🚫 NO {filterStatus} BOOKING REQUESTS</p>
           </div>
         ) : (
           <div className="space-y-4">
             {filteredBookings.map((booking) => (
               <div
                 key={booking._id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
+                className="brutal-card p-6 bg-white hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
               >
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
+                    <div className="flex items-center gap-3 mb-4">
                       <span className="text-2xl">{getStatusIcon(booking.status)}</span>
-                      <h3 className="text-lg font-semibold text-gray-900">
+                      <h3 className="font-black text-sm uppercase">
                         {booking.customer?.firstName} {booking.customer?.lastName}
                       </h3>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
+                      <span className={`brutal-badge ${
+                        booking.status === 'PENDING_PROVIDER' ? 'bg-yellow-200' :
+                        booking.status === 'PROVIDER_ACCEPTED' ? 'bg-blue-200' :
+                        booking.status === 'CONFIRMED' ? 'bg-green-200' :
+                        'bg-gray-200'
+                      }`}>
                         {booking.status}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                       <div>
-                        <p className="text-gray-500">Vehicle</p>
-                        <p className="font-medium text-gray-900">
+                        <p className="text-[10px] font-black uppercase">🚗 VEHICLE</p>
+                        <p className="font-bold">
                           {booking.vehicle?.brand} {booking.vehicle?.model}
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Start Date</p>
-                        <p className="font-medium text-gray-900">
+                        <p className="text-[10px] font-black uppercase">📅 START</p>
+                        <p className="font-bold">
                           {new Date(booking.startDate).toLocaleDateString()}
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-500">End Date</p>
-                        <p className="font-medium text-gray-900">
+                        <p className="text-[10px] font-black uppercase">📆 END</p>
+                        <p className="font-bold">
                           {new Date(booking.endDate).toLocaleDateString()}
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray-500">Total Cost</p>
-                        <p className="font-medium text-blue-600">₹{booking.totalCost}</p>
+                        <p className="text-[10px] font-black uppercase">💰 TOTAL</p>
+                        <p className="font-black text-sm">₹{booking.totalCost}</p>
                       </div>
                     </div>
 
                     {booking.customerNote && (
-                      <div className="mt-3 p-3 bg-gray-50 rounded border-l-4 border-blue-400">
-                        <p className="text-xs text-gray-500 uppercase font-semibold">Customer Note</p>
-                        <p className="text-gray-700 text-sm">{booking.customerNote}</p>
+                      <div className="mt-3 brutal-card-sm p-3 bg-blue-100">
+                        <p className="text-[10px] font-black uppercase">📝 CUSTOMER NOTE</p>
+                        <p className="text-xs font-bold mt-1">{booking.customerNote}</p>
                       </div>
                     )}
                   </div>
@@ -268,16 +271,16 @@ const ProviderBookingRequests = () => {
                     {booking.status === 'PENDING_PROVIDER' ? (
                       <button
                         onClick={() => openDetailModal(booking)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors duration-200"
+                        className="brutal-btn bg-cyan-400 text-xs px-5 py-3"
                       >
-                        Review
+                        🔎 REVIEW
                       </button>
                     ) : (
                       <button
                         onClick={() => openDetailModal(booking)}
-                        className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded transition-colors duration-200"
+                        className="brutal-btn bg-purple-300 text-xs px-5 py-3"
                       >
-                        Details
+                        📝 DETAILS
                       </button>
                     )}
                   </div>
@@ -289,40 +292,45 @@ const ProviderBookingRequests = () => {
 
         {/* Detail Modal */}
         {showDetailModal && selectedBooking && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
-              <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex justify-between items-center">
-                <h2 className="text-2xl font-bold">Booking Details</h2>
+          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white/30 backdrop-blur-sm border-3 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="bg-purple-400 border-b-3 border-black p-6 flex justify-between items-center">
+                <h2 className="brutal-heading text-2xl">📝 BOOKING DETAILS</h2>
                 <button
                   onClick={closeDetailModal}
-                  className="text-white hover:text-gray-200 text-2xl font-bold"
+                  className="brutal-btn bg-red-300 text-xl px-4 py-2"
                 >
                   ×
                 </button>
               </div>
 
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-5">
                 {/* Customer Info */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Customer Information</h3>
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                  <h3 className="brutal-heading text-lg mb-4">👤 CUSTOMER INFO</h3>
+                  <div className="brutal-card-sm p-5 bg-blue-100 grid grid-cols-2 gap-4 text-xs">
                     <div>
-                      <p className="text-sm text-gray-600">Name</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-[10px] font-black uppercase">NAME</p>
+                      <p className="font-bold">
                         {selectedBooking.customer?.firstName} {selectedBooking.customer?.lastName}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Email</p>
-                      <p className="font-medium text-gray-900">{selectedBooking.customer?.email}</p>
+                      <p className="text-[10px] font-black uppercase">EMAIL</p>
+                      <p className="font-bold">{selectedBooking.customer?.email}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Phone</p>
-                      <p className="font-medium text-gray-900">{selectedBooking.customer?.phone || 'N/A'}</p>
+                      <p className="text-[10px] font-black uppercase">PHONE</p>
+                      <p className="font-bold">{selectedBooking.customer?.phone || 'N/A'}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Status</p>
-                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedBooking.status)}`}>
+                      <p className="text-[10px] font-black uppercase">STATUS</p>
+                      <span className={`brutal-badge ${
+                        selectedBooking.status === 'PENDING_PROVIDER' ? 'bg-yellow-200' :
+                        selectedBooking.status === 'PROVIDER_ACCEPTED' ? 'bg-blue-200' :
+                        selectedBooking.status === 'CONFIRMED' ? 'bg-green-200' :
+                        'bg-gray-200'
+                      }`}>
                         {selectedBooking.status}
                       </span>
                     </div>
@@ -331,52 +339,52 @@ const ProviderBookingRequests = () => {
 
                 {/* Vehicle Info */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Vehicle Details</h3>
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                  <h3 className="brutal-heading text-lg mb-4">🚗 VEHICLE DETAILS</h3>
+                  <div className="brutal-card-sm p-5 bg-green-100 grid grid-cols-2 gap-4 text-xs">
                     <div>
-                      <p className="text-sm text-gray-600">Vehicle</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-[10px] font-black uppercase">VEHICLE</p>
+                      <p className="font-bold">
                         {selectedBooking.vehicle?.brand} {selectedBooking.vehicle?.model}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Year</p>
-                      <p className="font-medium text-gray-900">{selectedBooking.vehicle?.year}</p>
+                      <p className="text-[10px] font-black uppercase">YEAR</p>
+                      <p className="font-bold">{selectedBooking.vehicle?.year}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Registration</p>
-                      <p className="font-medium text-gray-900">{selectedBooking.vehicle?.registrationNumber}</p>
+                      <p className="text-[10px] font-black uppercase">REGISTRATION</p>
+                      <p className="font-bold">{selectedBooking.vehicle?.registrationNumber}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Daily Rate</p>
-                      <p className="font-medium text-blue-600">₹{selectedBooking.dailyRate}</p>
+                      <p className="text-[10px] font-black uppercase">DAILY RATE</p>
+                      <p className="font-black text-sm">₹{selectedBooking.dailyRate}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Booking Details */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Booking Details</h3>
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                  <h3 className="brutal-heading text-lg mb-4">📅 BOOKING DETAILS</h3>
+                  <div className="brutal-card-sm p-5 bg-yellow-100 grid grid-cols-2 gap-4 text-xs">
                     <div>
-                      <p className="text-sm text-gray-600">Start Date</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-[10px] font-black uppercase">START DATE</p>
+                      <p className="font-bold">
                         {new Date(selectedBooking.startDate).toLocaleDateString()} {new Date(selectedBooking.startDate).toLocaleTimeString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">End Date</p>
-                      <p className="font-medium text-gray-900">
+                      <p className="text-[10px] font-black uppercase">END DATE</p>
+                      <p className="font-bold">
                         {new Date(selectedBooking.endDate).toLocaleDateString()} {new Date(selectedBooking.endDate).toLocaleTimeString()}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Number of Days</p>
-                      <p className="font-medium text-gray-900">{selectedBooking.numberOfDays}</p>
+                      <p className="text-[10px] font-black uppercase">DAYS</p>
+                      <p className="font-bold">{selectedBooking.numberOfDays}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Total Cost</p>
-                      <p className="font-medium text-lg text-blue-600">₹{selectedBooking.totalCost}</p>
+                      <p className="text-[10px] font-black uppercase">TOTAL COST</p>
+                      <p className="font-black text-lg">₹{selectedBooking.totalCost}</p>
                     </div>
                   </div>
                 </div>
@@ -384,9 +392,9 @@ const ProviderBookingRequests = () => {
                 {/* Notes */}
                 {selectedBooking.customerNote && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Customer Note</h3>
-                    <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                      <p className="text-gray-700">{selectedBooking.customerNote}</p>
+                    <h3 className="brutal-heading text-lg mb-4">📝 CUSTOMER NOTE</h3>
+                    <div className="brutal-card-sm p-5 bg-pink-100">
+                      <p className="text-xs font-bold">{selectedBooking.customerNote}</p>
                     </div>
                   </div>
                 )}
@@ -394,42 +402,42 @@ const ProviderBookingRequests = () => {
                 {/* Provider Response - Only show for pending bookings */}
                 {selectedBooking.status === 'PENDING_PROVIDER' && (
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Your Response</h3>
+                    <h3 className="brutal-heading text-lg mb-4">✍️ YOUR RESPONSE</h3>
                     <textarea
                       value={responseNote}
                       onChange={(e) => setResponseNote(e.target.value)}
                       placeholder="Add any notes for the customer (optional)..."
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-5 py-4 border-3 border-black uppercase text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       rows="4"
                     />
                   </div>
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex space-x-3 pt-4 border-t border-gray-200">
+                <div className="flex gap-4 pt-5">
                   {selectedBooking.status === 'PENDING_PROVIDER' ? (
                     <>
                       <button
                         onClick={handleApproveBooking}
                         disabled={responding}
-                        className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-medium py-3 px-4 rounded transition-colors duration-200"
+                        className="flex-1 brutal-btn bg-green-300 text-xs px-5 py-3"
                       >
-                        {responding ? 'Processing...' : '✅ Approve Booking'}
+                        {responding ? '⏳ PROCESSING...' : '✅ APPROVE BOOKING'}
                       </button>
                       <button
                         onClick={handleRejectBooking}
                         disabled={responding}
-                        className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium py-3 px-4 rounded transition-colors duration-200"
+                        className="flex-1 brutal-btn bg-red-300 text-xs px-5 py-3"
                       >
-                        {responding ? 'Processing...' : '❌ Reject Booking'}
+                        {responding ? '⏳ PROCESSING...' : '❌ REJECT BOOKING'}
                       </button>
                     </>
                   ) : (
                     <button
                       onClick={closeDetailModal}
-                      className="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded transition-colors duration-200"
+                      className="w-full brutal-btn bg-gray-300 text-xs px-5 py-3"
                     >
-                      Close
+                      CLOSE
                     </button>
                   )}
                 </div>

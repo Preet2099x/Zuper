@@ -4,19 +4,19 @@ const VehicleDetailsModal = ({ vehicle, isOpen, onClose }) => {
   if (!isOpen || !vehicle) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-lg bg-gradient-to-br from-white/20 to-blue-100/10 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-white/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="brutal-card bg-white max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900">Vehicle Details</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <div className="sticky top-0 bg-purple-400 border-b-3 border-black p-6 z-10">
+          <div className="flex justify-between items-center">
+            <h2 className="brutal-heading text-2xl">🚗 VEHICLE DETAILS</h2>
+            <button
+              onClick={onClose}
+              className="text-3xl font-black hover:text-red-600 transition-colors"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Content */}
@@ -27,10 +27,10 @@ const VehicleDetailsModal = ({ vehicle, isOpen, onClose }) => {
               <img
                 src={vehicle.images[0]}
                 alt={`${vehicle.company} ${vehicle.model}`}
-                className="w-full h-64 object-cover rounded-lg"
+                className="w-full h-64 object-cover border-3 border-black"
               />
             ) : (
-              <div className="w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg">
+              <div className="w-full h-64 bg-gradient-to-br from-cyan-200 to-purple-200 border-3 border-black flex items-center justify-center">
                 <div className="text-center">
                   <div className="text-8xl mb-2">
                     {vehicle.type === 'bike' && '🏍️'}
@@ -38,7 +38,7 @@ const VehicleDetailsModal = ({ vehicle, isOpen, onClose }) => {
                     {vehicle.type === 'car' && '🚗'}
                     {!vehicle.type && '🚗'}
                   </div>
-                  <p className="text-sm text-gray-500 font-medium">No image available</p>
+                  <p className="font-black uppercase text-xs">No image available</p>
                 </div>
               </div>
             )}
@@ -48,90 +48,67 @@ const VehicleDetailsModal = ({ vehicle, isOpen, onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Basic Info */}
             <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Basic Information</h3>
-                <div className="space-y-2">
+              <div className="brutal-card-sm bg-white p-4">
+                <h3 className="brutal-heading text-sm mb-3">📋 BASIC INFO</h3>
+                <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Vehicle:</span>
-                    <span className="font-medium">{vehicle.year} {vehicle.company} {vehicle.model}</span>
+                    <span className="font-bold">Vehicle:</span>
+                    <span className="font-black">{vehicle.year} {vehicle.company} {vehicle.model}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Type:</span>
-                    <span className="font-medium capitalize">{vehicle.type}</span>
+                    <span className="font-bold">Type:</span>
+                    <span className="font-black uppercase">{vehicle.type}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">License Plate:</span>
-                    <span className="font-medium">{vehicle.licensePlate}</span>
+                    <span className="font-bold">License:</span>
+                    <span className="font-black">{vehicle.licensePlate}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Status:</span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      vehicle.status === 'available' ? 'bg-green-100 text-green-800' :
-                      vehicle.status === 'rented' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
+                    <span className="font-bold">Status:</span>
+                    <span className={`brutal-badge text-[10px] ${
+                      vehicle.status === 'available' ? 'bg-green-300' :
+                      vehicle.status === 'rented' ? 'bg-yellow-300' :
+                      'bg-red-300'
                     }`}>
-                      {vehicle.status}
+                      {vehicle.status.toUpperCase()}
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* Pricing */}
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Pricing</h3>
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <div className="flex items-baseline">
-                    <span className="text-3xl font-bold text-blue-600">₹{vehicle.dailyRate}</span>
-                    <span className="text-gray-600 ml-2">/day</span>
-                  </div>
-                  {vehicle.kmLimit && (
-                    <p className="text-sm text-gray-600 mt-2">
-                      Includes {vehicle.kmLimit} km/day
-                    </p>
-                  )}
+              <div className="brutal-card-sm bg-cyan-300 p-4">
+                <h3 className="brutal-heading text-sm mb-2">💰 PRICING</h3>
+                <div className="flex items-baseline">
+                  <span className="text-3xl font-black">₹{vehicle.dailyRate}</span>
+                  <span className="font-bold ml-2">/day</span>
                 </div>
+                {vehicle.kmLimit && (
+                  <p className="text-xs font-bold mt-2">
+                    Includes {vehicle.kmLimit} km/day
+                  </p>
+                )}
               </div>
             </div>
 
             {/* Location & Provider */}
             <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Location</h3>
-                <div className="flex items-start text-gray-700">
-                  <svg className="w-5 h-5 mr-2 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span>{vehicle.location}</span>
-                </div>
+              <div className="brutal-card-sm bg-white p-4">
+                <h3 className="brutal-heading text-sm mb-2">📍 LOCATION</h3>
+                <p className="font-bold text-xs">{vehicle.location}</p>
               </div>
 
               {/* Provider Info */}
               {vehicle.provider && (
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Provider</h3>
-                  <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-                    <div className="flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                      <span className="font-medium">{vehicle.provider.businessName || vehicle.provider.name}</span>
-                    </div>
+                <div className="brutal-card-sm bg-purple-200 p-4">
+                  <h3 className="brutal-heading text-sm mb-3">👤 PROVIDER</h3>
+                  <div className="space-y-2 text-xs">
+                    <p className="font-black">{vehicle.provider.businessName || vehicle.provider.name}</p>
                     {vehicle.provider.email && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        {vehicle.provider.email}
-                      </div>
+                      <p className="font-bold">📧 {vehicle.provider.email}</p>
                     )}
                     {vehicle.provider.phone && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
-                        {vehicle.provider.phone}
-                      </div>
+                      <p className="font-bold">📞 {vehicle.provider.phone}</p>
                     )}
                   </div>
                 </div>
@@ -141,23 +118,20 @@ const VehicleDetailsModal = ({ vehicle, isOpen, onClose }) => {
 
           {/* Description */}
           {vehicle.description && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-              <p className="text-gray-700 leading-relaxed">{vehicle.description}</p>
+            <div className="mb-6 brutal-card-sm bg-white p-4">
+              <h3 className="brutal-heading text-sm mb-2">📝 DESCRIPTION</h3>
+              <p className="text-xs font-bold leading-relaxed">{vehicle.description}</p>
             </div>
           )}
 
           {/* Features */}
           {vehicle.features && vehicle.features.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Features & Amenities</h3>
+            <div className="mb-6 brutal-card-sm bg-yellow-100 p-4">
+              <h3 className="brutal-heading text-sm mb-3">⭐ FEATURES</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {vehicle.features.map((feature, index) => (
-                  <div key={index} className="flex items-center bg-gray-50 px-3 py-2 rounded-lg">
-                    <svg className="w-4 h-4 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm text-gray-700">{feature}</span>
+                  <div key={index} className="brutal-badge bg-white text-[10px] px-2 py-1">
+                    ✓ {feature}
                   </div>
                 ))}
               </div>
@@ -167,14 +141,14 @@ const VehicleDetailsModal = ({ vehicle, isOpen, onClose }) => {
           {/* All Images */}
           {vehicle.images && vehicle.images.length > 1 && (
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Gallery</h3>
+              <h3 className="brutal-heading text-sm mb-3">📸 GALLERY</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {vehicle.images.map((image, index) => (
                   <img
                     key={index}
                     src={image}
                     alt={`${vehicle.company} ${vehicle.model} ${index + 1}`}
-                    className="w-full h-32 object-cover rounded-lg"
+                    className="w-full h-32 object-cover border-3 border-black"
                   />
                 ))}
               </div>
@@ -182,18 +156,18 @@ const VehicleDetailsModal = ({ vehicle, isOpen, onClose }) => {
           )}
 
           {/* Action Buttons */}
-          <div className="flex space-x-3 pt-4 border-t border-gray-200">
+          <div className="flex gap-3 pt-4 border-t-3 border-black">
             <button
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 disabled:opacity-50"
+              className="flex-1 brutal-btn bg-green-300 hover:bg-green-400 disabled:bg-gray-300 disabled:opacity-50 py-3 text-sm"
               disabled={vehicle.status !== 'available'}
             >
-              {vehicle.status === 'available' ? 'Book Now' : 'Not Available'}
+              {vehicle.status === 'available' ? '📅 BOOK NOW' : '❌ NOT AVAILABLE'}
             </button>
             <button
               onClick={onClose}
-              className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg transition duration-200"
+              className="flex-1 brutal-btn bg-red-300 hover:bg-red-400 py-3 text-sm"
             >
-              Close
+              ✕ CLOSE
             </button>
           </div>
         </div>

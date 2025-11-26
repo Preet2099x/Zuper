@@ -209,6 +209,21 @@ const ProviderSettings = () => {
         });
       }
       
+      // Update localStorage with new name
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          user.name = settings.profile.businessName;
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          // Dispatch event to notify other components (like navbar)
+          window.dispatchEvent(new Event('userUpdated'));
+        } catch (error) {
+          console.error('Error updating localStorage:', error);
+        }
+      }
+      
       setMessage('Profile updated successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {
@@ -240,147 +255,145 @@ const ProviderSettings = () => {
   };
 
   return (
-    <div className='p-8'>
+    <div className='p-6'>
       <div className='max-w-7xl mx-auto'>
-        <h1 className='text-3xl font-bold text-gray-900 mb-8'>Account Settings</h1>
-        {error && <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700'>{error}</div>}
-        {message && <div className='mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700'>{message}</div>}
+        <h1 className='brutal-heading text-3xl mb-8'>⚙️ ACCOUNT SETTINGS</h1>
+        {error && <div className='brutal-card mb-6 p-5 bg-red-200'><p className='font-black text-sm'>⚠️ {error}</p></div>}
+        {message && <div className='brutal-card mb-6 p-5 bg-green-200'><p className='font-black text-sm'>✅ {message}</p></div>}
         {loading ? (
-          <div className='bg-white rounded-lg shadow-md p-8 text-center'><p className='text-gray-600'>Loading profile...</p></div>
+          <div className='brutal-card p-8 text-center bg-yellow-200'><p className='font-black uppercase'>⏳ LOADING PROFILE...</p></div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="flex">
+          <div className="brutal-card bg-white">
+          <div className="border-b-3 border-black bg-purple-100 p-5">
+            <nav className="flex flex-wrap gap-3">
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                className={`brutal-btn text-xs px-5 py-3 ${
                   activeTab === 'profile'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'bg-cyan-400'
+                    : 'bg-white'
                 }`}
               >
-                Business Profile
+                🏛️ BUSINESS PROFILE
               </button>
               <button
                 onClick={() => setActiveTab('notifications')}
-                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                className={`brutal-btn text-xs px-5 py-3 ${
                   activeTab === 'notifications'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'bg-cyan-400'
+                    : 'bg-white'
                 }`}
               >
-                Notifications
+                🔔 NOTIFICATIONS
               </button>
               <button
                 onClick={() => setActiveTab('business')}
-                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                className={`brutal-btn text-xs px-5 py-3 ${
                   activeTab === 'business'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'bg-cyan-400'
+                    : 'bg-white'
                 }`}
               >
-                Business Info
+                💼 BUSINESS INFO
               </button>
               <button
                 onClick={() => setActiveTab('payment')}
-                className={`py-4 px-6 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                className={`brutal-btn text-xs px-5 py-3 ${
                   activeTab === 'payment'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'bg-cyan-400'
+                    : 'bg-white'
                 }`}
               >
-                Payment Settings
+                💳 PAYMENT SETTINGS
               </button>
             </nav>
           </div>
 
           {/* Tab Content */}
-          <div className="p-8">
+          <div className="p-6">
             {/* Business Profile Tab */}
             {activeTab === 'profile' && (
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900">Business Profile</h2>
-                  <div className="flex space-x-2">
-                    <button onClick={handleSaveChanges} disabled={saving} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
-                      {saving ? 'Saving...' : 'Save Changes'}
-                    </button>
-                  </div>
+                  <h2 className="brutal-heading text-xl">🏛️ BUSINESS PROFILE</h2>
+                  <button onClick={handleSaveChanges} disabled={saving} className="brutal-btn bg-green-300 text-xs px-5 py-3">
+                    {saving ? '⏳ SAVING...' : '💾 SAVE CHANGES'}
+                  </button>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
+                      <label className="block text-[10px] font-black uppercase mb-2">🏛️ BUSINESS NAME *</label>
                       <input
                         type="text"
                         value={settings.profile.businessName}
                         onChange={(e) => handleProfileUpdate('businessName', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black uppercase text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Contact Email *</label>
+                      <label className="block text-[10px] font-black uppercase mb-2">📧 CONTACT EMAIL *</label>
                       <input
                         type="email"
                         value={settings.profile.contactEmail}
                         onChange={(e) => handleProfileUpdate('contactEmail', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                      <label className="block text-[10px] font-black uppercase mb-2">📞 PHONE NUMBER *</label>
                       <input
                         type="tel"
                         value={settings.profile.phone}
                         onChange={(e) => handleProfileUpdate('phone', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                      <label className="block text-[10px] font-black uppercase mb-2">🌐 WEBSITE</label>
                       <input
                         type="url"
                         value={settings.profile.website}
                         onChange={(e) => handleProfileUpdate('website', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Business Address *</label>
+                    <label className="block text-[10px] font-black uppercase mb-2">📍 BUSINESS ADDRESS *</label>
                     <input
                       type="text"
                       value={settings.profile.address}
                       onChange={(e) => handleProfileUpdate('address', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Business Description</label>
+                    <label className="block text-[10px] font-black uppercase mb-2">📝 BUSINESS DESCRIPTION</label>
                     <textarea
                       value={settings.profile.description}
                       onChange={(e) => handleProfileUpdate('description', e.target.value)}
                       rows={4}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Describe your business and services..."
+                      className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                      placeholder="DESCRIBE YOUR BUSINESS..."
                     />
                   </div>
 
                   {/* Logo Upload */}
-                  <div className="border-t border-gray-200 pt-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Business Logo</h3>
-                    <div className="flex items-start space-x-6">
-                      <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border-2 border-gray-200">
+                  <div className="brutal-card-sm p-5 bg-blue-100 mt-6">
+                    <h3 className="brutal-heading text-lg mb-4">🏢 BUSINESS LOGO</h3>
+                    <div className="flex items-start gap-5">
+                      <div className="w-24 h-24 border-3 border-black flex items-center justify-center overflow-hidden bg-white">
                         {businessLogoPreview ? (
                           <img
                             src={businessLogoPreview}
@@ -388,11 +401,11 @@ const ProviderSettings = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <span className="text-3xl text-gray-400">🏢</span>
+                          <span className="text-3xl">🏢</span>
                         )}
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center space-x-4 mb-2">
+                        <div className="flex items-center gap-3 mb-3">
                           <input
                             type="file"
                             accept="image/*"
@@ -402,25 +415,25 @@ const ProviderSettings = () => {
                           />
                           <label
                             htmlFor="logo-upload"
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg cursor-pointer transition duration-200"
+                            className="brutal-btn bg-cyan-400 text-xs px-5 py-3 cursor-pointer"
                           >
-                            {businessLogoPreview ? 'Change Logo' : 'Upload Logo'}
+                            {businessLogoPreview ? '🔄 CHANGE LOGO' : '📷 UPLOAD LOGO'}
                           </label>
                           {businessLogoPreview && (
                             <button
                               onClick={handleRemoveLogo}
-                              className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+                              className="brutal-btn bg-red-300 text-xs px-5 py-3"
                             >
-                              Remove
+                              🗑️ REMOVE
                             </button>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600">
-                          PNG, JPG up to 5MB. Images will be compressed and stored securely.
+                        <p className="text-[10px] font-bold">
+                          PNG, JPG UP TO 5MB. IMAGES COMPRESSED.
                         </p>
                         {businessLogoFile && (
-                          <p className="text-sm text-green-600 mt-1">
-                            New logo selected: {businessLogoFile.name}
+                          <p className="text-[10px] font-bold text-green-800 mt-2">
+                            ✅ NEW LOGO: {businessLogoFile.name}
                           </p>
                         )}
                       </div>
@@ -433,17 +446,19 @@ const ProviderSettings = () => {
             {/* Notifications Tab */}
             {activeTab === 'notifications' && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Notification Preferences</h2>
+                <h2 className="brutal-heading text-xl mb-6 bg-pink-100 p-4 border-3 border-black">
+                  🔔 NOTIFICATION PREFERENCES
+                </h2>
 
                 <div className="space-y-4">
                   {Object.entries(settings.notifications).map(([key, value]) => {
                     const labels = {
-                      bookingRequests: 'New Booking Requests',
-                      bookingConfirmations: 'Booking Confirmations',
-                      paymentReceived: 'Payment Notifications',
-                      customerMessages: 'Customer Messages',
-                      maintenanceReminders: 'Maintenance Reminders',
-                      marketingEmails: 'Marketing Emails'
+                      bookingRequests: '📩 NEW BOOKING REQUESTS',
+                      bookingConfirmations: '✅ BOOKING CONFIRMATIONS',
+                      paymentReceived: '💰 PAYMENT NOTIFICATIONS',
+                      customerMessages: '💬 CUSTOMER MESSAGES',
+                      maintenanceReminders: '🔧 MAINTENANCE REMINDERS',
+                      marketingEmails: '📧 MARKETING EMAILS'
                     };
 
                     const descriptions = {
@@ -456,11 +471,11 @@ const ProviderSettings = () => {
                     };
 
                     return (
-                      <div key={key} className="border border-gray-200 rounded-lg p-6">
+                      <div key={key} className="brutal-card-sm p-5 bg-yellow-100">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h3 className="text-lg font-medium text-gray-900">{labels[key]}</h3>
-                            <p className="text-sm text-gray-600">{descriptions[key]}</p>
+                            <h3 className="font-black text-sm uppercase mb-1">{labels[key]}</h3>
+                            <p className="text-[10px] font-bold">{descriptions[key]}</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
@@ -469,7 +484,7 @@ const ProviderSettings = () => {
                               onChange={(e) => handleSettingChange('notifications', key, e.target.checked)}
                               className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <div className="w-11 h-6 bg-gray-200 border-2 border-black peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-400 peer peer-checked:after:translate-x-full peer-checked:after:border-black after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-2 after:border-black after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-400"></div>
                           </label>
                         </div>
                       </div>
@@ -482,77 +497,79 @@ const ProviderSettings = () => {
             {/* Business Info Tab */}
             {activeTab === 'business' && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Business Information</h2>
+                <h2 className="brutal-heading text-xl mb-6 bg-green-100 p-4 border-3 border-black">
+                  🏢 BUSINESS INFORMATION
+                </h2>
 
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tax ID / EIN</label>
+                      <label className="block text-xs font-black uppercase mb-2">🆔 TAX ID / EIN</label>
                       <input
                         type="text"
                         value={settings.business.taxId}
                         onChange={(e) => handleSettingChange('business', 'taxId', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Business License Number</label>
+                      <label className="block text-xs font-black uppercase mb-2">📋 BUSINESS LICENSE NUMBER</label>
                       <input
                         type="text"
                         value={settings.business.licenseNumber}
                         onChange={(e) => handleSettingChange('business', 'licenseNumber', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Insurance Provider</label>
+                      <label className="block text-xs font-black uppercase mb-2">🛡️ INSURANCE PROVIDER</label>
                       <input
                         type="text"
                         value={settings.business.insuranceProvider}
                         onChange={(e) => handleSettingChange('business', 'insuranceProvider', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Policy Number</label>
+                      <label className="block text-xs font-black uppercase mb-2">📄 POLICY NUMBER</label>
                       <input
                         type="text"
                         value={settings.business.policyNumber}
                         onChange={(e) => handleSettingChange('business', 'policyNumber', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Operating Hours</label>
+                    <label className="block text-xs font-black uppercase mb-2">⏰ OPERATING HOURS</label>
                     <input
                       type="text"
                       value={settings.business.operatingHours}
                       onChange={(e) => handleSettingChange('business', 'operatingHours', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="e.g., Mon-Fri: 9AM-6PM, Sat: 9AM-4PM"
+                      className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                      placeholder="E.G., MON-FRI: 9AM-6PM, SAT: 9AM-4PM"
                     />
                   </div>
 
-                  <div className="border-t border-gray-200 pt-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Document Uploads</h3>
+                  <div className="brutal-card-sm p-5 bg-orange-100 mt-6">
+                    <h3 className="brutal-heading text-lg mb-5">📎 DOCUMENT UPLOADS</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      <div className="brutal-card p-4 text-center bg-white">
                         <div className="text-2xl mb-2">📄</div>
-                        <p className="text-sm font-medium text-gray-900">Business License</p>
-                        <button className="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          Upload Document
+                        <p className="font-black text-xs uppercase mb-3">BUSINESS LICENSE</p>
+                        <button className="brutal-btn bg-cyan-400 text-xs px-5 py-3 w-full">
+                          📤 UPLOAD DOCUMENT
                         </button>
                       </div>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                      <div className="brutal-card p-4 text-center bg-white">
                         <div className="text-2xl mb-2">🛡️</div>
-                        <p className="text-sm font-medium text-gray-900">Insurance Certificate</p>
-                        <button className="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium">
-                          Upload Document
+                        <p className="font-black text-xs uppercase mb-3">INSURANCE CERTIFICATE</p>
+                        <button className="brutal-btn bg-cyan-400 text-xs px-5 py-3 w-full">
+                          📤 UPLOAD DOCUMENT
                         </button>
                       </div>
                     </div>
@@ -564,64 +581,66 @@ const ProviderSettings = () => {
             {/* Payment Settings Tab */}
             {activeTab === 'payment' && (
               <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment Settings</h2>
+                <h2 className="brutal-heading text-xl mb-6 bg-blue-100 p-4 border-3 border-black">
+                  💳 PAYMENT SETTINGS
+                </h2>
 
                 <div className="space-y-6">
-                  <div className="border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Bank Account Information</h3>
+                  <div className="brutal-card p-6 bg-green-100">
+                    <h3 className="brutal-heading text-lg mb-5">🏦 BANK ACCOUNT INFORMATION</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Bank Name</label>
+                        <label className="block text-xs font-black uppercase mb-2">🏦 BANK NAME</label>
                         <input
                           type="text"
                           value={settings.payment.bankName}
                           onChange={(e) => handleSettingChange('payment', 'bankName', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Account Number</label>
+                        <label className="block text-xs font-black uppercase mb-2">🔢 ACCOUNT NUMBER</label>
                         <input
                           type="text"
                           value={settings.payment.accountNumber}
                           onChange={(e) => handleSettingChange('payment', 'accountNumber', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Routing Number</label>
+                        <label className="block text-xs font-black uppercase mb-2">📦 ROUTING NUMBER</label>
                         <input
                           type="text"
                           value={settings.payment.routingNumber}
                           onChange={(e) => handleSettingChange('payment', 'routingNumber', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">PayPal (Alternative Payment)</h3>
+                  <div className="brutal-card p-6 bg-yellow-100">
+                    <h3 className="brutal-heading text-lg mb-5">🔵 PAYPAL (ALTERNATIVE PAYMENT)</h3>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">PayPal Email</label>
+                      <label className="block text-xs font-black uppercase mb-2">✉️ PAYPAL EMAIL</label>
                       <input
                         type="email"
                         value={settings.payment.paypalEmail}
                         onChange={(e) => handleSettingChange('payment', 'paypalEmail', e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full p-3 border-3 border-black text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       />
                     </div>
                   </div>
 
-                  <div className="border border-gray-200 rounded-lg p-6">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Payout Preferences</h3>
+                  <div className="brutal-card p-6 bg-purple-100">
+                    <h3 className="brutal-heading text-lg mb-5">📅 PAYOUT PREFERENCES</h3>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <label className="text-sm font-medium text-gray-700">Automatic Payouts</label>
-                          <p className="text-sm text-gray-600">Automatically transfer earnings to your account</p>
+                          <label className="font-black text-xs uppercase">⚡ AUTOMATIC PAYOUTS</label>
+                          <p className="text-[10px] font-bold">Automatically transfer earnings to your account</p>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
                           <input
@@ -630,20 +649,20 @@ const ProviderSettings = () => {
                             onChange={(e) => handleSettingChange('payment', 'autoPayout', e.target.checked)}
                             className="sr-only peer"
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                          <div className="w-11 h-6 bg-gray-200 border-2 border-black peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-400 peer peer-checked:after:translate-x-full peer-checked:after:border-black after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-2 after:border-black after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-400"></div>
                         </label>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Payout Schedule</label>
+                        <label className="block text-xs font-black uppercase mb-2">📆 PAYOUT SCHEDULE</label>
                         <select
                           value={settings.payment.payoutSchedule}
                           onChange={(e) => handleSettingChange('payment', 'payoutSchedule', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full p-3 border-3 border-black text-xs font-bold uppercase focus:outline-none focus:ring-2 focus:ring-cyan-400"
                         >
-                          <option value="weekly">Weekly</option>
-                          <option value="biweekly">Bi-weekly</option>
-                          <option value="monthly">Monthly</option>
+                          <option value="weekly">WEEKLY</option>
+                          <option value="biweekly">BI-WEEKLY</option>
+                          <option value="monthly">MONTHLY</option>
                         </select>
                       </div>
                     </div>

@@ -94,114 +94,118 @@ const BookingModal = ({ vehicle, onClose, onBook }) => {
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-8 relative">
+    <div className="fixed inset-0 bg-white/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="brutal-card bg-white w-full max-w-md relative">
         <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+          className="absolute top-4 right-4 text-3xl font-black hover:text-red-600 transition-colors z-10"
           onClick={onClose}
         >
-          &times;
+          ✕
         </button>
 
-        <h2 className="text-2xl font-bold mb-6">Book Vehicle</h2>
-
-        {/* Vehicle Summary */}
-        <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
-          <h3 className="font-semibold text-gray-900 mb-2">
-            {vehicle.year} {vehicle.company} {vehicle.model}
-          </h3>
-          <p className="text-sm text-gray-600 mb-1">📍 {vehicle.location}</p>
-          <p className="text-sm font-semibold text-blue-600">₹{vehicle.dailyRate}/day</p>
+        <div className="bg-cyan-300 border-b-3 border-black p-6">
+          <h2 className="brutal-heading text-2xl">📅 BOOK VEHICLE</h2>
         </div>
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded-lg mb-4 text-sm">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Check-in Date *
-            </label>
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleDateChange}
-              min={today}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
+        <div className="p-6">
+          {/* Vehicle Summary */}
+          <div className="brutal-card-sm bg-purple-200 p-4 mb-6">
+            <h3 className="font-black text-sm mb-2 uppercase">
+              {vehicle.year} {vehicle.company} {vehicle.model}
+            </h3>
+            <p className="text-xs font-bold mb-1">📍 {vehicle.location}</p>
+            <p className="text-sm font-black text-purple-600">₹{vehicle.dailyRate}/day</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Check-out Date *
-            </label>
-            <input
-              type="date"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleDateChange}
-              min={formData.startDate || today}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Message (Optional)
-            </label>
-            <textarea
-              name="customerNote"
-              value={formData.customerNote}
-              onChange={handleInputChange}
-              placeholder="Add any special requests or questions..."
-              rows={3}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          {/* Cost Summary */}
-          {totalCost > 0 && (
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-700">Days:</span>
-                <span className="font-semibold text-gray-900">
-                  {Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24))}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-700">Daily Rate:</span>
-                <span className="font-semibold text-gray-900">₹{vehicle.dailyRate}</span>
-              </div>
-              <div className="border-t border-blue-200 pt-2 flex justify-between">
-                <span className="font-semibold text-gray-900">Total Cost:</span>
-                <span className="font-bold text-blue-600 text-lg">₹{totalCost}</span>
-              </div>
+          {error && (
+            <div className="brutal-card-sm bg-red-300 border-red-600 p-3 mb-4">
+              <p className="text-xs font-black uppercase">{error}</p>
             </div>
           )}
 
-          <div className="flex justify-end gap-2 mt-6">
-            <button
-              type="button"
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-medium transition"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-2 rounded-lg font-medium transition"
-            >
-              {loading ? 'Booking...' : 'Send Booking Request'}
-            </button>
-          </div>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-black uppercase mb-2">
+                🟢 CHECK-IN DATE *
+              </label>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleDateChange}
+                min={today}
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-cyan-400"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase mb-2">
+                🔴 CHECK-OUT DATE *
+              </label>
+              <input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleDateChange}
+                min={formData.startDate || today}
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-cyan-400"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-black uppercase mb-2">
+                💬 MESSAGE (OPTIONAL)
+              </label>
+              <textarea
+                name="customerNote"
+                value={formData.customerNote}
+                onChange={handleInputChange}
+                placeholder="Add any special requests..."
+                rows={3}
+                className="w-full p-3 border-3 border-black font-bold focus:ring-0 focus:border-cyan-400"
+              />
+            </div>
+
+            {/* Cost Summary */}
+            {totalCost > 0 && (
+              <div className="brutal-card-sm bg-green-200 border-green-600 p-4">
+                <div className="flex justify-between text-xs mb-2">
+                  <span className="font-bold">Days:</span>
+                  <span className="font-black">
+                    {Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24))}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs mb-2">
+                  <span className="font-bold">Daily Rate:</span>
+                  <span className="font-black">₹{vehicle.dailyRate}</span>
+                </div>
+                <div className="border-t-2 border-black pt-2 flex justify-between">
+                  <span className="font-black uppercase">Total Cost:</span>
+                  <span className="font-black text-lg text-green-600">₹{totalCost}</span>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                className="flex-1 brutal-btn bg-gray-300 hover:bg-gray-400 py-3 text-sm"
+                onClick={onClose}
+              >
+                ❌ CANCEL
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 disabled:opacity-50 py-3 text-sm"
+              >
+                {loading ? '⏳ BOOKING...' : '✅ SEND REQUEST'}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
