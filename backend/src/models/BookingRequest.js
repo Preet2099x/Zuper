@@ -26,11 +26,11 @@ const bookingRequestSchema = new mongoose.Schema({
     required: true 
   },
 
-  // Booking status: pending (waiting), approved, rejected, cancelled
+  // Booking status flow: PENDING_PROVIDER -> PROVIDER_ACCEPTED -> CONFIRMED or CANCELLED
   status: { 
     type: String, 
-    enum: ["pending", "approved", "rejected", "cancelled"], 
-    default: "pending" 
+    enum: ["PENDING_PROVIDER", "PROVIDER_ACCEPTED", "CONFIRMED", "CANCELLED"], 
+    default: "PENDING_PROVIDER" 
   },
 
   // Total cost calculation
@@ -57,10 +57,16 @@ const bookingRequestSchema = new mongoose.Schema({
     trim: true
   },
 
-  // Related contract (created when approved)
+  // Related contract (created when provider accepts)
   contract: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Contract",
+    default: null
+  },
+
+  // Provider acceptance timestamp
+  providerAcceptedAt: {
+    type: Date,
     default: null
   }
 }, { timestamps: true });

@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const contractSchema = new mongoose.Schema({
+  booking: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "BookingRequest",
+    required: true
+  },
   customer: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "Customer", 
@@ -26,10 +31,27 @@ const contractSchema = new mongoose.Schema({
     required: true 
   },
 
+  // Contract status flow: PENDING_CUSTOMER -> SIGNED or VOID
   status: { 
     type: String, 
-    enum: ["active", "completed", "cancelled"], 
-    default: "active" 
+    enum: ["PENDING_CUSTOMER", "SIGNED", "VOID"], 
+    default: "PENDING_CUSTOMER" 
+  },
+
+  // Signing timestamps
+  providerSignedAt: {
+    type: Date,
+    required: true // Auto-signed when provider accepts
+  },
+  customerSignedAt: {
+    type: Date,
+    default: null
+  },
+
+  // Terms and conditions
+  terms: {
+    type: String,
+    default: "Standard vehicle rental agreement. Customer agrees to return the vehicle in the same condition as received."
   }
 }, { timestamps: true });
 

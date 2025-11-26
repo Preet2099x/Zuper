@@ -51,7 +51,7 @@ export const createBookingRequest = async (req, res) => {
       dailyRate: vehicle.dailyRate,
       totalCost,
       customerNote: customerNote || "",
-      status: "pending"
+      status: "PENDING_PROVIDER"
     });
 
     // Populate all references
@@ -125,45 +125,43 @@ export const approveBookingRequest = async (req, res) => {
     }
 
     // Check if already processed
-    if (bookingRequest.status !== "pending") {
+    if (bookingRequest.status !== "PENDING_PROVIDER") {
       return res.status(400).json({ message: `Booking request is already ${bookingRequest.status}` });
     }
 
-    // Create contract
+    // Update booking to PROVIDER_ACCEPTED
+    bookingRequest.status = "PROVIDER_ACCEPTED";
+    bookingRequest.providerNote = providerNote || "";
+    bookingRequest.providerAcceptedAt = new Date();
+    await bookingRequest.save();
+
+    // Create contract with provider auto-signed
     const contract = await Contract.create({
+      booking: bookingRequest._id,
       customer: bookingRequest.customer._id,
       provider: bookingRequest.provider._id,
       vehicle: bookingRequest.vehicle._id,
       startDate: bookingRequest.startDate,
       endDate: bookingRequest.endDate,
-      status: "active"
+      status: "PENDING_CUSTOMER",
+      providerSignedAt: new Date() // Auto-sign provider
     });
 
-    // Update booking request status
-    bookingRequest.status = "approved";
-    bookingRequest.providerNote = providerNote || "";
+    // Link contract to booking
     bookingRequest.contract = contract._id;
     await bookingRequest.save();
-
-    // Update vehicle status to rented
-    await Vehicle.findByIdAndUpdate(bookingRequest.vehicle._id, {
-      status: "rented"
-    });
-
-    // Add contract to customer
-    await Customer.findByIdAndUpdate(bookingRequest.customer._id, {
-      $push: { contracts: contract._id }
-    });
 
     const populatedBooking = await bookingRequest.populate([
       { path: "customer", select: "name email phone" },
       { path: "provider", select: "name email businessName" },
-      { path: "vehicle", select: "company model year licensePlate" }
+      { path: "vehicle", select: "company model year licensePlate" },
+      { path: "contract" }
     ]);
 
     res.json({
-      message: "Booking request approved successfully",
-      booking: populatedBooking
+      message: "Booking approved. Contract sent to customer for signature.",
+      booking: populatedBooking,
+      contract: contract
     });
   } catch (error) {
     console.error("Approve booking request error:", error);
@@ -189,12 +187,12 @@ export const rejectBookingRequest = async (req, res) => {
     }
 
     // Check if already processed
-    if (bookingRequest.status !== "pending") {
+    if (bookingRequest.status !== "PENDING_PROVIDER") {
       return res.status(400).json({ message: `Booking request is already ${bookingRequest.status}` });
     }
 
-    // Update booking request status
-    bookingRequest.status = "rejected";
+    // Update booking request status to CANCELLED
+    bookingRequest.status = "CANCELLED";
     bookingRequest.providerNote = providerNote || "";
     await bookingRequest.save();
 
@@ -205,7 +203,7 @@ export const rejectBookingRequest = async (req, res) => {
     ]);
 
     res.json({
-      message: "Booking request rejected",
+      message: "Booking request rejected. Booking cancelled.",
       booking: populatedBooking
     });
   } catch (error) {
@@ -252,13 +250,20 @@ export const cancelBookingRequest = async (req, res) => {
       return res.status(403).json({ message: "Not authorized to cancel this booking" });
     }
 
-    // Can only cancel if pending or not yet started
-    if (bookingRequest.status === "approved" && bookingRequest.startDate < new Date()) {
-      return res.status(400).json({ message: "Cannot cancel booking that has already started" });
+    // Can only cancel if PENDING_PROVIDER or PROVIDER_ACCEPTED (before contract signed)
+    if (!["PENDING_PROVIDER", "PROVIDER_ACCEPTED"].includes(bookingRequest.status)) {
+      return res.status(400).json({ message: "Cannot cancel booking at this stage" });
     }
 
-    bookingRequest.status = "cancelled";
+    bookingRequest.status = "CANCELLED";
     await bookingRequest.save();
+
+    // If there's a contract, void it
+    if (bookingRequest.contract) {
+      await Contract.findByIdAndUpdate(bookingRequest.contract, {
+        status: "VOID"
+      });
+    }
 
     const populatedBooking = await bookingRequest.populate([
       { path: "customer", select: "name email phone" },
@@ -272,6 +277,164 @@ export const cancelBookingRequest = async (req, res) => {
     });
   } catch (error) {
     console.error("Cancel booking request error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Customer signs contract
+export const signContract = async (req, res) => {
+  try {
+    const { contractId } = req.params;
+
+    const contract = await Contract.findById(contractId).populate([
+      { path: "booking" },
+      { path: "customer", select: "name email phone" },
+      { path: "provider", select: "name email businessName" },
+      { path: "vehicle" }
+    ]);
+
+    if (!contract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+
+    // Verify customer owns this contract
+    if (contract.customer._id.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to sign this contract" });
+    }
+
+    // Check if contract is pending customer signature
+    if (contract.status !== "PENDING_CUSTOMER") {
+      return res.status(400).json({ message: `Contract is already ${contract.status}` });
+    }
+
+    // Sign contract
+    contract.status = "SIGNED";
+    contract.customerSignedAt = new Date();
+    await contract.save();
+
+    // Update booking to CONFIRMED
+    const booking = await BookingRequest.findById(contract.booking._id);
+    booking.status = "CONFIRMED";
+    await booking.save();
+
+    // Mark vehicle as unavailable/rented
+    await Vehicle.findByIdAndUpdate(contract.vehicle._id, {
+      status: "rented"
+    });
+
+    // Add contract to customer's contracts list
+    await Customer.findByIdAndUpdate(contract.customer._id, {
+      $addToSet: { contracts: contract._id } // Use $addToSet to avoid duplicates
+    });
+
+    const populatedContract = await contract.populate([
+      { path: "booking" },
+      { path: "customer", select: "name email phone" },
+      { path: "provider", select: "name email businessName" },
+      { path: "vehicle" }
+    ]);
+
+    res.json({
+      message: "Contract signed successfully! Booking confirmed.",
+      contract: populatedContract,
+      booking: booking
+    });
+  } catch (error) {
+    console.error("Sign contract error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Customer rejects contract
+export const rejectContract = async (req, res) => {
+  try {
+    const { contractId } = req.params;
+
+    const contract = await Contract.findById(contractId).populate([
+      { path: "booking" },
+      { path: "customer", select: "name email phone" },
+      { path: "provider", select: "name email businessName" },
+      { path: "vehicle" }
+    ]);
+
+    if (!contract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+
+    // Verify customer owns this contract
+    if (contract.customer._id.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to reject this contract" });
+    }
+
+    // Check if contract is pending customer signature
+    if (contract.status !== "PENDING_CUSTOMER") {
+      return res.status(400).json({ message: `Contract is already ${contract.status}` });
+    }
+
+    // Void contract
+    contract.status = "VOID";
+    await contract.save();
+
+    // Cancel booking
+    const booking = await BookingRequest.findById(contract.booking._id);
+    booking.status = "CANCELLED";
+    await booking.save();
+
+    res.json({
+      message: "Contract rejected. Booking cancelled.",
+      contract: contract,
+      booking: booking
+    });
+  } catch (error) {
+    console.error("Reject contract error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Get contract by ID
+export const getContractById = async (req, res) => {
+  try {
+    const { contractId } = req.params;
+
+    const contract = await Contract.findById(contractId).populate([
+      { path: "booking" },
+      { path: "customer", select: "name email phone" },
+      { path: "provider", select: "name email businessName" },
+      { path: "vehicle" }
+    ]);
+
+    if (!contract) {
+      return res.status(404).json({ message: "Contract not found" });
+    }
+
+    // Verify user has access to this contract
+    const userId = req.user.id;
+    if (contract.customer._id.toString() !== userId && contract.provider._id.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized to view this contract" });
+    }
+
+    res.json(contract);
+  } catch (error) {
+    console.error("Get contract error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Get customer's contracts
+export const getCustomerContracts = async (req, res) => {
+  try {
+    const contracts = await Contract.find({ customer: req.user.id })
+      .populate([
+        { path: "booking" },
+        { path: "customer", select: "name email phone" },
+        { path: "provider", select: "name email businessName" },
+        { path: "vehicle" }
+      ])
+      .sort({ createdAt: -1 });
+
+    res.json(contracts);
+  } catch (error) {
+    console.error("Get customer contracts error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

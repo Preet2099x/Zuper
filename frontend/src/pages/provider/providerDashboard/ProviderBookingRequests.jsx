@@ -4,7 +4,7 @@ const ProviderBookingRequests = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filterStatus, setFilterStatus] = useState('pending');
+  const [filterStatus, setFilterStatus] = useState('PENDING_PROVIDER');
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [responseNote, setResponseNote] = useState('');
@@ -134,13 +134,13 @@ const ProviderBookingRequests = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
+      case 'PENDING_PROVIDER':
         return 'bg-yellow-100 text-yellow-800';
-      case 'approved':
+      case 'PROVIDER_ACCEPTED':
+        return 'bg-blue-100 text-blue-800';
+      case 'CONFIRMED':
         return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      case 'cancelled':
+      case 'CANCELLED':
         return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -149,13 +149,13 @@ const ProviderBookingRequests = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'pending':
+      case 'PENDING_PROVIDER':
         return '⏳';
-      case 'approved':
+      case 'PROVIDER_ACCEPTED':
+        return '📋';
+      case 'CONFIRMED':
         return '✅';
-      case 'rejected':
-        return '❌';
-      case 'cancelled':
+      case 'CANCELLED':
         return '🚫';
       default:
         return '⚪';
@@ -190,7 +190,7 @@ const ProviderBookingRequests = () => {
         <div className="bg-white rounded-lg shadow-md mb-6">
           <div className="border-b border-gray-200">
             <nav className="flex">
-              {['pending', 'approved', 'rejected', 'cancelled'].map((status) => (
+              {['PENDING_PROVIDER', 'PROVIDER_ACCEPTED', 'CONFIRMED', 'CANCELLED'].map((status) => (
                 <button
                   key={status}
                   onClick={() => setFilterStatus(status)}
@@ -265,7 +265,7 @@ const ProviderBookingRequests = () => {
                   </div>
 
                   <div className="ml-4">
-                    {booking.status === 'pending' ? (
+                    {booking.status === 'PENDING_PROVIDER' ? (
                       <button
                         onClick={() => openDetailModal(booking)}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition-colors duration-200"
@@ -392,7 +392,7 @@ const ProviderBookingRequests = () => {
                 )}
 
                 {/* Provider Response - Only show for pending bookings */}
-                {selectedBooking.status === 'pending' && (
+                {selectedBooking.status === 'PENDING_PROVIDER' && (
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Your Response</h3>
                     <textarea
@@ -407,7 +407,7 @@ const ProviderBookingRequests = () => {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-3 pt-4 border-t border-gray-200">
-                  {selectedBooking.status === 'pending' ? (
+                  {selectedBooking.status === 'PENDING_PROVIDER' ? (
                     <>
                       <button
                         onClick={handleApproveBooking}

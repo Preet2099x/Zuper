@@ -6,6 +6,9 @@ const CustomerMyVehicles = () => {
   const [error, setError] = useState('');
   const [cancelling, setCancelling] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [showContractModal, setShowContractModal] = useState(false);
+  const [selectedContract, setSelectedContract] = useState(null);
+  const [signingContract, setSigningContract] = useState(false);
 
   useEffect(() => {
     fetchCustomerBookings();
@@ -78,15 +81,125 @@ const CustomerMyVehicles = () => {
     }
   };
 
+  const handleViewContract = async (booking) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/api/bookings/contracts/${booking.contract}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch contract');
+      }
+
+      const contractData = await response.json();
+      setSelectedContract({ ...contractData, bookingId: booking._id });
+      setShowContractModal(true);
+    } catch (err) {
+      console.error('Fetch contract error:', err);
+      alert('Failed to load contract: ' + err.message);
+    }
+  };
+
+  const handleSignContract = async () => {
+    if (!selectedContract) return;
+
+    setSigningContract(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/api/bookings/contracts/${selectedContract._id}/sign`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to sign contract');
+      }
+
+      const data = await response.json();
+      
+      // Update booking in list
+      setBookings(prev =>
+        prev.map(b => (b._id === selectedContract.bookingId ? { ...b, status: 'CONFIRMED' } : b))
+      );
+      
+      setShowContractModal(false);
+      setSelectedContract(null);
+      setSuccessMessage('🎉 Contract signed! Vehicle confirmed and ready for pickup!');
+      
+      setTimeout(() => setSuccessMessage(''), 5000);
+    } catch (err) {
+      console.error('Sign contract error:', err);
+      alert('Failed to sign contract: ' + err.message);
+    } finally {
+      setSigningContract(false);
+    }
+  };
+
+  const handleRejectContract = async () => {
+    if (!selectedContract) return;
+    
+    if (!window.confirm('Are you sure you want to reject this contract? This will cancel your booking.')) {
+      return;
+    }
+
+    setSigningContract(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/api/bookings/contracts/${selectedContract._id}/reject`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to reject contract');
+      }
+
+      // Remove cancelled booking
+      setBookings(prev => prev.filter(b => b._id !== selectedContract.bookingId));
+      
+      setShowContractModal(false);
+      setSelectedContract(null);
+      setSuccessMessage('Contract rejected. Booking cancelled.');
+      
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch (err) {
+      console.error('Reject contract error:', err);
+      alert('Failed to reject contract: ' + err.message);
+    } finally {
+      setSigningContract(false);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending':
+      case 'PENDING_PROVIDER':
         return 'bg-yellow-300 border-yellow-600';
-      case 'approved':
+      case 'PROVIDER_ACCEPTED':
+        return 'bg-blue-300 border-blue-600';
+      case 'CONFIRMED':
         return 'bg-green-300 border-green-600';
-      case 'rejected':
-        return 'bg-red-300 border-red-600';
-      case 'cancelled':
+      case 'CANCELLED':
         return 'bg-gray-300 border-gray-600';
       default:
         return 'bg-gray-300 border-gray-600';
@@ -95,10 +208,10 @@ const CustomerMyVehicles = () => {
 
   const getStatusEmoji = (status) => {
     switch (status) {
-      case 'pending': return '⏰';
-      case 'approved': return '✅';
-      case 'rejected': return '❌';
-      case 'cancelled': return '🚫';
+      case 'PENDING_PROVIDER': return '⏰';
+      case 'PROVIDER_ACCEPTED': return '📋';
+      case 'CONFIRMED': return '✅';
+      case 'CANCELLED': return '🚫';
       default: return '📋';
     }
   };
@@ -216,10 +329,29 @@ const CustomerMyVehicles = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <button className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 text-xs">
-                  👁️ VIEW
-                </button>
-                {booking.status === 'pending' && (
+                {booking.status === 'PROVIDER_ACCEPTED' && booking.contract && (
+                  <button 
+                    onClick={() => handleViewContract(booking)}
+                    className="flex-1 brutal-btn bg-green-300 hover:bg-green-400 py-2 text-xs font-black"
+                  >
+                    ✍️ SIGN CONTRACT
+                  </button>
+                )}
+                {booking.status === 'PENDING_PROVIDER' && (
+                  <>
+                    <button className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 text-xs">
+                      👁️ VIEW
+                    </button>
+                    <button 
+                      onClick={() => handleCancelBooking(booking._id)}
+                      disabled={cancelling === booking._id}
+                      className="flex-1 brutal-btn bg-red-300 hover:bg-red-400 py-2 text-xs disabled:opacity-50"
+                    >
+                      {cancelling === booking._id ? '⏳' : '❌ CANCEL'}
+                    </button>
+                  </>
+                )}
+                {booking.status === 'PROVIDER_ACCEPTED' && booking.contract && (
                   <button 
                     onClick={() => handleCancelBooking(booking._id)}
                     disabled={cancelling === booking._id}
@@ -228,10 +360,15 @@ const CustomerMyVehicles = () => {
                     {cancelling === booking._id ? '⏳' : '❌ CANCEL'}
                   </button>
                 )}
-                {booking.status !== 'pending' && (
-                  <button className="flex-1 brutal-btn bg-purple-300 hover:bg-purple-400 py-2 text-xs">
-                    💬 CONTACT
-                  </button>
+                {booking.status === 'CONFIRMED' && (
+                  <>
+                    <button className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 text-xs">
+                      👁️ VIEW
+                    </button>
+                    <button className="flex-1 brutal-btn bg-purple-300 hover:bg-purple-400 py-2 text-xs">
+                      💬 CONTACT
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -250,13 +387,13 @@ const CustomerMyVehicles = () => {
             </div>
             <div className="text-center brutal-card-sm bg-green-200 border-green-600 p-3">
               <p className="text-3xl font-black">
-                {bookings.filter(b => b.status === 'approved').length}
+                {bookings.filter(b => b.status === 'CONFIRMED').length}
               </p>
-              <p className="text-xs font-black uppercase mt-1">Approved</p>
+              <p className="text-xs font-black uppercase mt-1">Confirmed</p>
             </div>
             <div className="text-center brutal-card-sm bg-yellow-200 border-yellow-600 p-3">
               <p className="text-3xl font-black">
-                {bookings.filter(b => b.status === 'pending').length}
+                {bookings.filter(b => b.status === 'PENDING_PROVIDER' || b.status === 'PROVIDER_ACCEPTED').length}
               </p>
               <p className="text-xs font-black uppercase mt-1">Pending</p>
             </div>
@@ -265,6 +402,138 @@ const CustomerMyVehicles = () => {
                 ₹{bookings.reduce((sum, b) => sum + b.totalCost, 0).toLocaleString()}
               </p>
               <p className="text-xs font-black uppercase mt-1">Total Spent</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contract Modal */}
+      {showContractModal && selectedContract && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="brutal-card bg-white max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-purple-400 border-b-3 border-black p-6 sticky top-0 z-10">
+              <div className="flex justify-between items-center">
+                <h2 className="brutal-heading text-2xl">📋 RENTAL CONTRACT</h2>
+                <button
+                  onClick={() => setShowContractModal(false)}
+                  className="text-3xl font-black hover:text-red-600 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Contract Status */}
+              <div className="brutal-card-sm bg-blue-100 border-blue-600 p-4">
+                <p className="font-black uppercase text-xs mb-2">📊 CONTRACT STATUS</p>
+                <div className="flex items-center gap-3">
+                  <span className="brutal-badge bg-green-300 text-xs">
+                    ✅ PROVIDER SIGNED
+                  </span>
+                  <span className="brutal-badge bg-yellow-300 text-xs">
+                    ⏳ AWAITING YOUR SIGNATURE
+                  </span>
+                </div>
+              </div>
+
+              {/* Vehicle Details */}
+              <div className="brutal-card-sm bg-white p-5">
+                <h3 className="brutal-heading text-lg mb-3">🚗 VEHICLE DETAILS</h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">Vehicle</p>
+                    <p className="font-bold">{selectedContract.vehicle?.company} {selectedContract.vehicle?.model}</p>
+                  </div>
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">Year</p>
+                    <p className="font-bold">{selectedContract.vehicle?.year}</p>
+                  </div>
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">License Plate</p>
+                    <p className="font-bold">{selectedContract.vehicle?.licensePlate}</p>
+                  </div>
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">Daily Rate</p>
+                    <p className="font-bold text-purple-600">₹{selectedContract.vehicle?.dailyRate}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rental Period */}
+              <div className="brutal-card-sm bg-white p-5">
+                <h3 className="brutal-heading text-lg mb-3">📅 RENTAL PERIOD</h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">Start Date</p>
+                    <p className="font-bold">{new Date(selectedContract.startDate).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">End Date</p>
+                    <p className="font-bold">{new Date(selectedContract.endDate).toLocaleDateString()}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Provider Details */}
+              <div className="brutal-card-sm bg-white p-5">
+                <h3 className="brutal-heading text-lg mb-3">👤 PROVIDER INFORMATION</h3>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">Provider</p>
+                    <p className="font-bold">{selectedContract.provider?.businessName || selectedContract.provider?.name}</p>
+                  </div>
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">Email</p>
+                    <p className="font-bold">{selectedContract.provider?.email}</p>
+                  </div>
+                  <div>
+                    <p className="font-black uppercase text-xs text-gray-600">Provider Signed At</p>
+                    <p className="font-bold text-green-600">
+                      ✅ {new Date(selectedContract.providerSignedAt).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Terms & Conditions */}
+              <div className="brutal-card-sm bg-yellow-50 border-yellow-600 p-5">
+                <h3 className="brutal-heading text-lg mb-3">📜 TERMS & CONDITIONS</h3>
+                <div className="text-sm font-bold space-y-2 bg-white p-4 border-2 border-black">
+                  <p>{selectedContract.terms}</p>
+                  <ul className="list-disc list-inside space-y-1 mt-3 text-xs">
+                    <li>You agree to return the vehicle in the same condition as received</li>
+                    <li>Any damage to the vehicle will be your responsibility</li>
+                    <li>Late returns may incur additional charges</li>
+                    <li>Vehicle must not be used for illegal activities</li>
+                    <li>You must have a valid driver's license</li>
+                    <li>Insurance coverage is included in the rental rate</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="brutal-card-sm bg-gray-100 border-gray-600 p-5">
+                <p className="font-black uppercase text-xs mb-3 text-center">
+                  ⚠️ By signing, you agree to all terms and conditions above
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleRejectContract}
+                    disabled={signingContract}
+                    className="flex-1 brutal-btn bg-red-300 hover:bg-red-400 disabled:opacity-50 py-3 text-sm"
+                  >
+                    ❌ REJECT CONTRACT
+                  </button>
+                  <button
+                    onClick={handleSignContract}
+                    disabled={signingContract}
+                    className="flex-1 brutal-btn bg-green-300 hover:bg-green-400 disabled:opacity-50 py-3 text-sm"
+                  >
+                    {signingContract ? '⏳ SIGNING...' : '✍️ SIGN & CONFIRM'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
