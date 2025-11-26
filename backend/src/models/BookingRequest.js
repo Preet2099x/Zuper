@@ -26,10 +26,10 @@ const bookingRequestSchema = new mongoose.Schema({
     required: true 
   },
 
-  // Booking status flow: PENDING_PROVIDER -> PROVIDER_ACCEPTED -> CONFIRMED or CANCELLED
+  // Booking status flow: PENDING_PROVIDER -> PROVIDER_ACCEPTED -> PAYMENT_PENDING -> CONFIRMED or CANCELLED
   status: { 
     type: String, 
-    enum: ["PENDING_PROVIDER", "PROVIDER_ACCEPTED", "CONFIRMED", "CANCELLED"], 
+    enum: ["PENDING_PROVIDER", "PROVIDER_ACCEPTED", "PAYMENT_PENDING", "CONFIRMED", "CANCELLED"], 
     default: "PENDING_PROVIDER" 
   },
 

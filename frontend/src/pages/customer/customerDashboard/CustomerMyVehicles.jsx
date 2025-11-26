@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PaymentModal from '../../../components/PaymentComponent';
 
 const CustomerMyVehicles = () => {
   const [bookings, setBookings] = useState([]);
@@ -9,6 +10,8 @@ const CustomerMyVehicles = () => {
   const [showContractModal, setShowContractModal] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
   const [signingContract, setSigningContract] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState(null);
 
   useEffect(() => {
     fetchCustomerBookings();
@@ -131,16 +134,38 @@ const CustomerMyVehicles = () => {
 
       const data = await response.json();
       
-      // Update booking in list
-      setBookings(prev =>
-        prev.map(b => (b._id === selectedContract.bookingId ? { ...b, status: 'CONFIRMED' } : b))
-      );
-      
-      setShowContractModal(false);
-      setSelectedContract(null);
-      setSuccessMessage('🎉 Contract signed! Vehicle confirmed and ready for pickup!');
-      
-      setTimeout(() => setSuccessMessage(''), 5000);
+      // Check if payment is required
+      if (data.nextStep === 'payment_required') {
+        // Close contract modal and open payment modal
+        setShowContractModal(false);
+        
+        // Prepare payment details
+        const booking = bookings.find(b => b._id === selectedContract.bookingId);
+        setPaymentDetails({
+          contractId: selectedContract._id,
+          bookingId: selectedContract.bookingId,
+          vehicleName: `${booking?.vehicle?.year} ${booking?.vehicle?.brand} ${booking?.vehicle?.model}`,
+          numberOfDays: booking?.numberOfDays || 0,
+          dailyRate: booking?.dailyRate || 0,
+          totalCost: booking?.totalCost || 0,
+          customerName: booking?.customer?.name || '',
+          customerEmail: booking?.customer?.email || '',
+          customerPhone: booking?.customer?.phone || ''
+        });
+        
+        setShowPaymentModal(true);
+        setSuccessMessage('✍️ Contract signed! Please complete payment to confirm booking.');
+        setTimeout(() => setSuccessMessage(''), 5000);
+      } else {
+        // Old flow (if payment is disabled)
+        setBookings(prev =>
+          prev.map(b => (b._id === selectedContract.bookingId ? { ...b, status: 'CONFIRMED' } : b))
+        );
+        setShowContractModal(false);
+        setSelectedContract(null);
+        setSuccessMessage('🎉 Contract signed! Vehicle confirmed and ready for pickup!');
+        setTimeout(() => setSuccessMessage(''), 5000);
+      }
     } catch (err) {
       console.error('Sign contract error:', err);
       alert('Failed to sign contract: ' + err.message);
@@ -191,12 +216,43 @@ const CustomerMyVehicles = () => {
     }
   };
 
+  // Handle payment success
+  const handlePaymentSuccess = (payment) => {
+    setShowPaymentModal(false);
+    setPaymentDetails(null);
+    setSelectedContract(null);
+    
+    // Update booking status to CONFIRMED
+    setBookings(prev =>
+      prev.map(b => 
+        b._id === payment.booking?._id 
+          ? { ...b, status: 'CONFIRMED' } 
+          : b
+      )
+    );
+    
+    setSuccessMessage('🎉 Payment successful! Booking confirmed. Vehicle ready for pickup!');
+    setTimeout(() => setSuccessMessage(''), 5000);
+    
+    // Refresh bookings to get latest data
+    fetchCustomerBookings();
+  };
+
+  // Handle payment failure
+  const handlePaymentFailure = (error) => {
+    console.error('Payment failed:', error);
+    setError('Payment failed: ' + error.message + '. Please try again.');
+    setTimeout(() => setError(''), 5000);
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'PENDING_PROVIDER':
         return 'bg-yellow-300 border-yellow-600';
       case 'PROVIDER_ACCEPTED':
         return 'bg-blue-300 border-blue-600';
+      case 'PAYMENT_PENDING':
+        return 'bg-orange-300 border-orange-600';
       case 'CONFIRMED':
         return 'bg-green-300 border-green-600';
       case 'CANCELLED':
@@ -210,6 +266,7 @@ const CustomerMyVehicles = () => {
     switch (status) {
       case 'PENDING_PROVIDER': return '⏰';
       case 'PROVIDER_ACCEPTED': return '📋';
+      case 'PAYMENT_PENDING': return '💳';
       case 'CONFIRMED': return '✅';
       case 'CANCELLED': return '🚫';
       default: return '📋';
@@ -337,6 +394,27 @@ const CustomerMyVehicles = () => {
                     ✍️ SIGN CONTRACT
                   </button>
                 )}
+                {booking.status === 'PAYMENT_PENDING' && booking.contract && (
+                  <button 
+                    onClick={() => {
+                      setPaymentDetails({
+                        contractId: booking.contract,
+                        bookingId: booking._id,
+                        vehicleName: `${booking.vehicle?.year} ${booking.vehicle?.brand} ${booking.vehicle?.model}`,
+                        numberOfDays: booking.numberOfDays,
+                        dailyRate: booking.dailyRate,
+                        totalCost: booking.totalCost,
+                        customerName: booking.customer?.name || '',
+                        customerEmail: booking.customer?.email || '',
+                        customerPhone: booking.customer?.phone || ''
+                      });
+                      setShowPaymentModal(true);
+                    }}
+                    className="flex-1 brutal-btn bg-orange-300 hover:bg-orange-400 py-2 text-xs font-black"
+                  >
+                    💳 COMPLETE PAYMENT
+                  </button>
+                )}
                 {booking.status === 'PENDING_PROVIDER' && (
                   <>
                     <button className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 text-xs">
@@ -393,7 +471,7 @@ const CustomerMyVehicles = () => {
             </div>
             <div className="text-center brutal-card-sm bg-yellow-200 border-yellow-600 p-3">
               <p className="text-3xl font-black">
-                {bookings.filter(b => b.status === 'PENDING_PROVIDER' || b.status === 'PROVIDER_ACCEPTED').length}
+                {bookings.filter(b => b.status === 'PENDING_PROVIDER' || b.status === 'PROVIDER_ACCEPTED' || b.status === 'PAYMENT_PENDING').length}
               </p>
               <p className="text-xs font-black uppercase mt-1">Pending</p>
             </div>
@@ -537,6 +615,21 @@ const CustomerMyVehicles = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Payment Modal */}
+      {showPaymentModal && paymentDetails && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setPaymentDetails(null);
+          }}
+          contractId={paymentDetails.contractId}
+          bookingDetails={paymentDetails}
+          onSuccess={handlePaymentSuccess}
+          onFailure={handlePaymentFailure}
+        />
       )}
     </div>
   );

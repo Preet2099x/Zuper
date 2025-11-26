@@ -21,6 +21,11 @@ const contractSchema = new mongoose.Schema({
     ref: "Vehicle", 
     required: true 
   },
+  payment: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Payment",
+    default: null
+  },
 
   startDate: { 
     type: Date, 

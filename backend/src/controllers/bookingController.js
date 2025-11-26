@@ -281,7 +281,7 @@ export const cancelBookingRequest = async (req, res) => {
   }
 };
 
-// Customer signs contract
+// Customer signs contract (payment required after this)
 export const signContract = async (req, res) => {
   try {
     const { contractId } = req.params;
@@ -312,20 +312,10 @@ export const signContract = async (req, res) => {
     contract.customerSignedAt = new Date();
     await contract.save();
 
-    // Update booking to CONFIRMED
+    // Update booking to PAYMENT_PENDING (new status - awaiting payment)
     const booking = await BookingRequest.findById(contract.booking._id);
-    booking.status = "CONFIRMED";
+    booking.status = "PAYMENT_PENDING";
     await booking.save();
-
-    // Mark vehicle as unavailable/rented
-    await Vehicle.findByIdAndUpdate(contract.vehicle._id, {
-      status: "rented"
-    });
-
-    // Add contract to customer's contracts list
-    await Customer.findByIdAndUpdate(contract.customer._id, {
-      $addToSet: { contracts: contract._id } // Use $addToSet to avoid duplicates
-    });
 
     const populatedContract = await contract.populate([
       { path: "booking" },
@@ -335,9 +325,10 @@ export const signContract = async (req, res) => {
     ]);
 
     res.json({
-      message: "Contract signed successfully! Booking confirmed.",
+      message: "Contract signed successfully! Please proceed with payment to confirm booking.",
       contract: populatedContract,
-      booking: booking
+      booking: booking,
+      nextStep: "payment_required"
     });
   } catch (error) {
     console.error("Sign contract error:", error);
