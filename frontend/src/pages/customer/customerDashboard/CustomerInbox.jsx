@@ -132,7 +132,7 @@ const CustomerInbox = () => {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <h1 className="brutal-heading text-3xl mb-5">INBOX 📬</h1>
+      <h1 className="brutal-heading text-3xl mb-5">INBOX �</h1>
 
       {/* Tabs */}
       <div className="flex gap-3 mb-5">

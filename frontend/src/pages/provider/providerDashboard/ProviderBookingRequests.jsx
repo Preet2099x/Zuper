@@ -22,7 +22,7 @@ const ProviderBookingRequests = () => {
         return;
       }
 
-  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/bookings/provider/inbox`, {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/bookings/provider/messages`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

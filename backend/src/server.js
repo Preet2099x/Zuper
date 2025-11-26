@@ -11,6 +11,7 @@ import vehicleRoutes from "./routes/vehicleRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 import { ensureContainerExists } from "./config/azure.js";
 import { createDefaultAdmin } from "./controllers/adminAuthController.js";
 
@@ -46,6 +47,7 @@ app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/messages", messageRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

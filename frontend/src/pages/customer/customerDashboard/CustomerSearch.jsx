@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import VehicleDetailsModal from '../../../components/VehicleDetailsModal';
 import BookingModal from '../../../components/BookingModal';
 
 const CustomerSearch = () => {
+  const navigate = useNavigate();
   const [searchFilters, setSearchFilters] = useState({
     location: '',
     vehicleType: '',
@@ -44,6 +46,15 @@ const CustomerSearch = () => {
     setWaitingBookings(prev => [...prev, booking]);
     setBookingSuccess('Booking request sent! You will be notified once the provider accepts.');
     setTimeout(() => setBookingSuccess(''), 5000);
+  };
+
+  const handleContactProvider = (providerId) => {
+    if (!providerId) {
+      alert('Provider information not available for this vehicle');
+      return;
+    }
+    console.log('Navigating to messages with provider ID:', providerId);
+    navigate('/dashboard/customer/messages', { state: { providerId } });
   };
 
   // Fetch all available vehicles on component mount
@@ -313,12 +324,25 @@ const CustomerSearch = () => {
 
                 <div className="flex gap-2">
                   {vehicle.status === 'available' ? (
-                    <button 
-                      onClick={() => handleBookClick(vehicle)}
-                      className="flex-1 brutal-btn bg-yellow-400 hover:bg-yellow-500 py-2 text-xs"
-                    >
-                      📅 BOOK NOW
-                    </button>
+                    <>
+                      <button 
+                        onClick={() => handleBookClick(vehicle)}
+                        className="flex-1 brutal-btn bg-yellow-400 hover:bg-yellow-500 py-2 text-xs"
+                      >
+                        📅 BOOK NOW
+                      </button>
+                      <button 
+                        onClick={() => {
+                          console.log('Contact button clicked - Vehicle:', vehicle);
+                          console.log('Contact button clicked - Provider ID:', vehicle.provider?._id);
+                          handleContactProvider(vehicle.provider?._id);
+                        }}
+                        className="brutal-btn bg-purple-300 hover:bg-purple-400 py-2 px-3 text-xs"
+                        title="Contact Provider"
+                      >
+                        💬
+                      </button>
+                    </>
                   ) : (
                     <button 
                       className="flex-1 brutal-btn bg-gray-300 py-2 text-xs opacity-50 cursor-not-allowed"
@@ -330,6 +354,7 @@ const CustomerSearch = () => {
                   <button
                     onClick={() => handleViewDetails(vehicle)}
                     className="brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 px-3 text-xs"
+                    title="View Details"
                   >
                     ℹ️
                   </button>

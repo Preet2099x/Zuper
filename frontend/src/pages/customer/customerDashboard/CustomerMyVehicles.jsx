@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PaymentModal from '../../../components/PaymentComponent';
 
 const CustomerMyVehicles = () => {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -82,6 +84,18 @@ const CustomerMyVehicles = () => {
     } finally {
       setCancelling(null);
     }
+  };
+
+  const handleContactProvider = (providerId) => {
+    console.log('handleContactProvider called with:', providerId);
+    if (!providerId) {
+      console.error('handleContactProvider - No provider ID provided!');
+      alert('Provider information not available');
+      return;
+    }
+    console.log('handleContactProvider - Navigating to messages with providerId:', providerId);
+    // Navigate to messages page with provider ID to open/create conversation
+    navigate('/dashboard/customer/messages', { state: { providerId } });
   };
 
   const handleViewContract = async (booking) => {
@@ -443,7 +457,19 @@ const CustomerMyVehicles = () => {
                     <button className="flex-1 brutal-btn bg-cyan-300 hover:bg-cyan-400 py-2 text-xs">
                       👁️ VIEW
                     </button>
-                    <button className="flex-1 brutal-btn bg-purple-300 hover:bg-purple-400 py-2 text-xs">
+                    <button 
+                      onClick={() => {
+                        console.log('Contact button clicked - Full Booking object:', JSON.stringify(booking, null, 2));
+                        console.log('Contact button clicked - booking.provider:', booking.provider);
+                        console.log('Contact button clicked - booking.vehicle:', booking.vehicle);
+                        console.log('Contact button clicked - booking.vehicle?.provider:', booking.vehicle?.provider);
+                        // Try both ways to get provider ID
+                        const providerId = booking.vehicle?.provider?._id || booking.vehicle?.provider || booking.provider?._id || booking.provider;
+                        console.log('Contact button clicked - Final Provider ID:', providerId);
+                        handleContactProvider(providerId);
+                      }}
+                      className="flex-1 brutal-btn bg-purple-300 hover:bg-purple-400 py-2 text-xs"
+                    >
                       💬 CONTACT
                     </button>
                   </>

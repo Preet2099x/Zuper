@@ -263,7 +263,7 @@ export const searchVehicles = async (req, res) => {
     }
 
     const vehicles = await Vehicle.find(query)
-      .populate("provider", "name businessName phone email")
+      .populate("provider", "name businessName phone email _id")
       .sort({ createdAt: -1 });
 
     res.json(vehicles);

@@ -12,7 +12,7 @@ export const protectCustomer = async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await Customer.findById(decoded.id).select("-password");
     if (!user) return res.status(401).json({ message: "Invalid token" });
-    req.user = user;
+    req.user = { ...user.toObject(), id: user._id.toString(), role: 'customer' };
     next();
   } catch (err) {
     console.error(err);
@@ -28,7 +28,7 @@ export const protectProvider = async (req, res, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await Provider.findById(decoded.id).select("-password");
     if (!user) return res.status(401).json({ message: "Invalid token" });
-    req.user = user;
+    req.user = { ...user.toObject(), id: user._id.toString(), role: 'provider' };
     next();
   } catch (err) {
     console.error(err);

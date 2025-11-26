@@ -3,7 +3,7 @@
  * 
  * These tests verify the complete booking workflow:
  * 1. Customer creates booking request
- * 2. Provider reviews in inbox
+ * 2. Provider reviews in messages
  * 3. Provider approves/rejects
  * 4. Customer can cancel pending bookings
  */
@@ -120,8 +120,8 @@ describe('Booking API Integration Tests', () => {
     });
   });
 
-  describe('Provider Inbox', () => {
-    test('GET /api/bookings/provider/inbox - should return pending requests', () => {
+  describe('Provider Messages', () => {
+    test('GET /api/bookings/provider/messages - should return pending requests', () => {
       const pendingBookings = [
         { _id: '1', status: 'pending', customer: { firstName: 'Rajesh' } },
         { _id: '2', status: 'pending', customer: { firstName: 'Amit' } }
@@ -131,7 +131,7 @@ describe('Booking API Integration Tests', () => {
       expect(filtered.every(b => b.status === 'pending')).toBe(true);
     });
 
-    test('GET /api/bookings/provider/inbox - should include customer details', () => {
+    test('GET /api/bookings/provider/messages - should include customer details', () => {
       const booking = {
         _id: 'booking1',
         status: 'pending',
@@ -148,7 +148,7 @@ describe('Booking API Integration Tests', () => {
       expect(booking.customer.email).toBeDefined();
     });
 
-    test('GET /api/bookings/provider/inbox - should require provider authentication', () => {
+    test('GET /api/bookings/provider/messages - should require provider authentication', () => {
       const hasAuth = false;
       expect(hasAuth).toBe(false);
     });

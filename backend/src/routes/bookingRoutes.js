@@ -28,8 +28,8 @@ router.get("/contracts/:contractId", protectCustomer, getContractById);
 router.put("/contracts/:contractId/sign", protectCustomer, signContract);
 router.put("/contracts/:contractId/reject", protectCustomer, rejectContract);
 
-// Provider routes (inbox)
-router.get("/provider/inbox", protectProvider, getProviderBookingRequests);
+// Provider routes (messages)
+router.get("/provider/messages", protectProvider, getProviderBookingRequests);
 router.put("/provider/:bookingId/approve", protectProvider, approveBookingRequest);
 router.put("/provider/:bookingId/reject", protectProvider, rejectBookingRequest);
 

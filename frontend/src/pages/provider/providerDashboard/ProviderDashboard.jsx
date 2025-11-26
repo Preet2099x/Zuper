@@ -7,7 +7,7 @@ import ProviderListVehicle from './ProviderListVehicle';
 import ProviderEditVehicle from './ProviderEditVehicle';
 import ProviderEarnings from './ProviderEarnings';
 import ProviderBookingRequests from './ProviderBookingRequests';
-import ProviderInbox from './ProviderInbox';
+import ProviderMessages from './ProviderMessages';
 import ProviderSettings from './ProviderSettings';
 import ProviderHelp from './ProviderHelp';
 import DashboardNavbar from '../../../components/DashboardNavbar';
@@ -28,7 +28,7 @@ const ProviderDashboard = () => {
             <Route path="edit-vehicle/:vehicleId" element={<ProviderEditVehicle />} />
             <Route path="earnings" element={<ProviderEarnings />} />
             <Route path="booking-requests" element={<ProviderBookingRequests />} />
-            <Route path="inbox" element={<ProviderInbox />} />
+            <Route path="messages" element={<ProviderMessages />} />
             <Route path="settings" element={<ProviderSettings />} />
             <Route path="help" element={<ProviderHelp />} />
           </Routes>

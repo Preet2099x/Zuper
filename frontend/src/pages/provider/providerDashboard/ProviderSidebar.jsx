@@ -8,7 +8,7 @@ const providerNavItems = [
   { path: '/dashboard/provider/list-vehicle', label: 'List Vehicle', emoji: '➕' },
   { path: '/dashboard/provider/earnings', label: 'Earnings', emoji: '💰' },
   { path: '/dashboard/provider/booking-requests', label: 'Booking Requests', emoji: '🔔' },
-  { path: '/dashboard/provider/inbox', label: 'Inbox', emoji: '📬' },
+  { path: '/dashboard/provider/messages', label: 'Messages', emoji: '📬' },
   { path: '/dashboard/provider/settings', label: 'Settings', emoji: '⚙️', position: 'footer' },
   { path: '/dashboard/provider/help', label: 'Help', emoji: '❓', position: 'footer' },
 ];

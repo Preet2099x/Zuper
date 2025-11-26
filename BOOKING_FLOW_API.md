@@ -295,9 +295,9 @@ Customer rejects contract
 
 ---
 
-### 9. Get Provider's Booking Requests (Inbox)
+### 9. Get Provider's Booking Requests (Messages)
 
-**GET** `/api/bookings/provider/inbox`
+**GET** `/api/bookings/provider/messages`
 
 **Auth**: Provider token required
 
@@ -456,7 +456,7 @@ const signContract = async (contractId) => {
 ## ✅ Testing Checklist
 
 - [ ] Customer can create booking request
-- [ ] Provider receives booking in inbox
+- [ ] Provider receives booking in messages
 - [ ] Provider can approve booking → contract created
 - [ ] Provider can reject booking → booking cancelled
 - [ ] Customer receives contract after provider approval

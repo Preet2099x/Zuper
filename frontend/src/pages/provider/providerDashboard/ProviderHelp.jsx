@@ -50,7 +50,7 @@ const ProviderHelp = () => {
       id: 6,
       category: 'bookings',
       question: 'How do I receive booking requests?',
-      answer: 'Booking requests appear in your dashboard inbox. You can approve, decline, or counter-offer. Approved bookings are automatically confirmed and payment is held until pickup.'
+      answer: 'Booking requests appear in your dashboard messages. You can approve, decline, or counter-offer. Approved bookings are automatically confirmed and payment is held until pickup.'
     },
     {
       id: 7,

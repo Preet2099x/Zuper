@@ -15,6 +15,7 @@ const customerNavItems = [
   { path: "/dashboard/customer/vehicles", icon: <FaTruck />, label: "Vehicles", emoji: "🚗" },
   { path: "/dashboard/customer/search", icon: <FaSearch />, label: "Search", emoji: "🔍" },
   { path: "/dashboard/customer/inbox", icon: <FaEnvelope />, label: "Inbox", emoji: "📬" },
+  { path: "/dashboard/customer/messages", icon: <FaEnvelope />, label: "Messages", emoji: "💬" },
   { path: "/dashboard/customer/profile", icon: <FaUser />, label: "Profile", emoji: "👤" },
   { path: "/dashboard/customer/help", icon: <FaQuestionCircle />, label: "Help", emoji: "❓", position: "footer" },
   { path: "/dashboard/customer/settings", icon: <FaCog />, label: "Settings", emoji: "⚙️", position: "footer" },

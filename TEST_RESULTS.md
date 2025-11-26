@@ -25,7 +25,7 @@
   - ✅ Populate vehicle data
   - ✅ Require authentication
 
-- **Provider Inbox** (3 tests)
+- **Provider Messages** (3 tests)
   - ✅ Return pending requests
   - ✅ Include customer details
   - ✅ Require provider authentication
@@ -122,7 +122,7 @@
 ### API Endpoint Coverage
 ✅ POST /api/bookings (Create booking)
 ✅ GET /api/bookings/customer/my-bookings (Customer history)
-✅ GET /api/bookings/provider/inbox (Provider requests)
+✅ GET /api/bookings/provider/messages (Provider requests)
 ✅ PUT /api/bookings/provider/:id/approve (Approve booking)
 ✅ PUT /api/bookings/provider/:id/reject (Reject booking)
 ✅ PUT /api/bookings/customer/:id/cancel (Cancel booking)
@@ -150,7 +150,7 @@
    ✅ Calculates cost correctly
    ✅ Sets initial status: pending
 
-2. Provider reviews in inbox
+2. Provider reviews in messages
    ✅ Fetches pending requests
    ✅ Includes customer details
    ✅ Includes vehicle details

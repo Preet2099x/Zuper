@@ -5,6 +5,7 @@ import CustomerOverview from "./CustomerOverview";
 import CustomerMyVehicles from "./CustomerMyVehicles";
 import CustomerSearch from "./CustomerSearch";
 import CustomerInbox from "./CustomerInbox";
+import CustomerMessages from "./CustomerMessages";
 import CustomerProfile from "./CustomerProfile";
 import CustomerHelp from "./CustomerHelp";
 import CustomerSettings from "./CustomerSettings";
@@ -23,6 +24,7 @@ const CustomerDashboard = () => {
             <Route path="vehicles" element={<CustomerMyVehicles />} />
             <Route path="search" element={<CustomerSearch />} />
             <Route path="inbox" element={<CustomerInbox />} />
+            <Route path="messages" element={<CustomerMessages />} />
             <Route path="profile" element={<CustomerProfile />} />
             <Route path="help" element={<CustomerHelp />} />
             <Route path="settings" element={<CustomerSettings />} />

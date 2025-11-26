@@ -78,7 +78,11 @@ export const getCustomerBookings = async (req, res) => {
       .populate([
         { path: "customer", select: "name email phone" },
         { path: "provider", select: "name email businessName" },
-        { path: "vehicle", select: "company model year licensePlate images" }
+        { 
+          path: "vehicle", 
+          select: "company model year licensePlate images provider",
+          populate: { path: "provider", select: "name email businessName _id" }
+        }
       ])
       .sort({ createdAt: -1 });
 
@@ -89,7 +93,7 @@ export const getCustomerBookings = async (req, res) => {
   }
 };
 
-// Provider gets booking requests for their vehicles (inbox)
+// Provider gets booking requests for their vehicles (messages)
 export const getProviderBookingRequests = async (req, res) => {
   try {
     const bookings = await BookingRequest.find({ provider: req.user.id })

@@ -39,7 +39,7 @@ npm test -- bookingController.test.js
 **Coverage**:
 - ✅ Booking creation with validation
 - ✅ Customer booking retrieval
-- ✅ Provider inbox management
+- ✅ Provider messages management
 - ✅ Booking approval workflow
 - ✅ Booking rejection workflow
 - ✅ Booking cancellation workflow
@@ -49,7 +49,7 @@ npm test -- bookingController.test.js
 
 **Key Test Scenarios**:
 - **Creation**: Valid/invalid bookings, past dates, unavailable vehicles
-- **Retrieval**: Customer bookings, inbox for providers
+- **Retrieval**: Customer bookings, messages for providers
 - **Approval**: Status updates, contract creation, vehicle status changes
 - **Rejection**: Status updates with provider notes
 - **Cancellation**: Customer cancellation, vehicle status restoration
@@ -68,7 +68,7 @@ npm test -- bookingAPI.integration.test.js
 
 **Coverage**:
 - ✅ BookingModal component
-- ✅ ProviderInbox component
+- ✅ ProviderMessages component
 - ✅ CustomerMyVehicles component
 - ✅ Form validation and submission
 - ✅ State management
@@ -83,7 +83,7 @@ npm test -- bookingAPI.integration.test.js
 - Form submission: Data handling, loading states
 - Modal controls: Open/close functionality
 
-**ProviderInbox**:
+**ProviderMessages**:
 - Data fetching: Load bookings on mount
 - Status filtering: Filter by pending/approved/rejected/cancelled
 - Booking cards: Display customer, vehicle, dates, cost
@@ -230,7 +230,7 @@ Total: 4/4 passing
 ```
 ✓ Booking Request Creation (5 tests)
 ✓ Customer Booking Retrieval (3 tests)
-✓ Provider Inbox (3 tests)
+✓ Provider Messages (3 tests)
 ✓ Booking Approval (5 tests)
 ✓ Booking Rejection (3 tests)
 ✓ Booking Cancellation (4 tests)
@@ -243,7 +243,7 @@ Total: 35/35 passing
 ### Frontend Component Tests
 ```
 ✓ BookingModal Component (13 tests)
-✓ ProviderInbox Component (14 tests)
+✓ ProviderMessages Component (14 tests)
 ✓ CustomerMyVehicles Component (19 tests)
 Total: 46/46 passing
 ```
@@ -254,7 +254,7 @@ Total: 46/46 passing
 ```javascript
 // Test: Complete booking lifecycle
 1. Customer creates booking request (status: pending)
-2. Provider receives in inbox
+2. Provider receives in messages
 3. Provider approves booking (status: approved, contract created)
 4. Vehicle status changes to 'rented'
 5. Booking appears in customer's "My Bookings"

@@ -188,7 +188,7 @@ CUSTOMER ACTIONS:
 └── PUT    /api/bookings/contracts/:id/reject     → Reject contract ❌
 
 PROVIDER ACTIONS:
-├── GET    /api/bookings/provider/inbox           → List requests
+├── GET    /api/bookings/provider/messages         → List requests
 ├── PUT    /api/bookings/provider/:id/approve     → Approve booking ✅
 └── PUT    /api/bookings/provider/:id/reject      → Reject booking ❌
 ```
@@ -243,7 +243,7 @@ PROVIDER ACTIONS:
 ## Success Criteria Checklist
 
 ✅ Customer can create booking
-✅ Provider receives notification (inbox)
+✅ Provider receives notification (messages)
 ✅ Provider can approve → Creates contract
 ✅ Provider can reject → Cancels booking
 ✅ Contract auto-signs for provider
@@ -263,7 +263,7 @@ PROVIDER ACTIONS:
 
 ### Frontend Components Needed
 1. **Booking Request Modal** - Customer creates booking
-2. **Provider Inbox** - Lists pending requests
+2. **Provider Messages** - Lists pending requests
 3. **Contract Review Modal** - Customer reviews & signs
 4. **Booking Status Badge** - Shows current state
 5. **My Vehicles** - Shows confirmed rentals
