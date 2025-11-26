@@ -38,30 +38,30 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-orange-50">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-lg">
+      <div className="w-64 bg-white border-r-4 border-black">
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-center h-16 bg-blue-600 text-white">
-            <h1 className="text-xl font-bold">Admin Panel</h1>
+          <div className="flex items-center justify-center h-20 bg-orange-400 border-b-4 border-black">
+            <h1 className="text-2xl font-black uppercase tracking-tight">🛡️ ADMIN</h1>
           </div>
 
           {/* Navigation Menu */}
-          <nav className="flex-1 px-4 py-6">
-            <ul className="space-y-2">
+          <nav className="flex-1 p-4">
+            <ul className="space-y-3">
               {menuItems.map((item) => (
                 <li key={item.id}>
                   <button
                     onClick={() => setActivePage(item.id)}
-                    className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors duration-200 ${
+                    className={`w-full flex items-center px-4 py-4 font-black uppercase text-sm border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none ${
                       activePage === item.id
-                        ? 'bg-blue-100 text-blue-700 border-r-4 border-blue-700'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-orange-300'
+                        : 'bg-white hover:bg-orange-100'
                     }`}
                   >
-                    <span className="text-xl mr-3">{item.icon}</span>
-                    <span className="font-medium">{item.label}</span>
+                    <span className="text-2xl mr-3">{item.icon}</span>
+                    <span>{item.label}</span>
                   </button>
                 </li>
               ))}
@@ -69,13 +69,13 @@ const AdminDashboard = () => {
           </nav>
 
           {/* Logout Button */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t-4 border-black">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+              className="w-full flex items-center px-4 py-4 bg-red-400 border-3 border-black font-black uppercase text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
             >
-              <span className="text-xl mr-3">🚪</span>
-              <span className="font-medium">Logout</span>
+              <span className="text-2xl mr-3">🚪</span>
+              <span>LOGOUT</span>
             </button>
           </div>
         </div>
@@ -84,16 +84,16 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="px-6 py-4">
-            <h2 className="text-2xl font-semibold text-gray-800 capitalize">
-              {menuItems.find(item => item.id === activePage)?.label || 'Dashboard'}
+        <header className="bg-white border-b-4 border-black">
+          <div className="px-8 py-6">
+            <h2 className="text-4xl font-black uppercase tracking-tight">
+              {menuItems.find(item => item.id === activePage)?.icon} {menuItems.find(item => item.id === activePage)?.label || 'DASHBOARD'}
             </h2>
           </div>
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-8">
           {renderContent()}
         </main>
       </div>

@@ -52,84 +52,80 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-orange-100 flex flex-col justify-center py-12 px-4">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Admin Login
+        <div className="text-center mb-8">
+          <div className="inline-block bg-orange-400 border-4 border-black px-8 py-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <h1 className="text-5xl font-black">🛡️</h1>
+          </div>
+        </div>
+        <h2 className="text-center text-5xl font-black uppercase tracking-tight mb-3">
+          ADMIN LOGIN
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Enter your admin credentials to access the dashboard
+        <p className="text-center text-sm font-bold uppercase">
+          ENTER CREDENTIALS TO ACCESS DASHBOARD
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8">
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
+            <div className="mb-6 bg-red-300 border-3 border-black px-4 py-3 font-bold uppercase text-sm">
+              ⚠️ {error}
             </div>
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="code" className="block text-sm font-medium text-gray-700">
-                Admin Code
+              <label htmlFor="code" className="block text-sm font-black uppercase mb-2">
+                🔑 ADMIN CODE
               </label>
-              <div className="mt-1">
-                <input
-                  id="code"
-                  name="code"
-                  type="text"
-                  required
-                  value={formData.code}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter admin code"
-                />
-              </div>
+              <input
+                id="code"
+                name="code"
+                type="text"
+                required
+                value={formData.code}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border-3 border-black font-bold uppercase text-sm focus:outline-none focus:ring-4 focus:ring-orange-400"
+                placeholder="ENTER CODE"
+              />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+              <label htmlFor="password" className="block text-sm font-black uppercase mb-2">
+                🔒 PASSWORD
               </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter password"
-                />
-              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border-3 border-black font-bold uppercase text-sm focus:outline-none focus:ring-4 focus:ring-orange-400"
+                placeholder="ENTER PASSWORD"
+              />
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Signing in...' : 'Sign in'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 bg-orange-400 border-3 border-black font-black uppercase text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            >
+              {loading ? '⏳ SIGNING IN...' : '➡️ SIGN IN'}
+            </button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
+          <div className="mt-8">
+            <div className="border-t-3 border-black pt-6">
+              <div className="text-center">
+                <p className="font-black uppercase text-xs mb-3 text-gray-600">📋 DEMO CREDENTIALS</p>
+                <div className="bg-orange-50 border-3 border-black p-4">
+                  <p className="font-black text-sm mb-1"><span className="text-gray-600">CODE:</span> BigBoss</p>
+                  <p className="font-black text-sm"><span className="text-gray-600">PASSWORD:</span> Admin123</p>
+                </div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Demo Credentials</span>
-              </div>
-            </div>
-            <div className="mt-4 text-center text-sm text-gray-600">
-              <p><strong>Code:</strong> BigBoss</p>
-              <p><strong>Password:</strong> Admin123</p>
             </div>
           </div>
         </div>

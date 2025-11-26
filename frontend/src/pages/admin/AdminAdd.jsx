@@ -176,63 +176,63 @@ const AdminAdd = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Add New Records</h3>
+      <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <h3 className="text-2xl font-black uppercase">➕ ADD NEW RECORDS</h3>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
+      <div className="border-b-4 border-black">
+        <nav className="-mb-1 flex space-x-8">
           <button
             onClick={() => setActiveTab('account')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`py-2 px-4 border-b-4 font-black text-sm uppercase transition-all ${
               activeTab === 'account'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-orange-400 bg-orange-100 text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
+                : 'border-transparent text-gray-600 hover:text-black hover:bg-gray-100'
             }`}
           >
-            Add Account
+            👥 ADD ACCOUNT
           </button>
           <button
             onClick={() => setActiveTab('vehicle')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+            className={`py-2 px-4 border-b-4 font-black text-sm uppercase transition-all ${
               activeTab === 'vehicle'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                ? 'border-orange-400 bg-orange-100 text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'
+                : 'border-transparent text-gray-600 hover:text-black hover:bg-gray-100'
             }`}
           >
-            Add Vehicle
+            🚗 ADD VEHICLE
           </button>
         </nav>
       </div>
 
       {/* Messages */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          {error}
+        <div className="bg-red-300 border-3 border-black px-4 py-3 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          ⚠️ {error}
         </div>
       )}
       {message && (
-        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-          {message}
+        <div className="bg-green-300 border-3 border-black px-4 py-3 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          ✓ {message}
         </div>
       )}
 
       {/* Account Form */}
       {activeTab === 'account' && (
-        <div className="bg-white shadow-sm rounded-lg p-6">
-          <h4 className="text-lg font-medium text-gray-900 mb-4">Create New Account</h4>
+        <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-6">
+          <h4 className="text-lg font-black uppercase text-gray-900 mb-4 pb-3 border-b-3 border-black">🔑 CREATE NEW ACCOUNT</h4>
           <form onSubmit={handleAccountSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Account Type
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  ACCOUNT TYPE
                 </label>
                 <select
                   name="type"
                   value={accountForm.type}
                   onChange={handleAccountChange}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
                 >
                   <option value="customer">Customer</option>
                   <option value="provider">Provider</option>
@@ -240,8 +240,8 @@ const AdminAdd = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  FULL NAME *
                 </label>
                 <input
                   type="text"
@@ -249,13 +249,13 @@ const AdminAdd = () => {
                   value={accountForm.name}
                   onChange={handleAccountChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  EMAIL *
                 </label>
                 <input
                   type="email"
@@ -263,13 +263,13 @@ const AdminAdd = () => {
                   value={accountForm.email}
                   onChange={handleAccountChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  PHONE *
                 </label>
                 <input
                   type="tel"
@@ -277,35 +277,35 @@ const AdminAdd = () => {
                   value={accountForm.phone}
                   onChange={handleAccountChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
 
               {accountForm.type === 'provider' && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Business Name
+                  <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                    BUSINESS NAME
                   </label>
                   <input
                     type="text"
                     name="businessName"
                     value={accountForm.businessName}
                     onChange={handleAccountChange}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   />
                 </div>
               )}
 
               <div className={accountForm.type === 'provider' ? '' : 'md:col-span-2'}>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {accountForm.type === 'provider' ? 'Business Address' : 'Address'}
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  {accountForm.type === 'provider' ? 'BUSINESS ADDRESS' : 'ADDRESS'}
                 </label>
                 <input
                   type="text"
                   name="address"
                   value={accountForm.address}
                   onChange={handleAccountChange}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
             </div>
@@ -314,9 +314,9 @@ const AdminAdd = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-orange-400 py-2 px-6 border-3 border-black font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating...' : 'Create Account'}
+                {loading ? '⏳ CREATING...' : '✓ CREATE ACCOUNT'}
               </button>
             </div>
           </form>
@@ -325,13 +325,13 @@ const AdminAdd = () => {
 
       {/* Vehicle Form */}
       {activeTab === 'vehicle' && (
-        <div className="bg-white shadow-sm rounded-lg p-6">
-          <h4 className="text-lg font-medium text-gray-900 mb-4">Create New Vehicle</h4>
+        <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-6">
+          <h4 className="text-lg font-black uppercase text-gray-900 mb-4 pb-3 border-b-3 border-black">🚙 CREATE NEW VEHICLE</h4>
           <form onSubmit={handleVehicleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Company *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  COMPANY *
                 </label>
                 <input
                   type="text"
@@ -339,14 +339,14 @@ const AdminAdd = () => {
                   value={vehicleForm.company}
                   onChange={handleVehicleChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   placeholder="e.g., Maruti Suzuki"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Model *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  MODEL *
                 </label>
                 <input
                   type="text"
@@ -354,14 +354,14 @@ const AdminAdd = () => {
                   value={vehicleForm.model}
                   onChange={handleVehicleChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   placeholder="e.g., Swift"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Year *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  YEAR *
                 </label>
                 <input
                   type="number"
@@ -371,19 +371,19 @@ const AdminAdd = () => {
                   required
                   min="2000"
                   max="2030"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Vehicle Type
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  VEHICLE TYPE
                 </label>
                 <select
                   name="type"
                   value={vehicleForm.type}
                   onChange={handleVehicleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
                 >
                   <option value="car">Car</option>
                   <option value="bike">Bike</option>
@@ -392,8 +392,8 @@ const AdminAdd = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  License Plate *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  LICENSE PLATE *
                 </label>
                 <input
                   type="text"
@@ -401,14 +401,14 @@ const AdminAdd = () => {
                   value={vehicleForm.licensePlate}
                   onChange={handleVehicleChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   placeholder="e.g., ABC-1234"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Daily Rate (₹) *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  DAILY RATE (₹) *
                 </label>
                 <input
                   type="number"
@@ -417,13 +417,13 @@ const AdminAdd = () => {
                   onChange={handleVehicleChange}
                   required
                   min="1"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Location *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  LOCATION *
                 </label>
                 <input
                   type="text"
@@ -431,35 +431,35 @@ const AdminAdd = () => {
                   value={vehicleForm.location}
                   onChange={handleVehicleChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   placeholder="e.g., Connaught Place, New Delhi"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  DESCRIPTION
                 </label>
                 <textarea
                   name="description"
                   value={vehicleForm.description}
                   onChange={handleVehicleChange}
                   rows={3}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                   placeholder="Describe the vehicle..."
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Provider *
+                <label className="block text-xs font-black uppercase text-gray-900 mb-1">
+                  PROVIDER *
                 </label>
                 <select
                   name="providerId"
                   value={vehicleForm.providerId}
                   onChange={handleVehicleChange}
                   required
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
                 >
                   <option value="">Select a provider</option>
                   {providers.map(provider => (
@@ -475,9 +475,9 @@ const AdminAdd = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-cyan-400 py-2 px-6 border-3 border-black font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating...' : 'Create Vehicle'}
+                {loading ? '⏳ CREATING...' : '✓ CREATE VEHICLE'}
               </button>
             </div>
           </form>

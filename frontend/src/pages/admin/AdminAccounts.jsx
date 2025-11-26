@@ -191,10 +191,10 @@ const AdminAccounts = () => {
 
   const getStatusBadge = (isVerified) => {
     return (
-      <span className={`px-2 py-1 text-xs rounded-full ${
-        isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+      <span className={`px-3 py-1 text-xs font-black uppercase border-2 border-black ${
+        isVerified ? 'bg-green-300' : 'bg-yellow-300'
       }`}>
-        {isVerified ? 'Verified' : 'Pending'}
+        {isVerified ? '✓ VERIFIED' : '⏳ PENDING'}
       </span>
     );
   };
@@ -202,26 +202,32 @@ const AdminAccounts = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="text-6xl animate-spin">⏳</div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-medium text-gray-900">Account Management</h3>
-        <div className="flex space-x-4 text-sm text-gray-600">
-          <span>Customers: {customers.length}</span>
-          <span>Providers: {providers.length}</span>
+      <div className="bg-white border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="flex justify-between items-center">
+          <h3 className="text-2xl font-black uppercase">📊 ACCOUNT MANAGEMENT</h3>
+          <div className="flex space-x-4">
+            <div className="bg-blue-200 border-3 border-black px-4 py-2 font-black text-sm">
+              👥 CUSTOMERS: {customers.length}
+            </div>
+            <div className="bg-green-200 border-3 border-black px-4 py-2 font-black text-sm">
+              🏢 PROVIDERS: {providers.length}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Customers Section */}
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-        <div className="bg-blue-50 px-6 py-4 border-b">
-          <h4 className="text-lg font-medium text-blue-900">Customers ({customers.length})</h4>
+      <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="bg-blue-300 px-6 py-4 border-b-4 border-black">
+          <h4 className="text-xl font-black uppercase">👥 CUSTOMERS ({customers.length})</h4>
         </div>
 
         <div className="max-h-96 overflow-y-auto">
@@ -330,9 +336,9 @@ const AdminAccounts = () => {
                           <div className="flex space-x-2">
                             <button
                               onClick={handleSaveCustomer}
-                              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                              className="px-4 py-2 bg-green-400 border-3 border-black font-black uppercase text-sm shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                             >
-                              Save
+                              ✓ SAVE
                             </button>
                             <button
                               onClick={handleCancelEdit}
@@ -354,15 +360,15 @@ const AdminAccounts = () => {
                           <div className="flex space-x-2 pt-2">
                             <button
                               onClick={() => handleEditCustomer(customer)}
-                              className="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600"
+                              className="px-4 py-2 bg-yellow-300 border-3 border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                             >
-                              Edit
+                              ✏️ EDIT
                             </button>
                             <button
                               onClick={() => handleDeleteCustomer(customer._id)}
-                              className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                              className="px-4 py-2 bg-red-400 border-3 border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                             >
-                              Delete
+                              🗑️ DELETE
                             </button>
                           </div>
                         </div>
@@ -377,9 +383,9 @@ const AdminAccounts = () => {
       </div>
 
       {/* Providers Section */}
-      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-        <div className="bg-green-50 px-6 py-4 border-b">
-          <h4 className="text-lg font-medium text-green-900">Providers ({providers.length})</h4>
+      <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div className="bg-green-300 px-6 py-4 border-b-4 border-black">
+          <h4 className="text-xl font-black uppercase">🏢 PROVIDERS ({providers.length})</h4>
         </div>
 
         <div className="max-h-96 overflow-y-auto">
@@ -548,15 +554,15 @@ const AdminAccounts = () => {
                           <div className="flex space-x-2 pt-2">
                             <button
                               onClick={() => handleEditProvider(provider)}
-                              className="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600"
+                              className="px-4 py-2 bg-yellow-300 border-3 border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                             >
-                              Edit
+                              ✏️ EDIT
                             </button>
                             <button
                               onClick={() => handleDeleteProvider(provider._id)}
-                              className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600"
+                              className="px-4 py-2 bg-red-400 border-3 border-black font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                             >
-                              Delete
+                              🗑️ DELETE
                             </button>
                           </div>
                         </div>
