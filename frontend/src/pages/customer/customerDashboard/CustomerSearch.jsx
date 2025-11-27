@@ -317,9 +317,9 @@ const CustomerSearch = () => {
                 )}
 
                 {vehicle.provider && (
-                  <p className="text-xs font-bold mb-3">
-                    🏢 {vehicle.provider.businessName || vehicle.provider.name}
-                  </p>
+                  <div className="mb-3 brutal-badge bg-purple-100 border-purple-600">
+                    <span className="text-xs">👤 Provider: {vehicle.provider.businessName || vehicle.provider.name}</span>
+                  </div>
                 )}
 
                 <div className="flex gap-2">
