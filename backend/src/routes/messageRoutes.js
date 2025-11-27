@@ -7,7 +7,9 @@ import {
   sendMessage,
   getConversationById,
   getUnreadCount,
-  uploadMessageImage
+  uploadMessageImage,
+  editMessage,
+  deleteMessage
 } from "../controllers/messageController.js";
 import { protectCustomer, protectProvider } from "../middleware/authMiddleware.js";
 
@@ -35,6 +37,8 @@ router.get("/conversations/customer", protectCustomer, getUserConversations);
 router.get("/conversations/customer/:id", protectCustomer, getConversationById);
 router.get("/conversations/customer/:conversationId/messages", protectCustomer, getConversationMessages);
 router.post("/conversations/customer/:conversationId/messages", protectCustomer, sendMessage);
+router.put("/messages/customer/:messageId", protectCustomer, editMessage);
+router.delete("/messages/customer/:messageId", protectCustomer, deleteMessage);
 router.get("/unread/customer", protectCustomer, getUnreadCount);
 router.post("/upload/customer", protectCustomer, upload.single('image'), uploadMessageImage);
 
@@ -44,6 +48,8 @@ router.get("/conversations/provider", protectProvider, getUserConversations);
 router.get("/conversations/provider/:conversationId", protectProvider, getConversationById);
 router.get("/conversations/provider/:conversationId/messages", protectProvider, getConversationMessages);
 router.post("/conversations/provider/:conversationId/messages", protectProvider, sendMessage);
+router.put("/messages/provider/:messageId", protectProvider, editMessage);
+router.delete("/messages/provider/:messageId", protectProvider, deleteMessage);
 router.get("/unread/provider", protectProvider, getUnreadCount);
 router.post("/upload/provider", protectProvider, upload.single('image'), uploadMessageImage);
 

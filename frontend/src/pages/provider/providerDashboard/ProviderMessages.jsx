@@ -12,10 +12,31 @@ const ProviderMessages = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [contextMenu, setContextMenu] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editContent, setEditContent] = useState('');
 
   useEffect(() => {
     fetchConversations();
+
+    // Auto-refresh conversations every 10 seconds
+    const conversationsInterval = setInterval(() => {
+      fetchConversations();
+    }, 10000);
+
+    return () => clearInterval(conversationsInterval);
   }, []);
+
+  useEffect(() => {
+    // Auto-refresh messages every 10 seconds when a conversation is selected
+    if (selectedConversation?._id) {
+      const messagesInterval = setInterval(() => {
+        fetchMessages(selectedConversation._id);
+      }, 10000);
+
+      return () => clearInterval(messagesInterval);
+    }
+  }, [selectedConversation]);
 
   useEffect(() => {
     // If navigated with a customerId (from notification/contact button), open that conversation
@@ -197,6 +218,105 @@ const ProviderMessages = () => {
     }
   };
 
+  const handleContextMenu = (e, msg) => {
+    e.preventDefault();
+    const isOwnMessage = msg.senderModel === 'Provider';
+    if (!isOwnMessage) return;
+
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      message: msg
+    });
+  };
+
+  const closeContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const canEdit = (msg) => {
+    if (!msg.createdAt) return false;
+    const timeDiff = Date.now() - new Date(msg.createdAt).getTime();
+    const fiveMinutes = 5 * 60 * 1000;
+    return timeDiff < fiveMinutes && !msg.deleted;
+  };
+
+  const handleEdit = () => {
+    if (contextMenu?.message) {
+      setEditingMessage(contextMenu.message);
+      setEditContent(contextMenu.message.content || '');
+    }
+    closeContextMenu();
+  };
+
+  const handleEditSubmit = async () => {
+    if (!editContent.trim() || !editingMessage) return;
+
+    try {
+      const token = localStorage.getItem('providerToken');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/api/messages/messages/provider/${editingMessage._id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ content: editContent.trim() })
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to edit message');
+      }
+
+      const updatedMessage = await response.json();
+      setMessages(messages.map(m => m._id === updatedMessage._id ? updatedMessage : m));
+      setEditingMessage(null);
+      setEditContent('');
+    } catch (error) {
+      console.error('Edit message error:', error);
+      alert(error.message || 'Failed to edit message');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!contextMenu?.message) return;
+
+    if (!confirm('Are you sure you want to delete this message?')) {
+      closeContextMenu();
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('providerToken');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/api/messages/messages/provider/${contextMenu.message._id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (!response.ok) throw new Error('Failed to delete message');
+
+      await fetchMessages(selectedConversation._id);
+      closeContextMenu();
+    } catch (error) {
+      console.error('Delete message error:', error);
+      alert('Failed to delete message');
+    }
+  };
+
+  React.useEffect(() => {
+    const handleClick = () => closeContextMenu();
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
   const getInitials = (firstName, lastName) => {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
   };
@@ -295,6 +415,7 @@ const ProviderMessages = () => {
               ) : (
                 messages.map((msg) => {
                   const isOwnMessage = msg.senderModel === 'Provider';
+                  const isEditing = editingMessage?._id === msg._id;
                   
                   return (
                     <div
@@ -302,13 +423,14 @@ const ProviderMessages = () => {
                       className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-xs px-5 py-3 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
+                        onContextMenu={(e) => handleContextMenu(e, msg)}
+                        className={`max-w-xs px-5 py-3 border-3 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] cursor-pointer ${
                           isOwnMessage
                             ? 'bg-cyan-300'
                             : 'bg-pink-200'
-                        }`}
+                        } ${msg.deleted ? 'opacity-60 italic' : ''}`}
                       >
-                        {msg.messageType === 'image' && msg.imageUrl && (
+                        {msg.messageType === 'image' && msg.imageUrl && !msg.deleted && (
                           <img
                             src={msg.imageUrl}
                             alt="Message attachment"
@@ -316,12 +438,46 @@ const ProviderMessages = () => {
                             onClick={() => window.open(msg.imageUrl, '_blank')}
                           />
                         )}
-                        {msg.content && (
-                          <p className="text-xs font-bold">{msg.content}</p>
+                        {isEditing ? (
+                          <div className="space-y-2">
+                            <input
+                              type="text"
+                              value={editContent}
+                              onChange={(e) => setEditContent(e.target.value)}
+                              className="w-full p-2 border-2 border-black font-bold text-xs"
+                              autoFocus
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={handleEditSubmit}
+                                className="brutal-btn bg-green-400 hover:bg-green-500 px-3 py-1 text-xs"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setEditingMessage(null);
+                                  setEditContent('');
+                                }}
+                                className="brutal-btn bg-gray-300 hover:bg-gray-400 px-3 py-1 text-xs"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            {msg.content && (
+                              <p className="text-xs font-bold">{msg.content}</p>
+                            )}
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-[10px] font-bold opacity-70">
+                                {new Date(msg.createdAt).toLocaleTimeString()}
+                              </p>
+                              {msg.edited && <span className="text-[10px] opacity-70">(edited)</span>}
+                            </div>
+                          </>
                         )}
-                        <p className="text-[10px] font-bold mt-1 opacity-70">
-                          {new Date(msg.createdAt).toLocaleTimeString()}
-                        </p>
                       </div>
                     </div>
                   );
@@ -365,8 +521,8 @@ const ProviderMessages = () => {
                   type="text"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
-                  placeholder="TYPE YOUR MESSAGE..."
-                  className="flex-1 px-5 py-3 border-3 border-black font-bold uppercase text-xs focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  placeholder="Type your message..."
+                  className="flex-1 px-5 py-3 border-3 border-black font-bold text-xs focus:outline-none focus:ring-2 focus:ring-cyan-400 normal-case"
                   disabled={sending}
                 />
                 <button
@@ -385,6 +541,29 @@ const ProviderMessages = () => {
           </div>
         )}
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <div
+          className="fixed bg-white border-3 border-black shadow-lg z-50"
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+        >
+          {canEdit(contextMenu.message) && (
+            <button
+              onClick={handleEdit}
+              className="block w-full text-left px-4 py-2 font-bold text-sm hover:bg-purple-200 border-b-2 border-black"
+            >
+              ✏️ Edit
+            </button>
+          )}
+          <button
+            onClick={handleDelete}
+            className="block w-full text-left px-4 py-2 font-bold text-sm hover:bg-red-200 text-red-600"
+          >
+            🗑️ Delete
+          </button>
+        </div>
+      )}
     </div>
   );
 };

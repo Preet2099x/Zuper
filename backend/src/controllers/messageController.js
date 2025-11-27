@@ -288,3 +288,79 @@ export const uploadMessageImage = async (req, res) => {
     res.status(500).json({ message: "Failed to upload image", error: error.message });
   }
 };
+
+// Edit a message (within 5 minutes)
+export const editMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const { content } = req.body;
+    const userId = req.user.id;
+
+    if (!content || !content.trim()) {
+      return res.status(400).json({ message: "Message content is required" });
+    }
+
+    // Find message
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    // Verify sender
+    if (message.sender.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized to edit this message" });
+    }
+
+    // Check if message is within 5 minutes
+    const timeDiff = Date.now() - message.createdAt.getTime();
+    const fiveMinutes = 5 * 60 * 1000;
+    if (timeDiff > fiveMinutes) {
+      return res.status(400).json({ message: "Message can only be edited within 5 minutes" });
+    }
+
+    // Update message
+    message.content = content.trim();
+    message.edited = true;
+    message.editedAt = new Date();
+    await message.save();
+
+    const populatedMessage = await Message.findById(message._id).populate([
+      { path: "sender", select: "name email businessName" }
+    ]);
+
+    res.json(populatedMessage);
+  } catch (error) {
+    console.error("Edit message error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Delete a message
+export const deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.user.id;
+
+    // Find message
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    // Verify sender
+    if (message.sender.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized to delete this message" });
+    }
+
+    // Soft delete - mark as deleted
+    message.deleted = true;
+    message.deletedAt = new Date();
+    message.content = "This message has been deleted";
+    await message.save();
+
+    res.json({ message: "Message deleted successfully", messageId });
+  } catch (error) {
+    console.error("Delete message error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
