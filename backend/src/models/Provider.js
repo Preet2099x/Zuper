@@ -8,12 +8,16 @@ const providerSchema = new mongoose.Schema({
   emailVerificationCode: { type: String }, // store hashed OTP
   emailVerificationExpires: { type: Date },
 
-  phone: { type: String, required: true, unique: true },
+  phone: { type: String, unique: true, sparse: true },
   isPhoneVerified: { type: Boolean, default: false },
   phoneVerificationCode: { type: String },
   phoneVerificationExpires: { type: Date },
 
-  password: { type: String, required: true },
+  password: { type: String },
+  
+  // Google OAuth fields
+  googleId: { type: String, unique: true, sparse: true },
+  profilePicture: { type: String },
 
   businessName: { type: String },
 

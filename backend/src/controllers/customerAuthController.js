@@ -1,11 +1,15 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { OAuth2Client } from "google-auth-library";
 import Customer from "../models/Customer.js";
 import sendEmail from "../config/mailer.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 // ----- HELPERS -----
 function signToken(payload) {
@@ -230,5 +234,70 @@ export const loginCustomer = async (req, res) => {
   } catch (err) {
     console.error("login error:", err);
     return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ----- GOOGLE OAUTH LOGIN -----
+export const googleAuthCustomer = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    
+    if (!credential) {
+      return res.status(400).json({ message: "Google credential is required" });
+    }
+
+    // Verify the Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, sub: googleId, picture } = payload;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email not provided by Google" });
+    }
+
+    // Check if customer already exists
+    let customer = await Customer.findOne({ email });
+
+    if (customer) {
+      // Update Google ID if not set
+      if (!customer.googleId) {
+        customer.googleId = googleId;
+        customer.profilePicture = picture;
+        await customer.save();
+      }
+    } else {
+      // Create new customer account
+      customer = await Customer.create({
+        name: name || "Google User",
+        email,
+        googleId,
+        profilePicture: picture,
+        isEmailVerified: true, // Google accounts are pre-verified
+        phone: null, // Optional: User can add phone later
+        password: null, // No password for Google OAuth users
+      });
+    }
+
+    // Generate JWT token
+    const token = signToken({ customerId: customer._id });
+
+    return res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: customer._id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        profilePicture: customer.profilePicture,
+      },
+    });
+  } catch (err) {
+    console.error("Google auth error:", err);
+    return res.status(500).json({ message: "Google authentication failed" });
   }
 };
