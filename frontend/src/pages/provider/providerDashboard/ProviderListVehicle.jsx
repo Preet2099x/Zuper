@@ -208,7 +208,7 @@ const ProviderListVehicle = () => {
     setSuccess('');
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       if (!token) {
         setError('Please login to list a vehicle');
         navigate('/provider/login');

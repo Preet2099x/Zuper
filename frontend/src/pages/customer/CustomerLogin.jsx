@@ -45,8 +45,9 @@ export default function Login() {
       if (!res.ok) {
         setError(data.message || "Login failed");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("customerToken", data.token);
+        localStorage.setItem("customerUser", JSON.stringify(data.user));
+        localStorage.setItem("userRole", "customer");
         if (form.remember) localStorage.setItem("remembered", form.email);
         else localStorage.removeItem("remembered");
 
@@ -77,8 +78,9 @@ export default function Login() {
       if (!res.ok) {
         setError(data.message || "Google login failed");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("customerToken", data.token);
+        localStorage.setItem("customerUser", JSON.stringify(data.user));
+        localStorage.setItem("userRole", "customer");
 
         const redirectTo = loc.state?.from?.pathname || "/dashboard/customer/overview";
         nav(redirectTo, { replace: true });

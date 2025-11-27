@@ -284,7 +284,7 @@ export const googleAuthProvider = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = signToken({ providerId: provider._id });
+    const token = signToken({ id: provider._id, role: "provider" });
 
     return res.status(200).json({
       message: "Login successful",

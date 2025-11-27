@@ -59,7 +59,7 @@ const BookingModal = ({ vehicle, onClose, onBook }) => {
         return;
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
 
   const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/bookings`, {
         method: 'POST',

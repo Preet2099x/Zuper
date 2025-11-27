@@ -14,7 +14,7 @@ const ProviderMyVehicles = () => {
 
   const fetchVehicles = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       if (!token) {
         navigate('/provider/login');
         return;
@@ -47,7 +47,7 @@ const ProviderMyVehicles = () => {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
   const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/vehicles/${vehicleId}`, {
         method: 'DELETE',
         headers: {

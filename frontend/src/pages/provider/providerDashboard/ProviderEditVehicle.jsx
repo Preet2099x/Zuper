@@ -41,7 +41,7 @@ const ProviderEditVehicle = () => {
 
   const fetchVehicleData = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       if (!token) {
         navigate('/provider/login');
         return;
@@ -255,7 +255,7 @@ const ProviderEditVehicle = () => {
     setSuccess('');
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       if (!token) {
         setError('Please login to update vehicle');
         navigate('/provider/login');

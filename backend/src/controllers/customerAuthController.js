@@ -283,7 +283,7 @@ export const googleAuthCustomer = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = signToken({ customerId: customer._id });
+    const token = signToken({ id: customer._id, role: "customer" });
 
     return res.status(200).json({
       message: "Login successful",

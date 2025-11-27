@@ -21,7 +21,7 @@ const CustomerMyVehicles = () => {
 
   const fetchCustomerBookings = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       if (!token) {
         window.location.href = '/customer/login';
         return;
@@ -55,7 +55,7 @@ const CustomerMyVehicles = () => {
 
     setCancelling(bookingId);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/bookings/customer/${bookingId}/cancel`,
         {
@@ -100,7 +100,7 @@ const CustomerMyVehicles = () => {
 
   const handleViewContract = async (booking) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/bookings/contracts/${booking.contract}`,
         {
@@ -129,7 +129,7 @@ const CustomerMyVehicles = () => {
 
     setSigningContract(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/bookings/contracts/${selectedContract._id}/sign`,
         {
@@ -197,7 +197,7 @@ const CustomerMyVehicles = () => {
 
     setSigningContract(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/bookings/contracts/${selectedContract._id}/reject`,
         {

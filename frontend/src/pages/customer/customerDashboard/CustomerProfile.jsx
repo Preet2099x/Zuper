@@ -69,7 +69,7 @@ const CustomerProfile = () => {
   const fetchProfileData = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       if (!token) {
         window.location.href = '/customer/login';
         return;
@@ -118,7 +118,7 @@ const CustomerProfile = () => {
 
   const fetchDocuments = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
   const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/documents/customer`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -164,7 +164,7 @@ const CustomerProfile = () => {
     setSuccessMessage('');
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       
       // Combine firstName and lastName into name
       const fullName = `${profileData.personal.firstName} ${profileData.personal.lastName}`.trim();
@@ -193,9 +193,9 @@ const CustomerProfile = () => {
       setIsEditing(false);
 
       // Update localStorage with new user data
-      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      const userData = JSON.parse(localStorage.getItem('customerUser') || '{}');
       userData.name = fullName;
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('customerUser', JSON.stringify(userData));
 
       // Dispatch custom event to notify navbar of the change
       window.dispatchEvent(new Event('userUpdated'));
@@ -256,7 +256,7 @@ const CustomerProfile = () => {
     setSuccessMessage('');
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const formData = new FormData();
       formData.append('documentImage', file);
       formData.append('documentType', documentType);

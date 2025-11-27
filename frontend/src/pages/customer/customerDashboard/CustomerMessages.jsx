@@ -49,7 +49,7 @@ const CustomerMessages = () => {
   const fetchConversations = async () => {
     try {
       console.log('fetchConversations - Starting...');
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       console.log('fetchConversations - Token exists:', !!token);
       console.log('fetchConversations - API URL:', `${import.meta.env.VITE_API_BASE}/api/messages/conversations/customer`);
       
@@ -81,7 +81,7 @@ const CustomerMessages = () => {
     try {
       console.log('Creating/opening conversation with provider:', providerId);
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/messages/conversations/customer`, {
         method: 'POST',
         headers: {
@@ -124,7 +124,7 @@ const CustomerMessages = () => {
   const fetchMessages = async (conversationId) => {
     try {
       console.log('fetchMessages - Fetching messages for conversation:', conversationId);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/messages/conversations/customer/${conversationId}/messages`,
         {
@@ -169,7 +169,7 @@ const CustomerMessages = () => {
     const formData = new FormData();
     formData.append('image', selectedImage);
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('customerToken');
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE}/api/messages/upload/customer`,
       {
@@ -202,7 +202,7 @@ const CustomerMessages = () => {
         imageUrl = await uploadImage();
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const payload = imageUrl
         ? { messageType: 'image', imageUrl, content: messageInput.trim() || '' }
         : { messageType: 'text', content: messageInput.trim() };

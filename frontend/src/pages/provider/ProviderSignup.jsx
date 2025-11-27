@@ -123,8 +123,9 @@ export default function ProviderSignup() {
         const loginData = await loginRes.json();
 
         if (loginRes.ok) {
-          localStorage.setItem("token", loginData.token);
-          localStorage.setItem("user", JSON.stringify(loginData.provider));
+          localStorage.setItem("providerToken", loginData.token);
+          localStorage.setItem("providerUser", JSON.stringify(loginData.provider));
+          localStorage.setItem("userRole", "provider");
           nav("/dashboard/provider/overview", { replace: true });
         } else {
           setError(loginData.message || "Login failed. Please log in manually.");
@@ -178,8 +179,9 @@ export default function ProviderSignup() {
       if (!res.ok) {
         setError(data.message || "Google signup failed");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.provider));
+        localStorage.setItem("providerToken", data.token);
+        localStorage.setItem("providerUser", JSON.stringify(data.provider));
+        localStorage.setItem("userRole", "provider");
         nav("/dashboard/provider/overview", { replace: true });
       }
     } catch (err) {

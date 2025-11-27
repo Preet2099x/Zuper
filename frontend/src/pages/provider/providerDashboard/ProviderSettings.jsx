@@ -119,7 +119,7 @@ const ProviderSettings = () => {
   const fetchProviderProfile = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       if (!token) {
         setError('Please login to access settings');
         navigate('/provider/login');
@@ -153,7 +153,7 @@ const ProviderSettings = () => {
       setSaving(true);
       setError('');
       setMessage('');
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       if (!token) {
         setError('Please login to save settings');
         navigate('/provider/login');
@@ -210,12 +210,12 @@ const ProviderSettings = () => {
       }
       
       // Update localStorage with new name
-      const userData = localStorage.getItem('user');
+      const userData = localStorage.getItem('providerUser');
       if (userData) {
         try {
           const user = JSON.parse(userData);
           user.name = settings.profile.businessName;
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('providerUser', JSON.stringify(user));
           
           // Dispatch event to notify other components (like navbar)
           window.dispatchEvent(new Event('userUpdated'));

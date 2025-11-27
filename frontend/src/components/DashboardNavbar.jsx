@@ -7,7 +7,8 @@ const DashboardNavbar = ({ userRole }) => {
   const [userName, setUserName] = useState("User");
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
+    const userKey = userRole === "customer" ? "customerUser" : "providerUser";
+    const userData = localStorage.getItem(userKey);
     if (userData) {
       try {
         const user = JSON.parse(userData);
@@ -23,7 +24,8 @@ const DashboardNavbar = ({ userRole }) => {
 
   useEffect(() => {
     const handleUserUpdated = () => {
-      const userData = localStorage.getItem("user");
+      const userKey = userRole === "customer" ? "customerUser" : "providerUser";
+      const userData = localStorage.getItem(userKey);
       if (userData) {
         try {
           const user = JSON.parse(userData);
@@ -36,19 +38,19 @@ const DashboardNavbar = ({ userRole }) => {
 
     window.addEventListener("userUpdated", handleUserUpdated);
     return () => window.removeEventListener("userUpdated", handleUserUpdated);
-  }, []);
+  }, [userRole]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    
     if (userRole === "customer") {
-      navigate("/");
+      localStorage.removeItem("customerToken");
+      localStorage.removeItem("customerUser");
     } else if (userRole === "provider") {
-      navigate("/");
-    } else {
-      navigate("/");
+      localStorage.removeItem("providerToken");
+      localStorage.removeItem("providerUser");
     }
+    localStorage.removeItem("userRole");
+    
+    navigate("/");
   };
 
   const bgColor = userRole === "customer" ? "bg-yellow-400" : "bg-purple-400";

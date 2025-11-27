@@ -45,8 +45,9 @@ export default function ProviderLogin() {
       if (!res.ok) {
         setError(data.message || "Login failed");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.provider));
+        localStorage.setItem("providerToken", data.token);
+        localStorage.setItem("providerUser", JSON.stringify(data.provider));
+        localStorage.setItem("userRole", "provider");
         if (form.remember) localStorage.setItem("remembered", form.email);
         else localStorage.removeItem("remembered");
 
@@ -77,8 +78,9 @@ export default function ProviderLogin() {
       if (!res.ok) {
         setError(data.message || "Google login failed");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.provider));
+        localStorage.setItem("providerToken", data.token);
+        localStorage.setItem("providerUser", JSON.stringify(data.provider));
+        localStorage.setItem("userRole", "provider");
 
         const redirectTo = loc.state?.from?.pathname || "/dashboard/provider/overview";
         nav(redirectTo, { replace: true });

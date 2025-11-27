@@ -16,7 +16,7 @@ const ProviderBookingRequests = () => {
 
   const fetchBookings = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       if (!token) {
         window.location.href = '/provider/login';
         return;
@@ -48,7 +48,7 @@ const ProviderBookingRequests = () => {
 
     setResponding(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/bookings/provider/${selectedBooking._id}/approve`,
         {
@@ -87,7 +87,7 @@ const ProviderBookingRequests = () => {
 
     setResponding(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/bookings/provider/${selectedBooking._id}/reject`,
         {

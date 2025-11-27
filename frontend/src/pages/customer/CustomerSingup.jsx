@@ -107,8 +107,9 @@ export default function Signup() {
         const loginData = await loginRes.json();
 
         if (loginRes.ok) {
-          localStorage.setItem("token", loginData.token);
-          localStorage.setItem("user", JSON.stringify(loginData.user));
+          localStorage.setItem("customerToken", loginData.token);
+          localStorage.setItem("customerUser", JSON.stringify(loginData.user));
+          localStorage.setItem("userRole", "customer");
           nav("/dashboard/customer/overview", { replace: true });
         } else {
           setError(loginData.message || "Login failed. Please log in manually.");
@@ -162,8 +163,9 @@ export default function Signup() {
       if (!res.ok) {
         setError(data.message || "Google signup failed");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("customerToken", data.token);
+        localStorage.setItem("customerUser", JSON.stringify(data.user));
+        localStorage.setItem("userRole", "customer");
         nav("/dashboard/customer/overview", { replace: true });
       }
     } catch (err) {

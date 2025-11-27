@@ -32,7 +32,7 @@ const ProviderMessages = () => {
 
   const fetchConversations = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/messages/conversations/provider`,
         {
@@ -55,7 +55,7 @@ const ProviderMessages = () => {
 
   const createOrOpenConversation = async (customerId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/messages/conversations/provider`,
         {
@@ -82,7 +82,7 @@ const ProviderMessages = () => {
 
   const fetchMessages = async (conversationId) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE}/api/messages/conversations/provider/${conversationId}/messages`,
         {
@@ -129,7 +129,7 @@ const ProviderMessages = () => {
     const formData = new FormData();
     formData.append('image', selectedImage);
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('providerToken');
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE}/api/messages/upload/provider`,
       {
@@ -162,7 +162,7 @@ const ProviderMessages = () => {
         imageUrl = await uploadImage();
       }
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('providerToken');
       const payload = imageUrl
         ? { messageType: 'image', imageUrl, content: messageInput.trim() || '' }
         : { messageType: 'text', content: messageInput.trim() };
