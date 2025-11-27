@@ -217,7 +217,7 @@ export const loginProvider = async (req, res) => {
     const provider = await Provider.findOne({ 
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
     });
-    if (!provider) return res.status(401).json({ message: "Invalid credentials" });
+    if (!provider) return res.status(404).json({ message: "No account found with this email" });
 
     const ok = await bcrypt.compare(password, provider.password);
     if (!ok) return res.status(401).json({ message: "Invalid credentials" });

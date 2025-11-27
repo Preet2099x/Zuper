@@ -15,13 +15,13 @@ export const loginAdmin = async (req, res) => {
     // Check if admin exists with the code as name
     const admin = await Admin.findOne({ name: code });
     if (!admin) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(404).json({ message: "No admin account found with this code" });
     }
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Incorrect password. Please try again." });
     }
 
     // Generate JWT token

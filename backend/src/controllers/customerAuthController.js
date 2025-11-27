@@ -213,17 +213,22 @@ export const resendEmailOtp = async (req, res) => {
 export const loginCustomer = async (req, res) => {
   try {
     const { emailOrPhone, password } = req.body;
-    if (!emailOrPhone || !password) return res.status(400).json({ message: "Missing fields" });
+    if (!emailOrPhone || !password) return res.status(400).json({ message: "Email/phone and password are required" });
 
     const user = await Customer.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }]
     });
-    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+    if (!user) return res.status(404).json({ message: "No account found with this email" });
+
+    // Check if account uses Google OAuth (no password)
+    if (!user.password) {
+      return res.status(400).json({ message: "This account uses Google login. Please sign in with Google." });
+    }
 
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+    if (!ok) return res.status(401).json({ message: "Incorrect password. Please try again." });
 
-    if (!user.isEmailVerified) return res.status(403).json({ message: "Verify your email first" });
+    if (!user.isEmailVerified) return res.status(403).json({ message: "Please verify your email before logging in. Check your inbox for the verification code." });
 
     const token = signToken({ id: user._id, role: "customer" });
 
