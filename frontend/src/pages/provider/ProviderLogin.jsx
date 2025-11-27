@@ -194,10 +194,10 @@ export default function ProviderLogin() {
 
               <button 
                 type="button" 
-                onClick={() => nav("/forgot-password")} 
+                onClick={() => nav("/provider/forgot-password")} 
                 className="font-black text-sm uppercase hover:text-purple-600 underline"
               >
-                Forgot?
+                Forgot Password?
               </button>
             </div>
 

@@ -18,6 +18,10 @@ const customerSchema = new mongoose.Schema({
 
   password: { type: String },
   
+  // Password reset fields
+  passwordResetCode: { type: String },
+  passwordResetExpires: { type: Date },
+  
   // Google OAuth fields
   googleId: { type: String, unique: true, sparse: true },
   profilePicture: { type: String },

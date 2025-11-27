@@ -4,9 +4,11 @@ import { Routes, Route } from "react-router-dom";
 
 import Signup from "./pages/customer/CustomerSingup.jsx";
 import Login from "./pages/customer/CustomerLogin.jsx";
+import CustomerForgotPassword from "./pages/customer/ForgotPassword.jsx";
 import CustomerDashboard from "./pages/customer/customerDashboard/CustomerDashboard.jsx";
 import ProviderSignup from "./pages/provider/ProviderSignup.jsx";
 import ProviderLogin from "./pages/provider/ProviderLogin.jsx";
+import ProviderForgotPassword from "./pages/provider/ForgotPassword.jsx";
 import ProviderDashboard from "./pages/provider/providerDashboard/ProviderDashboard.jsx";
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
@@ -25,8 +27,10 @@ export default function App() {
       {/* Public */}
       <Route path="/customer/signup" element={<Signup />} />
       <Route path="/customer/login" element={<Login />} />
+      <Route path="/customer/forgot-password" element={<CustomerForgotPassword />} />
       <Route path="/provider/signup" element={<ProviderSignup />} />
       <Route path="/provider/login" element={<ProviderLogin />} />
+      <Route path="/provider/forgot-password" element={<ProviderForgotPassword />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/verify-email/:token" element={<VerifyEmail />} />
 

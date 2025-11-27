@@ -194,7 +194,7 @@ export default function Login() {
 
               <button 
                 type="button" 
-                onClick={() => nav("/forgot-password")} 
+                onClick={() => nav("/customer/forgot-password")} 
                 className="font-black text-sm uppercase hover:text-blue-600 underline"
               >
                 Forgot Password?

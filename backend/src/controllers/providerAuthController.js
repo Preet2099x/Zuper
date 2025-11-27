@@ -236,6 +236,95 @@ export const loginProvider = async (req, res) => {
   }
 };
 
+// ----- FORGOT PASSWORD -----
+export const forgotPasswordProvider = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email required" });
+
+    const user = await Provider.findOne({ email });
+    if (!user) return res.status(404).json({ message: "No account found with this email" });
+
+    // Check if account was created with Google OAuth (no password)
+    if (!user.password) {
+      return res.status(400).json({ message: "This account uses Google login. Please sign in with Google." });
+    }
+
+    const otp = generateOtp();
+    user.passwordResetCode = hashOtp(otp);
+    user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save();
+
+    await sendEmail({
+      to: email,
+      subject: "Reset your Zuper password",
+      text: `
+      Hello ${user.name},
+
+      We received a request to reset your password for your Zuper provider account.
+
+      Your password reset code is: ${otp}
+
+      This code will expire in 15 minutes. If you did not request a password reset, please ignore this email.
+
+      Thanks,
+      The Zuper Team
+      `,
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+        <h2 style="color: #9333ea;">Reset Your Password</h2>
+        <p>Hello <strong>${user.name}</strong>,</p>
+        <p>We received a request to reset your password for your provider account. Use the code below to reset it:</p>
+        <p style="font-size: 20px; font-weight: bold; letter-spacing: 3px; color: #111;">
+            ${otp}
+        </p>
+        <p>This code will expire in <strong>15 minutes</strong>.</p>
+        <p>If you didn't request this, you can safely ignore this email.</p>
+        <p style="margin-top: 20px;">— The Zuper Team</p>
+        </div>
+      `
+    });
+
+    return res.json({ message: "Password reset code sent to email" });
+  } catch (err) {
+    console.error("forgotPasswordProvider error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+// ----- RESET PASSWORD -----
+export const resetPasswordProvider = async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+    if (!email || !code || !newPassword) {
+      return res.status(400).json({ message: "Email, code, and new password required" });
+    }
+
+    const user = await Provider.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (!user.passwordResetCode || Date.now() > user.passwordResetExpires) {
+      return res.status(400).json({ message: "Code expired or invalid. Request a new one." });
+    }
+
+    if (hashOtp(code) !== user.passwordResetCode) {
+      return res.status(400).json({ message: "Invalid code" });
+    }
+
+    // Update password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    return res.json({ message: "Password reset successfully" });
+  } catch (err) {
+    console.error("resetPasswordProvider error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 // ----- GOOGLE OAUTH LOGIN -----
 export const googleAuthProvider = async (req, res) => {
   try {
