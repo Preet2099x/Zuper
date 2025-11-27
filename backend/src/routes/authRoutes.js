@@ -1,8 +1,8 @@
 import express from "express";
 import {
   signupCustomer,
-  verifyEmailOtp as verifyCustomerEmailOtp, // Use alias to avoid name conflict
-  resendEmailOtp as resendCustomerEmailOtp, // Use alias to avoid name conflict
+  verifyEmailOtp as verifyCustomerEmailOtp, 
+  resendEmailOtp as resendCustomerEmailOtp, 
   loginCustomer,
   googleAuthCustomer,
   forgotPasswordCustomer,
@@ -10,8 +10,8 @@ import {
 } from "../controllers/customerAuthController.js";
 import {
   signupProvider,
-  verifyEmailOtp as verifyProviderEmailOtp, // Use alias to avoid name conflict
-  resendEmailOtp as resendProviderEmailOtp, // Use alias to avoid name conflict
+  verifyEmailOtp as verifyProviderEmailOtp, 
+  resendEmailOtp as resendProviderEmailOtp, 
   loginProvider,
   googleAuthProvider,
   forgotPasswordProvider,
