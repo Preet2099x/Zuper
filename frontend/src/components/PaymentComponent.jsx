@@ -41,7 +41,7 @@ const PaymentModal = ({ isOpen, onClose, contractId, bookingDetails, onSuccess, 
   // Create payment order
   const createPaymentOrder = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/payments/create-order/${contractId}`, {
         method: 'POST',
         headers: {
@@ -63,7 +63,7 @@ const PaymentModal = ({ isOpen, onClose, contractId, bookingDetails, onSuccess, 
   // Verify payment on backend
   const verifyPayment = async (paymentDetails) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('customerToken');
       const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/payments/verify`, {
         method: 'POST',
         headers: {

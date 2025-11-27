@@ -331,11 +331,15 @@ const CustomerMyVehicles = () => {
             <div key={booking._id} className="brutal-card bg-white p-4">
               {/* Vehicle Image */}
               <div className="h-40 bg-gray-200 border-3 border-black mb-3 flex items-center justify-center overflow-hidden">
-                {booking.vehicle?.images && booking.vehicle.images.length > 0 ? (
+                {booking.vehicle?.images && booking.vehicle.images.length > 0 && booking.vehicle.images[0] && booking.vehicle.images[0].trim() ? (
                   <img
                     src={booking.vehicle.images[0]}
                     alt={`${booking.vehicle.brand} ${booking.vehicle.model}`}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML = '<div class="text-center"><div class="text-6xl mb-2">🚗</div><p class="text-xs font-black uppercase">No image</p></div>';
+                    }}
                   />
                 ) : (
                   <div className="text-center">
