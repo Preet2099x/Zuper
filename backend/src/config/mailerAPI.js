@@ -1,5 +1,6 @@
 // Brevo API mailer (works on Render.com free tier)
-import SibApiV3Sdk from '@sendinblue/client';
+import pkg from '@sendinblue/client';
+const { ApiClient, TransactionalEmailsApi, SendSmtpEmail } = pkg;
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,9 +12,9 @@ const FROM_NAME = process.env.EMAIL_FROM_NAME || 'Zuper';
 let apiInstance = null;
 
 if (BREVO_API_KEY) {
-  const apiKey = SibApiV3Sdk.ApiClient.instance.authentications['api-key'];
+  const apiKey = ApiClient.instance.authentications['api-key'];
   apiKey.apiKey = BREVO_API_KEY;
-  apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+  apiInstance = new TransactionalEmailsApi();
   console.log('✓ Mailer: Brevo API ready (using HTTP API - works on Render free tier)');
 } else {
   console.warn('⚠ Brevo API key not set - emails will log to console');
@@ -29,7 +30,7 @@ async function sendEmailInternal({ to, subject, text, html }, retries = 3) {
     return { ok: true, dev: true };
   }
 
-  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  const sendSmtpEmail = new SendSmtpEmail();
   sendSmtpEmail.sender = { email: FROM_EMAIL, name: FROM_NAME };
   sendSmtpEmail.to = [{ email: to }];
   sendSmtpEmail.subject = subject;
