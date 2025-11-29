@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
 import Customer from "../models/Customer.js";
-import sendEmail from "../config/mailer.js";
+import sendEmail from "../config/mailerAPI.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";

@@ -2,10 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
-import Provider from "../models/Provider.js"; 
-import sendEmail from "../config/mailer.js";
-
-const JWT_SECRET = process.env.JWT_SECRET || "secret";
+import Provider from "../models/Provider.js";
+import sendEmail from "../config/mailerAPI.js";const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
