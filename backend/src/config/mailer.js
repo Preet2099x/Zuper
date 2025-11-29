@@ -10,6 +10,14 @@ const SMTP_USER = process.env.SMTP_USER || "";
 const SMTP_PASS = process.env.SMTP_PASS || "";
 const FROM = process.env.EMAIL_FROM || "zuper@app.local";
 
+// Debug logging for production
+console.log("📧 Email Configuration:");
+console.log("  SMTP_HOST:", SMTP_HOST);
+console.log("  SMTP_PORT:", SMTP_PORT);
+console.log("  SMTP_USER:", SMTP_USER);
+console.log("  SMTP_PASS:", SMTP_PASS ? "***" + SMTP_PASS.slice(-4) : "NOT SET");
+console.log("  EMAIL_FROM:", FROM);
+
 let transporter = null;
 let isVerifying = false;
 
@@ -17,24 +25,24 @@ if (SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS) {
   transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: SMTP_PORT === 465, // true for 465, false for 587
+    secure: false, // Use STARTTLS for port 587
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASS,
     },
-    pool: true, // Enable connection pooling
-    maxConnections: 5,
-    maxMessages: 100,
-    rateDelta: 1000,
-    rateLimit: 5,
-    connectionTimeout: 15000, // Increased for Render.com
-    greetingTimeout: 10000,   // Increased for Render.com
-    socketTimeout: 45000,     // Increased for Render.com
-    requireTLS: true,         // Force TLS
+    pool: true,
+    maxConnections: 3,
+    maxMessages: 50,
+    connectionTimeout: 30000,
+    greetingTimeout: 15000,
+    socketTimeout: 60000,
+    requireTLS: true,
     tls: {
-      rejectUnauthorized: true,
-      minVersion: 'TLSv1.2'
-    }
+      rejectUnauthorized: false, // Less strict for Render.com
+      ciphers: 'SSLv3'
+    },
+    debug: true, // Enable debug logging
+    logger: true // Enable logger
   });
 
   // verify connection (non-blocking) but don't null out transporter on failure
