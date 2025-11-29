@@ -11,6 +11,7 @@ const SMTP_PASS = process.env.SMTP_PASS || "";
 const FROM = process.env.EMAIL_FROM || "zuper@app.local";
 
 let transporter = null;
+let isVerifying = false;
 
 if (SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS) {
   transporter = nodemailer.createTransport({
@@ -26,17 +27,28 @@ if (SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS) {
     maxMessages: 100,
     rateDelta: 1000,
     rateLimit: 5,
-    connectionTimeout: 10000,
-    greetingTimeout: 5000,
-    socketTimeout: 30000,
+    connectionTimeout: 15000, // Increased for Render.com
+    greetingTimeout: 10000,   // Increased for Render.com
+    socketTimeout: 45000,     // Increased for Render.com
+    requireTLS: true,         // Force TLS
+    tls: {
+      rejectUnauthorized: true,
+      minVersion: 'TLSv1.2'
+    }
   });
 
-  // verify connection (non-blocking)
+  // verify connection (non-blocking) but don't null out transporter on failure
+  isVerifying = true;
   transporter.verify()
-    .then(() => console.log("Mailer: SMTP ready with connection pool"))
+    .then(() => {
+      console.log("✓ Mailer: SMTP ready with connection pool");
+      isVerifying = false;
+    })
     .catch(err => {
-      console.warn("Mailer verify failed — falling back to console. Error:", err.message);
-      transporter = null;
+      console.warn("⚠ Mailer verify failed but will retry on first send. Error:", err.message);
+      console.warn("  This is common on platforms like Render.com - emails should still work");
+      isVerifying = false;
+      // Don't set transporter = null; let it try when actually sending
     });
 } else {
   console.log("Mailer: SMTP not configured — using console fallback");
