@@ -214,10 +214,15 @@ export const loginCustomer = async (req, res) => {
   try {
     const { emailOrPhone, password } = req.body;
     if (!emailOrPhone || !password) return res.status(400).json({ message: "Email/phone and password are required" });
-
+    
+    // Optimized query: Only fetch necessary fields, use lean() for faster response
     const user = await Customer.findOne({
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }]
-    });
+    })
+    .select('_id name email phone password isEmailVerified googleId')
+    .lean()
+    .exec();
+    
     if (!user) return res.status(404).json({ message: "No account found with this email" });
 
     // Check if account uses Google OAuth (no password)
@@ -225,10 +230,13 @@ export const loginCustomer = async (req, res) => {
       return res.status(400).json({ message: "This account uses Google login. Please sign in with Google." });
     }
 
+    // Check email verification early to avoid unnecessary bcrypt comparison
+    if (!user.isEmailVerified) {
+      return res.status(403).json({ message: "Please verify your email before logging in. Check your inbox for the verification code." });
+    }
+
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ message: "Incorrect password. Please try again." });
-
-    if (!user.isEmailVerified) return res.status(403).json({ message: "Please verify your email before logging in. Check your inbox for the verification code." });
 
     const token = signToken({ id: user._id, role: "customer" });
 

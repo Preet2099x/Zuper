@@ -212,15 +212,23 @@ export const loginProvider = async (req, res) => {
     const { emailOrPhone, password } = req.body;
     if (!emailOrPhone || !password) return res.status(400).json({ message: "Missing fields" });
 
+    // Optimized query: Only fetch necessary fields, use lean() for faster response
     const provider = await Provider.findOne({ 
       $or: [{ email: emailOrPhone }, { phone: emailOrPhone }],
-    });
+    })
+    .select('_id name email phone password isEmailVerified businessName')
+    .lean()
+    .exec();
+    
     if (!provider) return res.status(404).json({ message: "No account found with this email" });
+
+    // Check email verification early
+    if (!provider.isEmailVerified) {
+      return res.status(403).json({ message: "Verify your email first" });
+    }
 
     const ok = await bcrypt.compare(password, provider.password);
     if (!ok) return res.status(401).json({ message: "Invalid credentials" });
-
-    if (!provider.isEmailVerified) return res.status(403).json({ message: "Verify your email first" });
 
     const token = signToken({ id: provider._id, role: "provider" }); 
 

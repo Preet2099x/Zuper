@@ -29,4 +29,9 @@ const customerSchema = new mongoose.Schema({
   contracts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Contract" }]
 }, { timestamps: true });
 
+// Performance indexes for faster queries
+// Note: email and phone already have unique indexes from schema definition
+customerSchema.index({ isEmailVerified: 1 }); // For filtering verified users
+customerSchema.index({ createdAt: -1 }); // For sorting by registration date
+
 export default mongoose.model("Customer", customerSchema);

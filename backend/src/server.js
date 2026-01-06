@@ -3,6 +3,9 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import compression from 'compression';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import connectDB from  './config/db.js';
 import authRoutes from "./routes/authRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
@@ -36,22 +39,88 @@ const app = express();
 // Trust proxy for production deployments (Heroku, Railway, etc.)
 app.set('trust proxy', 1);
 
-// CORS configuration
+// Disable x-powered-by header for security
+app.disable('x-powered-by');
+
+// Compression middleware - compress all responses
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) {
+      return false;
+    }
+    return compression.filter(req, res);
+  },
+  threshold: 1024, // Only compress responses > 1KB
+  level: 6 // Balance between speed and compression ratio
+}));
+
+// Security headers with Helmet
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for Swagger UI
+  crossOriginEmbedderPolicy: false
+}));
+
+// Rate limiting for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Max 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Global rate limiter (more lenient)
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use('/api/v1/auth', authLimiter);
+app.use('/api/v1', globalLimiter);
+
+// CORS configuration with optimizations
 const allowedOrigins = [
   process.env.FRONTEND_URL || "http://localhost:5173",
   "https://zuper-amber.vercel.app"
 ].filter(Boolean);
 
-app.use(cors({ 
-  origin: allowedOrigins,
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'X-Response-Time'],
+  maxAge: 86400, // Cache preflight requests for 24 hours
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
 
-// Body parser with limits
+app.use(cors(corsOptions));
+
+// Body parser with optimized limits
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Add response time header for monitoring
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    res.setHeader('X-Response-Time', `${duration}ms`);
+  });
+  next();
+});
 
 
 app.get('/',(req,res) => {
