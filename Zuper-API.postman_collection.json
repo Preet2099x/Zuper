@@ -1,0 +1,667 @@
+{
+  "info": {
+    "name": "Zuper API v1",
+    "description": "Complete API collection for Zuper - Vehicle Rental Platform\n\n## Features\n- Multi-role authentication (Customer, Provider, Admin)\n- Vehicle CRUD operations\n- Booking management\n- Payment processing\n- Document verification\n\n## Base URL\n- Development: `http://localhost:5000/api/v1`\n- Production: `https://zuper-backend.onrender.com/api/v1`\n\n## Authentication\nMost endpoints require a Bearer token. After login, copy the token and set it in the Authorization header:\n```\nAuthorization: Bearer <your-token>\n```",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "zuper-api-v1"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Customer Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+919876543210\",\n  \"password\": \"SecurePass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/customer/signup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "customer", "signup"]
+            },
+            "description": "Register a new customer account. Email OTP will be sent for verification."
+          },
+          "response": []
+        },
+        {
+          "name": "Customer Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set(\"customer_token\", response.token);",
+                  "    console.log(\"Customer token saved:\", response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailOrPhone\": \"john.doe@example.com\",\n  \"password\": \"SecurePass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/customer/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "customer", "login"]
+            },
+            "description": "Login as customer. Returns JWT token valid for 7 days."
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/customer/verify-email",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "customer", "verify-email"]
+            },
+            "description": "Verify email with the 6-digit OTP sent during signup."
+          },
+          "response": []
+        },
+        {
+          "name": "Provider Signup",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"phone\": \"+919876543211\",\n  \"password\": \"ProviderPass123\",\n  \"businessName\": \"Smith Rentals\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/provider/signup",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "provider", "signup"]
+            },
+            "description": "Register a new provider (vehicle owner) account."
+          },
+          "response": []
+        },
+        {
+          "name": "Provider Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set(\"provider_token\", response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emailOrPhone\": \"jane.smith@example.com\",\n  \"password\": \"ProviderPass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/provider/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "provider", "login"]
+            },
+            "description": "Login as provider."
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set(\"admin_token\", response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@zuper.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/admin/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "admin", "login"]
+            },
+            "description": "Login as admin. Default credentials: admin@zuper.com / admin123"
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/customer/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "customer", "forgot-password"]
+            },
+            "description": "Request password reset OTP."
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"NewSecurePass123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/customer/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "customer", "reset-password"]
+            },
+            "description": "Reset password using OTP."
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints for Customer, Provider, and Admin roles"
+    },
+    {
+      "name": "Vehicles",
+      "item": [
+        {
+          "name": "Create Vehicle (Provider)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{provider_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "company",
+                  "value": "Toyota",
+                  "type": "text"
+                },
+                {
+                  "key": "model",
+                  "value": "Camry",
+                  "type": "text"
+                },
+                {
+                  "key": "year",
+                  "value": "2023",
+                  "type": "text"
+                },
+                {
+                  "key": "licensePlate",
+                  "value": "KA01AB1234",
+                  "type": "text"
+                },
+                {
+                  "key": "dailyRate",
+                  "value": "2500",
+                  "type": "text"
+                },
+                {
+                  "key": "location",
+                  "value": "Bangalore",
+                  "type": "text"
+                },
+                {
+                  "key": "type",
+                  "value": "car",
+                  "type": "text"
+                },
+                {
+                  "key": "features",
+                  "value": "[\"AC\", \"GPS\", \"Bluetooth\"]",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Comfortable sedan for city rides",
+                  "type": "text"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles"]
+            },
+            "description": "Create a new vehicle listing. Requires provider authentication. Supports up to 10 image uploads."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Vehicles (Provider)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{provider_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/my-vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", "my-vehicles"]
+            },
+            "description": "Get all vehicles owned by the logged-in provider."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Vehicles (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/search?location=Bangalore&type=car&minRate=1000&maxRate=5000",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", "search"],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "Bangalore"
+                },
+                {
+                  "key": "type",
+                  "value": "car"
+                },
+                {
+                  "key": "minRate",
+                  "value": "1000"
+                },
+                {
+                  "key": "maxRate",
+                  "value": "5000"
+                },
+                {
+                  "key": "company",
+                  "value": "Toyota",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Search vehicles with filters. No authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vehicle by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/:vehicleId",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", ":vehicleId"],
+              "variable": [
+                {
+                  "key": "vehicleId",
+                  "value": "507f1f77bcf86cd799439013"
+                }
+              ]
+            },
+            "description": "Get detailed information about a specific vehicle."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Vehicle (Provider)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{provider_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "dailyRate",
+                  "value": "2800",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "available",
+                  "type": "text"
+                },
+                {
+                  "key": "description",
+                  "value": "Updated description",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/vehicles/:vehicleId",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", ":vehicleId"],
+              "variable": [
+                {
+                  "key": "vehicleId",
+                  "value": "507f1f77bcf86cd799439013"
+                }
+              ]
+            },
+            "description": "Update vehicle details. Only the vehicle owner can update."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vehicle (Provider)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{provider_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/:vehicleId",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", ":vehicleId"],
+              "variable": [
+                {
+                  "key": "vehicleId",
+                  "value": "507f1f77bcf86cd799439013"
+                }
+              ]
+            },
+            "description": "Delete a vehicle. Only the owner can delete."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Vehicles (Admin)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{admin_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vehicles/admin/all",
+              "host": ["{{base_url}}"],
+              "path": ["vehicles", "admin", "all"]
+            },
+            "description": "Admin endpoint to get all vehicles in the system."
+          },
+          "response": []
+        }
+      ],
+      "description": "Vehicle CRUD operations with role-based access"
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"vehicleId\": \"507f1f77bcf86cd799439013\",\n  \"startDate\": \"2026-02-01\",\n  \"endDate\": \"2026-02-10\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/bookings",
+              "host": ["{{base_url}}"],
+              "path": ["bookings"]
+            },
+            "description": "Customer creates a booking request for a vehicle."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Customer Bookings",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/bookings/customer",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", "customer"]
+            },
+            "description": "Get all bookings for logged-in customer."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Provider Booking Requests",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{provider_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/bookings/provider/requests",
+              "host": ["{{base_url}}"],
+              "path": ["bookings", "provider", "requests"]
+            },
+            "description": "Get all booking requests for provider's vehicles."
+          },
+          "response": []
+        }
+      ],
+      "description": "Booking and contract management"
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get Customer Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user/customer/profile",
+              "host": ["{{base_url}}"],
+              "path": ["user", "customer", "profile"]
+            },
+            "description": "Get logged-in customer's profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Customer Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{customer_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated Doe\",\n  \"phone\": \"+919876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/user/customer/profile",
+              "host": ["{{base_url}}"],
+              "path": ["user", "customer", "profile"]
+            },
+            "description": "Update customer profile information."
+          },
+          "response": []
+        }
+      ],
+      "description": "User profile management"
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/v1",
+      "type": "string"
+    }
+  ]
+}

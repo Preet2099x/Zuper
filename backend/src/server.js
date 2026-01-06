@@ -14,6 +14,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import { ensureContainerExists } from "./config/azure.js";
 import { createDefaultAdmin } from "./controllers/adminAuthController.js";
+import { swaggerUi, swaggerSpec } from "./config/swagger.js";
 
 
 // Connect to database
@@ -57,15 +58,21 @@ app.get('/',(req,res) => {
     res.send('Zuper Backend is running');
 });
 
-app.use("/api/test", testRoutes);
+// Swagger API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Zuper API Documentation'
+}));
 
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/vehicles", vehicleRoutes);
-app.use("/api/bookings", bookingRoutes);
-app.use("/api/documents", documentRoutes);
-app.use("/api/payments", paymentRoutes);
-app.use("/api/messages", messageRoutes);
+// API v1 Routes
+app.use("/api/v1/test", testRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/vehicles", vehicleRoutes);
+app.use("/api/v1/bookings", bookingRoutes);
+app.use("/api/v1/documents", documentRoutes);
+app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/messages", messageRoutes);
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
