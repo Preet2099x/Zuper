@@ -10,11 +10,21 @@ export const protectCustomer = async (req, res, next) => {
     if (!auth || !auth.startsWith("Bearer ")) return res.status(401).json({ message: "Not authorized" });
     const token = auth.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await Customer.findById(decoded.id).select("-password");
+    
+    // Use lean() for faster queries - returns plain JS object instead of Mongoose document
+    // Only select essential fields to reduce data transfer
+    const user = await Customer.findById(decoded.id)
+      .select("_id name email phone isEmailVerified")
+      .lean()
+      .exec();
+      
     if (!user) return res.status(401).json({ message: "Invalid token" });
-    req.user = { ...user.toObject(), id: user._id.toString(), role: 'customer' };
+    req.user = { ...user, id: user._id.toString(), role: 'customer' };
     next();
   } catch (err) {
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
     console.error(err);
     res.status(401).json({ message: "Not authorized" });
   }
@@ -26,11 +36,20 @@ export const protectProvider = async (req, res, next) => {
     if (!auth || !auth.startsWith("Bearer ")) return res.status(401).json({ message: "Not authorized" });
     const token = auth.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = await Provider.findById(decoded.id).select("-password");
+    
+    // Use lean() for faster queries
+    const user = await Provider.findById(decoded.id)
+      .select("_id name email phone businessName isEmailVerified")
+      .lean()
+      .exec();
+      
     if (!user) return res.status(401).json({ message: "Invalid token" });
-    req.user = { ...user.toObject(), id: user._id.toString(), role: 'provider' };
+    req.user = { ...user, id: user._id.toString(), role: 'provider' };
     next();
   } catch (err) {
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
     console.error(err);
     res.status(401).json({ message: "Not authorized" });
   }
@@ -43,11 +62,20 @@ export const protectAdmin = async (req, res, next) => {
     const token = auth.split(" ")[1];
     const decoded = jwt.verify(token, JWT_SECRET);
     if (decoded.role !== "admin") return res.status(403).json({ message: "Admin access required" });
-    const admin = await Admin.findById(decoded.id).select("-password");
+    
+    // Use lean() for faster queries
+    const admin = await Admin.findById(decoded.id)
+      .select("_id email name")
+      .lean()
+      .exec();
+      
     if (!admin) return res.status(401).json({ message: "Invalid token" });
     req.admin = admin;
     next();
   } catch (err) {
+    if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
     console.error(err);
     res.status(401).json({ message: "Not authorized" });
   }

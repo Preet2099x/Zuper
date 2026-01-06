@@ -50,4 +50,10 @@ const providerSchema = new mongoose.Schema({
   payoutSchedule: { type: String, enum: ['weekly', 'biweekly', 'monthly'], default: 'monthly' }
 }, { timestamps: true });
 
+// Performance indexes for faster queries
+// Note: email and phone already have unique indexes from schema definition
+providerSchema.index({ isEmailVerified: 1 });
+providerSchema.index({ businessName: 1 }); // For business searches
+providerSchema.index({ createdAt: -1 });
+
 export default mongoose.model("Provider", providerSchema);
