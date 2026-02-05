@@ -164,3 +164,7 @@ With current architecture:
 - **Microservices + Caching:** 50,000+ concurrent users
 
 ---
+
+## Contributors
+- Harpreet Singh
+
