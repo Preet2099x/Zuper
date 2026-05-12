@@ -3,7 +3,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
 import Provider from "../models/Provider.js";
-import sendEmail from "../config/mailerAPI.js";const JWT_SECRET = process.env.JWT_SECRET || "secret";
+import { sendEmailBlocking } from "../config/mailer.js";
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
 const JWT_EXPIRES = process.env.JWT_EXPIRES || "7d";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
@@ -53,7 +54,7 @@ export const signupProvider = async (req, res) => {
       existing.emailVerificationExpires = Date.now() + 15 * 60 * 1000;
       await existing.save();
 
-      await sendEmail({
+      const emailResult = await sendEmailBlocking({
         to: email,
         subject: "Verify your Zuper account",
         text: `
@@ -83,6 +84,10 @@ export const signupProvider = async (req, res) => {
         `,
       });
 
+      if (!emailResult.ok) {
+        return res.status(500).json({ message: "Failed to send verification email", error: emailResult.error });
+      }
+
       return res.status(200).json({
         message: "Account exists but was not verified. New verification code sent to email.",
       });
@@ -109,7 +114,7 @@ export const signupProvider = async (req, res) => {
       emailVerificationExpires: Date.now() + 15 * 60 * 1000, 
     });
 
-    await sendEmail({
+    const emailResult = await sendEmailBlocking({
       to: email,
       subject: "Verify your Zuper account",
       text: `
@@ -138,6 +143,10 @@ export const signupProvider = async (req, res) => {
         </div>
       `,
     });
+
+    if (!emailResult.ok) {
+      return res.status(500).json({ message: "Failed to send verification email", error: emailResult.error });
+    }
 
     return res.status(201).json({
       message: "Signup successful. Verification code sent to email.",
@@ -193,11 +202,15 @@ export const resendEmailOtp = async (req, res) => {
     provider.emailVerificationExpires = Date.now() + 15 * 60 * 1000;
     await provider.save();
 
-    await sendEmail({
+    const emailResult = await sendEmailBlocking({
       to: email,
       subject: "Zuper Email Verification (Resend)",
       text: `Your new verification code is ${otp}. It expires in 15 minutes.`,
     });
+
+    if (!emailResult.ok) {
+      return res.status(500).json({ message: "Failed to send verification email", error: emailResult.error });
+    }
 
     return res.json({ message: "New verification code sent" });
   } catch (err) {
@@ -253,7 +266,7 @@ export const forgotPasswordProvider = async (req, res) => {
     user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
     await user.save();
 
-    await sendEmail({
+    const emailResult = await sendEmailBlocking({
       to: email,
       subject: "Reset your Zuper password",
       text: `
@@ -282,6 +295,10 @@ export const forgotPasswordProvider = async (req, res) => {
         </div>
       `
     });
+
+    if (!emailResult.ok) {
+      return res.status(500).json({ message: "Failed to send password reset email", error: emailResult.error });
+    }
 
     return res.json({ message: "Password reset code sent to email" });
   } catch (err) {

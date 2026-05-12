@@ -14,6 +14,7 @@ const PaymentModal = ({ isOpen, onClose, contractId, bookingDetails, onSuccess, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [emiMonths, setEmiMonths] = useState('');
 
   // Load Razorpay script on mount
   useEffect(() => {
@@ -39,15 +40,23 @@ const PaymentModal = ({ isOpen, onClose, contractId, bookingDetails, onSuccess, 
   }, [isOpen]);
 
   // Create payment order
+  const totalCost = Number(bookingDetails?.totalCost || 0);
+  const requiresEmi = totalCost > 100000;
+  const minEmiMonths = requiresEmi ? Math.ceil(totalCost / 100000) : 2;
+  const selectedEmiMonths = emiMonths ? Number(emiMonths) : null;
+  const installmentAmount = selectedEmiMonths ? Number((totalCost / selectedEmiMonths).toFixed(2)) : null;
+
   const createPaymentOrder = async () => {
     try {
       const token = localStorage.getItem('customerToken');
+      const payload = selectedEmiMonths ? { emiMonths: selectedEmiMonths } : undefined;
       const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/payments/create-order/${contractId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: payload ? JSON.stringify(payload) : undefined
       });
 
       if (!response.ok) {
@@ -87,6 +96,16 @@ const PaymentModal = ({ isOpen, onClose, contractId, bookingDetails, onSuccess, 
   const handlePayment = async () => {
     if (!scriptLoaded) {
       setError('Payment gateway not loaded yet. Please try again.');
+      return;
+    }
+
+    if (requiresEmi && !selectedEmiMonths) {
+      setError(`Amount above ₹1,00,000 must be paid in EMI. Choose at least ${minEmiMonths} months.`);
+      return;
+    }
+
+    if (selectedEmiMonths && installmentAmount > 100000) {
+      setError('Each EMI must not exceed ₹1,00,000. Increase EMI duration.');
       return;
     }
 
@@ -212,13 +231,51 @@ const PaymentModal = ({ isOpen, onClose, contractId, bookingDetails, onSuccess, 
             </div>
           )}
 
+          {/* EMI Selection */}
+          <div className="brutal-card-sm bg-purple-100 border-purple-600 p-4">
+            <p className="font-black uppercase text-xs mb-3">📆 EMI OPTIONS</p>
+            {requiresEmi ? (
+              <p className="text-xs font-bold mb-2">
+                Amount above ₹1,00,000 must be paid in EMI. Minimum {minEmiMonths} months required.
+              </p>
+            ) : (
+              <p className="text-xs font-bold mb-2">Optional for orders above ₹1,00,000 only.</p>
+            )}
+
+            <div className="flex items-center gap-3">
+              <label className="text-xs font-black">Duration:</label>
+              <select
+                value={emiMonths}
+                onChange={(e) => setEmiMonths(e.target.value)}
+                className="border-2 border-black px-2 py-1 text-xs font-bold"
+              >
+                <option value="">{requiresEmi ? 'Select months' : 'No EMI'}</option>
+                {[...Array(24)].map((_, idx) => {
+                  const months = idx + 2;
+                  if (requiresEmi && months < minEmiMonths) return null;
+                  return (
+                    <option key={months} value={months}>
+                      {months} months
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            {selectedEmiMonths && (
+              <p className="text-xs font-bold mt-2">
+                Estimated EMI: ₹{installmentAmount} / month
+              </p>
+            )}
+          </div>
+
           {/* Payment Info */}
           <div className="brutal-card-sm bg-yellow-100 border-yellow-600 p-4">
             <p className="font-black uppercase text-xs mb-2">ℹ️ PAYMENT INFO</p>
             <ul className="text-xs font-bold space-y-1">
               <li>✓ Secure payment via Razorpay</li>
               <li>✓ All major cards accepted</li>
-              <li>✓ Booking confirmed instantly</li>
+              <li>✓ Booking confirmed instantly after first EMI</li>
             </ul>
           </div>
 
@@ -237,7 +294,13 @@ const PaymentModal = ({ isOpen, onClose, contractId, bookingDetails, onSuccess, 
               disabled={loading || !scriptLoaded}
               className="w-full brutal-btn bg-green-300 hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed py-4 text-lg"
             >
-              {loading ? '⏳ PROCESSING...' : !scriptLoaded ? '⏳ LOADING...' : `💳 PAY ₹${bookingDetails?.totalCost || 0}`}
+              {loading
+                ? '⏳ PROCESSING...'
+                : !scriptLoaded
+                ? '⏳ LOADING...'
+                : selectedEmiMonths
+                ? `💳 PAY EMI ₹${installmentAmount}`
+                : `💳 PAY ₹${bookingDetails?.totalCost || 0}`}
             </button>
             
             <button

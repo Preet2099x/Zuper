@@ -16,6 +16,7 @@ const razorpay = new Razorpay({
 export const createPaymentOrder = async (req, res) => {
   try {
     const { contractId } = req.params;
+    const { emiMonths } = req.body;
 
     // Get contract details
     const contract = await Contract.findById(contractId).populate("booking");
@@ -42,7 +43,54 @@ export const createPaymentOrder = async (req, res) => {
 
     // Get booking details for amount
     const booking = contract.booking;
-    const amount = booking.totalCost * 100; // Convert to paise (Razorpay uses smallest currency unit)
+    const totalAmount = booking.totalCost;
+    const requiresEmi = totalAmount > 100000;
+    const parsedEmiMonths = emiMonths !== undefined && emiMonths !== null && emiMonths !== "" ? Number(emiMonths) : null;
+
+    if (requiresEmi && !parsedEmiMonths) {
+      return res.status(400).json({ message: "Amount above ₹1,00,000 must be paid via EMI" });
+    }
+
+    if (parsedEmiMonths && (!Number.isInteger(parsedEmiMonths) || parsedEmiMonths < 2)) {
+      return res.status(400).json({ message: "EMI duration must be an integer of at least 2 months" });
+    }
+
+    let paymentPlan = parsedEmiMonths ? "emi" : "full";
+    if (requiresEmi) paymentPlan = "emi";
+    if (existingPayment?.paymentPlan === "emi") paymentPlan = "emi";
+
+    let totalInstallments = parsedEmiMonths;
+    let installmentAmount = totalAmount;
+    let remainingAmount = totalAmount;
+    let orderAmountRupees = totalAmount;
+
+    if (paymentPlan === "emi") {
+      totalInstallments = totalInstallments || existingPayment?.emi?.totalInstallments;
+      if (!totalInstallments) {
+        return res.status(400).json({ message: "EMI duration is required" });
+      }
+
+      installmentAmount = existingPayment?.emi?.installmentAmount
+        || Number((totalAmount / totalInstallments).toFixed(2));
+
+      if (installmentAmount > 100000) {
+        return res.status(400).json({ message: "Each EMI must not exceed ₹1,00,000. Increase EMI duration." });
+      }
+
+      remainingAmount = existingPayment?.emi?.remainingAmount ?? totalAmount;
+      if (remainingAmount <= 0) {
+        return res.status(400).json({ message: "All EMI installments are already paid" });
+      }
+
+      const hasPendingInstallment = existingPayment?.emi?.installments?.some(i => i.status === "pending");
+      if (hasPendingInstallment) {
+        return res.status(400).json({ message: "Previous EMI installment is still pending" });
+      }
+
+      orderAmountRupees = Math.min(installmentAmount, remainingAmount);
+    }
+
+    const amount = Math.round(orderAmountRupees * 100); // Convert to paise
 
     // Create Razorpay order
     const razorpayOrder = await razorpay.orders.create({
@@ -52,26 +100,64 @@ export const createPaymentOrder = async (req, res) => {
       notes: {
         contractId: contractId,
         bookingId: booking._id.toString(),
-        customerId: req.user.id
+        customerId: req.user.id,
+        paymentPlan: paymentPlan,
+        totalInstallments: paymentPlan === "emi" ? String(totalInstallments) : "1"
       }
     });
 
     // Create or update payment record
     let payment;
     if (existingPayment) {
+      if (existingPayment.status === "paid") {
+        return res.status(400).json({ message: "Payment already completed for this contract" });
+      }
       existingPayment.razorpayOrderId = razorpayOrder.id;
-      existingPayment.amount = booking.totalCost;
+      existingPayment.amount = totalAmount;
       existingPayment.status = "pending";
+      existingPayment.paymentPlan = paymentPlan;
+
+      if (paymentPlan === "emi") {
+        const installments = existingPayment.emi?.installments || [];
+        installments.push({
+          orderId: razorpayOrder.id,
+          amount: orderAmountRupees,
+          status: "pending"
+        });
+
+        existingPayment.emi = {
+          totalInstallments,
+          installmentAmount,
+          installmentsPaid: existingPayment.emi?.installmentsPaid || 0,
+          remainingAmount,
+          installments
+        };
+      } else {
+        existingPayment.emi = undefined;
+      }
+
       payment = await existingPayment.save();
     } else {
       payment = await Payment.create({
         contract: contractId,
         booking: booking._id,
         customer: req.user.id,
-        amount: booking.totalCost,
+        amount: totalAmount,
         currency: "INR",
         razorpayOrderId: razorpayOrder.id,
-        status: "pending"
+        status: "pending",
+        paymentPlan: paymentPlan,
+        emi: paymentPlan === "emi" ? {
+          totalInstallments,
+          installmentAmount,
+          installmentsPaid: 0,
+          remainingAmount,
+          installments: [{
+            orderId: razorpayOrder.id,
+            amount: orderAmountRupees,
+            status: "pending"
+          }]
+        } : undefined
       });
 
       // Link payment to contract
@@ -124,7 +210,12 @@ export const verifyPayment = async (req, res) => {
     }
 
     // Update payment record
-    const payment = await Payment.findOne({ razorpayOrderId }).populate([
+    const payment = await Payment.findOne({
+      $or: [
+        { razorpayOrderId },
+        { "emi.installments.orderId": razorpayOrderId }
+      ]
+    }).populate([
       { path: "contract" },
       { path: "booking" }
     ]);
@@ -133,22 +224,63 @@ export const verifyPayment = async (req, res) => {
       return res.status(404).json({ message: "Payment record not found" });
     }
 
-    // Check if already paid
-    if (payment.status === "paid") {
-      return res.json({
-        message: "Payment already processed",
-        payment: payment
-      });
+    if (payment.paymentPlan === "emi") {
+      const installment = payment.emi?.installments?.find(i => i.orderId === razorpayOrderId);
+      if (installment?.status === "paid") {
+        return res.json({ message: "Installment already processed", payment });
+      }
+
+      if (installment) {
+        installment.paymentId = razorpayPaymentId;
+        installment.signature = razorpaySignature;
+        installment.status = "paid";
+        installment.paidAt = new Date();
+      } else {
+        payment.emi.installments.push({
+          orderId: razorpayOrderId,
+          paymentId: razorpayPaymentId,
+          signature: razorpaySignature,
+          amount: payment.emi?.installmentAmount || 0,
+          status: "paid",
+          paidAt: new Date()
+        });
+      }
+
+      const paidAmount = installment?.amount || payment.emi?.installmentAmount || 0;
+      payment.emi.installmentsPaid = (payment.emi.installmentsPaid || 0) + 1;
+      payment.emi.remainingAmount = Math.max(0, (payment.emi.remainingAmount ?? payment.amount) - paidAmount);
+
+      if (payment.emi.remainingAmount === 0) {
+        payment.status = "paid";
+      } else {
+        payment.status = "pending";
+      }
+
+      payment.razorpayPaymentId = razorpayPaymentId;
+      payment.razorpaySignature = razorpaySignature;
+      await payment.save();
+    } else {
+      // Check if already paid
+      if (payment.status === "paid") {
+        return res.json({
+          message: "Payment already processed",
+          payment: payment
+        });
+      }
+
+      payment.razorpayPaymentId = razorpayPaymentId;
+      payment.razorpaySignature = razorpaySignature;
+      payment.status = "paid";
+      await payment.save();
     }
 
-    payment.razorpayPaymentId = razorpayPaymentId;
-    payment.razorpaySignature = razorpaySignature;
-    payment.status = "paid";
-    await payment.save();
-
-    // Update booking status to CONFIRMED (payment completed)
+    // Update booking status to CONFIRMED
     const booking = await BookingRequest.findById(payment.booking._id);
-    if (booking.status !== "CONFIRMED") {
+    const shouldConfirm = payment.paymentPlan === "emi"
+      ? (payment.emi?.installmentsPaid || 0) >= 1
+      : payment.status === "paid";
+
+    if (shouldConfirm && booking.status !== "CONFIRMED") {
       booking.status = "CONFIRMED";
       await booking.save();
 
@@ -170,7 +302,9 @@ export const verifyPayment = async (req, res) => {
     ]);
 
     res.json({
-      message: "Payment verified and booking confirmed successfully",
+      message: payment.paymentPlan === "emi" && payment.status !== "paid"
+        ? "EMI installment paid successfully"
+        : "Payment verified and booking confirmed successfully",
       payment: populatedPayment,
       success: true
     });
@@ -248,17 +382,43 @@ export const handleWebhook = async (req, res) => {
 
     // Handle payment success
     if (event === "payment.captured") {
-      const payment = await Payment.findOne({ 
-        razorpayPaymentId: paymentEntity.id 
+      const payment = await Payment.findOne({
+        $or: [
+          { razorpayPaymentId: paymentEntity.id },
+          { razorpayOrderId: paymentEntity.order_id },
+          { "emi.installments.orderId": paymentEntity.order_id }
+        ]
       });
 
-      if (payment && payment.status !== "paid") {
-        payment.status = "paid";
+      if (payment) {
+        if (payment.paymentPlan === "emi") {
+          const installment = payment.emi?.installments?.find(i => i.orderId === paymentEntity.order_id);
+          if (installment && installment.status !== "paid") {
+            installment.paymentId = paymentEntity.id;
+            installment.status = "paid";
+            installment.paidAt = new Date();
+            payment.emi.installmentsPaid = (payment.emi.installmentsPaid || 0) + 1;
+            const paidAmount = installment.amount || payment.emi.installmentAmount || 0;
+            payment.emi.remainingAmount = Math.max(0, (payment.emi.remainingAmount ?? payment.amount) - paidAmount);
+          }
+
+          if (payment.emi?.remainingAmount === 0) {
+            payment.status = "paid";
+          } else {
+            payment.status = "pending";
+          }
+        } else if (payment.status !== "paid") {
+          payment.status = "paid";
+        }
+
         await payment.save();
 
-        // Update booking and vehicle status
         const booking = await BookingRequest.findById(payment.booking);
-        if (booking.status !== "CONFIRMED") {
+        const shouldConfirm = payment.paymentPlan === "emi"
+          ? (payment.emi?.installmentsPaid || 0) >= 1
+          : payment.status === "paid";
+
+        if (shouldConfirm && booking.status !== "CONFIRMED") {
           booking.status = "CONFIRMED";
           await booking.save();
 
@@ -275,12 +435,23 @@ export const handleWebhook = async (req, res) => {
 
     // Handle payment failure
     if (event === "payment.failed") {
-      const payment = await Payment.findOne({ 
-        razorpayOrderId: paymentEntity.order_id 
+      const payment = await Payment.findOne({
+        $or: [
+          { razorpayOrderId: paymentEntity.order_id },
+          { "emi.installments.orderId": paymentEntity.order_id }
+        ]
       });
 
       if (payment) {
-        payment.status = "failed";
+        if (payment.paymentPlan === "emi") {
+          const installment = payment.emi?.installments?.find(i => i.orderId === paymentEntity.order_id);
+          if (installment) {
+            installment.status = "failed";
+          }
+          payment.status = "pending";
+        } else {
+          payment.status = "failed";
+        }
         await payment.save();
       }
     }

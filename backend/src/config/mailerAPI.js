@@ -10,6 +10,7 @@ const FROM_NAME = process.env.EMAIL_FROM_NAME || 'Zuper';
 
 if (BREVO_API_KEY) {
   console.log('✓ Mailer: Brevo API ready (using HTTP API - works on Render free tier)');
+  console.log('📧 Brevo sender:', { email: FROM_EMAIL, name: FROM_NAME });
 } else {
   console.warn('⚠ Brevo API key not set - emails will log to console');
 }
@@ -44,8 +45,26 @@ async function sendEmailInternal({ to, subject, text, html }, retries = 3) {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || `HTTP ${response.status}`);
+        let errorBody = null;
+        try {
+          errorBody = await response.json();
+        } catch {
+          try {
+            errorBody = await response.text();
+          } catch {
+            errorBody = null;
+          }
+        }
+        console.error('✗ Brevo API error:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorBody
+        });
+        throw new Error(
+          (typeof errorBody === 'object' && errorBody?.message)
+            ? errorBody.message
+            : `Brevo API error (HTTP ${response.status})`
+        );
       }
 
       const result = await response.json();

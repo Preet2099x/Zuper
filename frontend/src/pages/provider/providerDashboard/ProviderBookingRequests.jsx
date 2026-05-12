@@ -9,6 +9,7 @@ const ProviderBookingRequests = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [responseNote, setResponseNote] = useState('');
   const [responding, setResponding] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchBookings();
@@ -73,10 +74,10 @@ const ProviderBookingRequests = () => {
       setShowDetailModal(false);
       setSelectedBooking(null);
       setResponseNote('');
-      alert('Booking approved successfully!');
+      setSuccessMessage('Booking approved successfully!');
     } catch (err) {
       console.error('Approve booking error:', err);
-      alert('Failed to approve booking: ' + err.message);
+      setError('Failed to approve booking: ' + err.message);
     } finally {
       setResponding(false);
     }
@@ -112,10 +113,52 @@ const ProviderBookingRequests = () => {
       setShowDetailModal(false);
       setSelectedBooking(null);
       setResponseNote('');
-      alert('Booking rejected');
+      setSuccessMessage('Booking rejected');
     } catch (err) {
       console.error('Reject booking error:', err);
-      alert('Failed to reject booking: ' + err.message);
+      setError('Failed to reject booking: ' + err.message);
+    } finally {
+      setResponding(false);
+    }
+  };
+
+  const handleCancelBooking = async () => {
+    if (!selectedBooking) return;
+
+    const confirmCancel = window.confirm('Cancel this confirmed booking? This will mark the booking cancelled and set the vehicle as available.');
+    if (!confirmCancel) return;
+
+    setResponding(true);
+    try {
+      const token = localStorage.getItem('providerToken');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/api/bookings/provider/${selectedBooking._id}/cancel`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ providerNote: responseNote })
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || 'Failed to cancel booking');
+      }
+
+      const data = await response.json();
+      setBookings(prev =>
+        prev.map(b => (b._id === selectedBooking._id ? data.booking : b))
+      );
+      setShowDetailModal(false);
+      setSelectedBooking(null);
+      setResponseNote('');
+      setSuccessMessage('Booking cancelled');
+    } catch (err) {
+      console.error('Cancel booking error:', err);
+      setError('Failed to cancel booking: ' + err.message);
     } finally {
       setResponding(false);
     }
@@ -183,6 +226,12 @@ const ProviderBookingRequests = () => {
         {error && (
           <div className="brutal-card mb-6 p-4 bg-red-200">
             <p className="font-black text-sm">⚠️ {error}</p>
+          </div>
+        )}
+
+        {successMessage && (
+          <div className="brutal-card mb-6 p-4 bg-green-200">
+            <p className="font-black text-sm">✅ {successMessage}</p>
           </div>
         )}
 
@@ -399,14 +448,16 @@ const ProviderBookingRequests = () => {
                   </div>
                 )}
 
-                {/* Provider Response - Only show for pending bookings */}
-                {selectedBooking.status === 'PENDING_PROVIDER' && (
+                {/* Provider Response - For pending or confirmed (cancel note) */}
+                {['PENDING_PROVIDER', 'CONFIRMED'].includes(selectedBooking.status) && (
                   <div>
                     <h3 className="brutal-heading text-lg mb-4">✍️ YOUR RESPONSE</h3>
                     <textarea
                       value={responseNote}
                       onChange={(e) => setResponseNote(e.target.value)}
-                      placeholder="Add any notes for the customer (optional)..."
+                      placeholder={selectedBooking.status === 'CONFIRMED'
+                        ? 'Add a cancellation note for the customer (optional)...'
+                        : 'Add any notes for the customer (optional)...'}
                       className="w-full px-5 py-4 border-3 border-black uppercase text-xs font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
                       rows="4"
                     />
@@ -430,6 +481,22 @@ const ProviderBookingRequests = () => {
                         className="flex-1 brutal-btn bg-red-300 text-xs px-5 py-3"
                       >
                         {responding ? '⏳ PROCESSING...' : '❌ REJECT BOOKING'}
+                      </button>
+                    </>
+                  ) : selectedBooking.status === 'CONFIRMED' ? (
+                    <>
+                      <button
+                        onClick={handleCancelBooking}
+                        disabled={responding}
+                        className="flex-1 brutal-btn bg-red-300 text-xs px-5 py-3"
+                      >
+                        {responding ? '⏳ PROCESSING...' : '🚫 CANCEL BOOKING'}
+                      </button>
+                      <button
+                        onClick={closeDetailModal}
+                        className="flex-1 brutal-btn bg-gray-300 text-xs px-5 py-3"
+                      >
+                        CLOSE
                       </button>
                     </>
                   ) : (

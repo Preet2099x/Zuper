@@ -135,6 +135,13 @@ export default function Footer() {
             <Link to="/cookies" className="text-gray-400 hover:text-yellow-400 transition-colors uppercase">
               Cookies
             </Link>
+            <span className="text-gray-600">•</span>
+            <Link
+              to="/admin/login"
+              className="text-gray-200 hover:text-lime-400 transition-colors uppercase"
+            >
+              Admin
+            </Link>
           </div>
         </div>
       </div>

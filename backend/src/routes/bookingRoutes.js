@@ -5,6 +5,8 @@ import {
   getProviderBookingRequests,
   approveBookingRequest,
   rejectBookingRequest,
+  cancelBookingByProvider,
+  cancelBookingByProviderVehicle,
   getBookingRequestById,
   cancelBookingRequest,
   signContract,
@@ -32,5 +34,7 @@ router.put("/contracts/:contractId/reject", protectCustomer, rejectContract);
 router.get("/provider/messages", protectProvider, getProviderBookingRequests);
 router.put("/provider/:bookingId/approve", protectProvider, approveBookingRequest);
 router.put("/provider/:bookingId/reject", protectProvider, rejectBookingRequest);
+router.put("/provider/:bookingId/cancel", protectProvider, cancelBookingByProvider);
+router.put("/provider/vehicle/:vehicleId/cancel", protectProvider, cancelBookingByProviderVehicle);
 
 export default router;

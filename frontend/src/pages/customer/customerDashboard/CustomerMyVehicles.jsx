@@ -15,6 +15,42 @@ const CustomerMyVehicles = () => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState(null);
 
+  const normalizeBookings = (list) => {
+    const priority = {
+      CONFIRMED: 4,
+      PAYMENT_PENDING: 3,
+      PROVIDER_ACCEPTED: 2,
+      PENDING_PROVIDER: 1
+    };
+
+    const filtered = list.filter(b => b.status !== 'CANCELLED');
+    const byVehicle = new Map();
+
+    for (const booking of filtered) {
+      const vehicleId = booking.vehicle?._id || booking.vehicle;
+      const key = vehicleId ? `vehicle:${vehicleId}` : `booking:${booking._id}`;
+      const existing = byVehicle.get(key);
+
+      if (!existing) {
+        byVehicle.set(key, booking);
+        continue;
+      }
+
+      const existingPriority = priority[existing.status] || 0;
+      const currentPriority = priority[booking.status] || 0;
+      const existingDate = new Date(existing.createdAt || 0).getTime();
+      const currentDate = new Date(booking.createdAt || 0).getTime();
+
+      if (currentPriority > existingPriority || (currentPriority === existingPriority && currentDate > existingDate)) {
+        byVehicle.set(key, booking);
+      }
+    }
+
+    return Array.from(byVehicle.values()).sort(
+      (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+    );
+  };
+
   useEffect(() => {
     fetchCustomerBookings();
   }, []);
@@ -39,7 +75,7 @@ const CustomerMyVehicles = () => {
       }
 
       const data = await response.json();
-      setBookings(data);
+      setBookings(normalizeBookings(data));
       setLoading(false);
     } catch (err) {
       console.error('Fetch bookings error:', err);
@@ -73,7 +109,7 @@ const CustomerMyVehicles = () => {
       }
 
       // Remove cancelled booking from the list or update its status
-      setBookings(prev => prev.filter(b => b._id !== bookingId));
+      setBookings(prev => normalizeBookings(prev.filter(b => b._id !== bookingId)));
       setSuccessMessage('Booking cancelled successfully');
       
       // Auto-hide success message after 3 seconds
@@ -173,7 +209,9 @@ const CustomerMyVehicles = () => {
       } else {
         // Old flow (if payment is disabled)
         setBookings(prev =>
-          prev.map(b => (b._id === selectedContract.bookingId ? { ...b, status: 'CONFIRMED' } : b))
+          normalizeBookings(
+            prev.map(b => (b._id === selectedContract.bookingId ? { ...b, status: 'CONFIRMED' } : b))
+          )
         );
         setShowContractModal(false);
         setSelectedContract(null);
@@ -215,7 +253,7 @@ const CustomerMyVehicles = () => {
       }
 
       // Remove cancelled booking
-      setBookings(prev => prev.filter(b => b._id !== selectedContract.bookingId));
+      setBookings(prev => normalizeBookings(prev.filter(b => b._id !== selectedContract.bookingId)));
       
       setShowContractModal(false);
       setSelectedContract(null);
@@ -238,10 +276,12 @@ const CustomerMyVehicles = () => {
     
     // Update booking status to CONFIRMED
     setBookings(prev =>
-      prev.map(b => 
-        b._id === payment.booking?._id 
-          ? { ...b, status: 'CONFIRMED' } 
-          : b
+      normalizeBookings(
+        prev.map(b => 
+          b._id === payment.booking?._id 
+            ? { ...b, status: 'CONFIRMED' } 
+            : b
+        )
       )
     );
     

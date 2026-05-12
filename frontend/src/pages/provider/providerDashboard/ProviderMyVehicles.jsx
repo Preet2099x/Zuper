@@ -7,6 +7,8 @@ const ProviderMyVehicles = () => {
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelVehicleId, setCancelVehicleId] = useState(null);
 
   useEffect(() => {
     fetchVehicles();
@@ -69,6 +71,43 @@ const ProviderMyVehicles = () => {
 
   const handleEditVehicle = (vehicleId) => {
     navigate(`/dashboard/provider/edit-vehicle/${vehicleId}`);
+  };
+
+  const handleCancelRentedBooking = async (vehicleId) => {
+    try {
+      const token = localStorage.getItem('providerToken');
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE}/api/bookings/provider/vehicle/${vehicleId}/cancel`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to cancel booking');
+      }
+
+      alert('Booking cancelled');
+      fetchVehicles();
+    } catch (err) {
+      console.error('Cancel rented booking error:', err);
+      alert('Failed to cancel booking: ' + err.message);
+    }
+  };
+
+  const openCancelModal = (vehicleId) => {
+    setCancelVehicleId(vehicleId);
+    setShowCancelModal(true);
+  };
+
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    setCancelVehicleId(null);
   };
 
   // Remove static data
@@ -363,12 +402,21 @@ const ProviderMyVehicles = () => {
                   >
                     ✏️ EDIT
                   </button>
-                  <button 
-                    onClick={() => handleDeleteVehicle(vehicle._id)}
-                    className="flex-1 brutal-btn bg-red-300 hover:bg-red-400 text-black py-2 px-3 text-xs"
-                  >
-                    ❌ DELETE
-                  </button>
+                  {vehicle.status === 'rented' ? (
+                    <button 
+                      onClick={() => openCancelModal(vehicle._id)}
+                      className="flex-1 brutal-btn bg-red-300 hover:bg-red-400 text-black py-2 px-3 text-xs"
+                    >
+                      🚫 CANCEL
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => handleDeleteVehicle(vehicle._id)}
+                      className="flex-1 brutal-btn bg-red-300 hover:bg-red-400 text-black py-2 px-3 text-xs"
+                    >
+                      ❌ DELETE
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -396,6 +444,45 @@ const ProviderMyVehicles = () => {
             <div className="brutal-card-sm bg-yellow-200 text-center p-5">
               <p className="text-4xl font-black text-yellow-700 mb-2">{vehicles.filter(v => v.status === 'maintenance').length}</p>
               <p className="font-black uppercase text-xs text-gray-700">In Maintenance</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Booking Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-3 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-md w-full">
+            <div className="bg-red-300 border-b-3 border-black p-4 flex justify-between items-center">
+              <h2 className="brutal-heading text-lg">🚫 CANCEL BOOKING</h2>
+              <button
+                onClick={closeCancelModal}
+                className="brutal-btn bg-white text-xs px-3 py-1"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm font-bold">
+                Cancel the active booking for this rented vehicle?
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={closeCancelModal}
+                  className="flex-1 brutal-btn bg-gray-300 text-xs px-4 py-2"
+                >
+                  KEEP BOOKING
+                </button>
+                <button
+                  onClick={async () => {
+                    await handleCancelRentedBooking(cancelVehicleId);
+                    closeCancelModal();
+                  }}
+                  className="flex-1 brutal-btn bg-red-300 text-xs px-4 py-2"
+                >
+                  CONFIRM CANCEL
+                </button>
+              </div>
             </div>
           </div>
         </div>

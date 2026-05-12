@@ -7,6 +7,23 @@ const paymentSchema = new mongoose.Schema({
 
   amount: { type: Number, required: true },
   currency: { type: String, default: "INR" },
+  paymentPlan: { type: String, enum: ["full", "emi"], default: "full" },
+  emi: {
+    totalInstallments: { type: Number },
+    installmentAmount: { type: Number },
+    installmentsPaid: { type: Number, default: 0 },
+    remainingAmount: { type: Number },
+    installments: [
+      {
+        orderId: { type: String },
+        paymentId: { type: String },
+        signature: { type: String },
+        amount: { type: Number },
+        status: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
+        paidAt: { type: Date }
+      }
+    ]
+  },
   
   // Payment status: pending -> paid/failed
   status: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },

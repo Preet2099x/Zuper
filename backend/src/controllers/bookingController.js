@@ -36,6 +36,18 @@ export const createBookingRequest = async (req, res) => {
       return res.status(400).json({ message: "Vehicle is not available" });
     }
 
+    // Prevent overlapping bookings for the same vehicle
+    const overlappingBooking = await BookingRequest.findOne({
+      vehicle: vehicleId,
+      status: { $in: ["PENDING_PROVIDER", "PROVIDER_ACCEPTED", "PAYMENT_PENDING", "CONFIRMED"] },
+      startDate: { $lt: end },
+      endDate: { $gt: start }
+    });
+
+    if (overlappingBooking) {
+      return res.status(400).json({ message: "Vehicle is already booked for the selected dates" });
+    }
+
     // Calculate cost
     const numberOfDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
     const totalCost = numberOfDays * vehicle.dailyRate;
@@ -212,6 +224,98 @@ export const rejectBookingRequest = async (req, res) => {
     });
   } catch (error) {
     console.error("Reject booking request error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Provider cancels a confirmed booking (after rental started/confirmed)
+export const cancelBookingByProvider = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const { providerNote } = req.body;
+
+    const bookingRequest = await BookingRequest.findById(bookingId).populate("provider vehicle contract");
+
+    if (!bookingRequest) {
+      return res.status(404).json({ message: "Booking request not found" });
+    }
+
+    if (bookingRequest.provider._id.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized to cancel this booking" });
+    }
+
+    if (bookingRequest.status !== "CONFIRMED") {
+      return res.status(400).json({ message: "Only confirmed bookings can be cancelled by provider" });
+    }
+
+    bookingRequest.status = "CANCELLED";
+    bookingRequest.providerNote = providerNote || bookingRequest.providerNote || "";
+    await bookingRequest.save();
+
+    if (bookingRequest.contract) {
+      await Contract.findByIdAndUpdate(bookingRequest.contract, { status: "VOID" });
+    }
+
+    if (bookingRequest.vehicle) {
+      await Vehicle.findByIdAndUpdate(bookingRequest.vehicle._id, { status: "available" });
+    }
+
+    const populatedBooking = await bookingRequest.populate([
+      { path: "customer", select: "name email phone" },
+      { path: "provider", select: "name email businessName" },
+      { path: "vehicle", select: "company model year licensePlate" }
+    ]);
+
+    res.json({
+      message: "Booking cancelled by provider",
+      booking: populatedBooking
+    });
+  } catch (error) {
+    console.error("Cancel booking by provider error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Provider cancels a confirmed booking by vehicle (for rented vehicles view)
+export const cancelBookingByProviderVehicle = async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+    const { providerNote } = req.body;
+
+    const bookingRequest = await BookingRequest.findOne({
+      vehicle: vehicleId,
+      provider: req.user.id,
+      status: "CONFIRMED"
+    }).sort({ createdAt: -1 }).populate("provider vehicle contract");
+
+    if (!bookingRequest) {
+      return res.status(404).json({ message: "No confirmed booking found for this vehicle" });
+    }
+
+    bookingRequest.status = "CANCELLED";
+    bookingRequest.providerNote = providerNote || bookingRequest.providerNote || "";
+    await bookingRequest.save();
+
+    if (bookingRequest.contract) {
+      await Contract.findByIdAndUpdate(bookingRequest.contract, { status: "VOID" });
+    }
+
+    if (bookingRequest.vehicle) {
+      await Vehicle.findByIdAndUpdate(bookingRequest.vehicle._id, { status: "available" });
+    }
+
+    const populatedBooking = await bookingRequest.populate([
+      { path: "customer", select: "name email phone" },
+      { path: "provider", select: "name email businessName" },
+      { path: "vehicle", select: "company model year licensePlate" }
+    ]);
+
+    res.json({
+      message: "Booking cancelled by provider",
+      booking: populatedBooking
+    });
+  } catch (error) {
+    console.error("Cancel booking by provider vehicle error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
